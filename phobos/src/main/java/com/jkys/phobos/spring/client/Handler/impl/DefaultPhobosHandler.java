@@ -1,15 +1,16 @@
-package com.jkys.phobos.spring.Handler.impl;
+package com.jkys.phobos.spring.client.Handler.impl;
 
-        import com.jkys.phobos.annotation.PhobosAddr;
-        import com.jkys.phobos.annotation.PhobosVersion;
-        import com.jkys.phobos.spring.Handler.PhobosHandler;
+import com.jkys.phobos.annotation.PhobosAddr;
+import com.jkys.phobos.annotation.PhobosVersion;
+import com.jkys.phobos.spring.client.Handler.PhobosHandler;
 
-        import java.lang.reflect.Method;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * Created by zdj on 2016/7/1.
  */
-public class DefaultPhobosHandler implements PhobosHandler{
+public class DefaultPhobosHandler implements PhobosHandler {
 
     public Object execution(Method method,Object[] args) {
 
@@ -26,9 +27,10 @@ public class DefaultPhobosHandler implements PhobosHandler{
             throw new RuntimeException("Annotation attribute addr and xbusAddr must be one is not null for" + method.getDeclaringClass().getName());
 
         //TODO 连接netty服务端
+        System.out.println();
         System.out.println("version is " + version);
-        System.out.println("addr is " + addr);
-        System.out.println("xbusAddr is " + xbusAddr);
+        System.out.println("addr is " + Arrays.toString(addr));
+        System.out.println("xbusAddr is " + Arrays.toString(xbusAddr));
 
         return null;
     }

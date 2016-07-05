@@ -1,0 +1,29 @@
+package com.jkys.phobos.spring.tag;
+
+import com.jkys.phobos.spring.server.PhobosContext;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.util.StringUtils;
+import org.w3c.dom.Element;
+
+/**
+ * Created by zdj on 2016/7/4.
+ * 解析自定义phobos registry标签
+ */
+public class PhobosRegistryDefinitionParser implements BeanDefinitionParser {
+
+    public BeanDefinition parse(Element element, ParserContext parserContext) {
+
+        String xbusAddr = element.getAttribute("xbusAddr");
+        if(StringUtils.isEmpty(xbusAddr)) throw new NullPointerException("phobos registry tag attribte xbusAddr is empty");
+        String[] s = xbusAddr.split(",");
+
+        PhobosContext phobosContext = PhobosContext.getInstance();
+        for(String addr : s){
+            phobosContext.setXbus(addr);
+        }
+
+        return null;
+    }
+}

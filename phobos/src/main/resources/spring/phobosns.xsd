@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://jkys.com/mars/phobos"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:beans="http://www.springframework.org/schema/beans"
+        targetNamespace="http://jkys.com/mars/phobos">
+
+    <xsd:import namespace="http://www.springframework.org/schema/beans" />
+
+    <xsd:element name="registry" type="registryType" />
+    <xsd:complexType name="registryType">
+        <xsd:attribute name="xbusAddr" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:element name="service" type="serviceType" />
+    <xsd:complexType name="serviceType">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:attribute name="class" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+</xsd:schema>

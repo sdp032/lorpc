@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:phobos="http://jkys.com/mars/phobos"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd">
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://jkys.com/mars/phobos
+       http://jkys.com/mars/phobos.xsd">
 
-    <bean id="test" class="com.jkys.phobos.spring.PhobosFactoryBean">
+    <phobos:registry xbusAddr="localhost:8080,127.0.0.1:8080,localhost:8080,localhost:8081"/>
+
+    <phobos:service id="testService" class="com.jkys.phobos.service.impl.TestServiceImpl" />
+
+    <bean id="test" class="com.jkys.phobos.spring.client.PhobosFactoryBean">
         <property name="phobosInterface" value="com.jkys.phobos.service.TestService"/>
     </bean>
 </beans>

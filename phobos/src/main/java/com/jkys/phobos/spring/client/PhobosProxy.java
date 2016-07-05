@@ -1,6 +1,6 @@
-package com.jkys.phobos.spring;
+package com.jkys.phobos.spring.client;
 
-import com.jkys.phobos.spring.Handler.PhobosHandler;
+import com.jkys.phobos.spring.client.Handler.PhobosHandler;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

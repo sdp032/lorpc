@@ -1,4 +1,4 @@
-package com.jkys.phobos.spring;
+package com.jkys.phobos.spring.client;
 
 import com.jkys.phobos.service.TestService;
 import org.junit.Test;
@@ -15,10 +15,8 @@ public class TestPhobosFactoryBean {
 
         ApplicationContext context = new ClassPathXmlApplicationContext("spring/application.xml");
 
-        Object testService = context.getBean("test");
+        TestService testService = (TestService)context.getBean("test");
 
-        System.out.print(testService.getClass());
-
-        //testService.test();
+        testService.test();
     }
 }

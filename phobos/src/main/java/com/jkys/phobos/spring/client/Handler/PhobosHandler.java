@@ -1,4 +1,4 @@
-package com.jkys.phobos.spring.Handler;
+package com.jkys.phobos.spring.client.Handler;
 
 import java.lang.reflect.Method;
 
