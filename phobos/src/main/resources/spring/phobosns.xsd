@@ -8,7 +8,8 @@
 
     <xsd:element name="registry" type="registryType" />
     <xsd:complexType name="registryType">
-        <xsd:attribute name="xbusAddr" type="xsd:string" use="required"/>
+        <xsd:attribute name="xbusAddr" type="xsd:string" />
+        <xsd:attribute name="servicePort" type="xsd:int" use="required"/>
     </xsd:complexType>
 
     <xsd:element name="service" type="serviceType" />

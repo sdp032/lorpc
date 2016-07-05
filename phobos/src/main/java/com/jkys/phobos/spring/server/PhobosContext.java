@@ -33,6 +33,11 @@ public class PhobosContext {
      */
     private HashSet<String> xbusSet = new HashSet();
 
+    /**
+     *  服务端口号
+     */
+    private Integer port;
+
 
     public Method getMethod(String serviceName,String methodName,String group,String version){
         return methodMap.get(generateMethodKey(serviceName,methodName,group,version));
@@ -48,6 +53,14 @@ public class PhobosContext {
 
     public void setXbus(String xbus) {
        xbusSet.add(xbus);
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
     }
 
     private String generateMethodKey(String serviceName, String methodName, String group, String version){

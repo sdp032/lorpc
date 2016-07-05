@@ -26,7 +26,7 @@ public class PhobosServiceDefinitionParser implements BeanDefinitionParser{
         try {
             classObject = Class.forName(className);
         }catch (ClassNotFoundException e){
-            //TODO 日志
+            e.printStackTrace();
             System.exit(0);
         }
 
@@ -53,7 +53,7 @@ public class PhobosServiceDefinitionParser implements BeanDefinitionParser{
         }
 
         if(interfaceClass == null){
-            //TODO 日志
+            new ClassCastException(classObject.getName() + "must implements phobos service interface").printStackTrace();
             System.exit(0);
         }
 
@@ -62,7 +62,6 @@ public class PhobosServiceDefinitionParser implements BeanDefinitionParser{
             try{
                 interfaceMethod = interfaceClass.getMethod(method.getName(),method.getParameterTypes());
             }catch (NoSuchMethodException e){
-
             }
 
             if(interfaceMethod != null){
@@ -73,11 +72,11 @@ public class PhobosServiceDefinitionParser implements BeanDefinitionParser{
                         ?interfaceClass.getAnnotation(PhobosGroup.class)
                         :interfaceMethod.getAnnotation(PhobosGroup.class);
                 if(version == null){
-                    //TODO 日志
+                    new NullPointerException("Annotation PhobosVersion is null for " + interfaceMethod.getName()).printStackTrace();
                     System.exit(0);
                 }
                 if(group == null){
-                    //TODO 日志
+                    new NullPointerException("Annotation PhobosGroup is null for " + interfaceMethod.getName()).printStackTrace();
                     System.exit(0);
                 }
                 phobosContext.setMethodMap(interfaceClass.getName(),method.getName(),group.value(),version.version(),method);
