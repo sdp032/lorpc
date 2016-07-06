@@ -9,7 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
 /**
  * Created by zdj on 2016/7/5.
  */
-public class DefaultChannelHandler extends ChannelHandlerAdapter {
+public class DefaultServerChannelHandler extends ChannelHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -22,6 +22,7 @@ public class DefaultChannelHandler extends ChannelHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        super.exceptionCaught(ctx, cause);
+        cause.printStackTrace();
+        ctx.close();
     }
 }

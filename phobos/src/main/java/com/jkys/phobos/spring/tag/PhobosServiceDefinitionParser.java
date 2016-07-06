@@ -2,7 +2,7 @@ package com.jkys.phobos.spring.tag;
 
 import com.jkys.phobos.annotation.PhobosVersion;
 import com.jkys.phobos.annotation.PhobosGroup;
-import com.jkys.phobos.spring.server.PhobosContext;
+import com.jkys.phobos.server.PhobosContext;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
@@ -52,10 +52,8 @@ public class PhobosServiceDefinitionParser implements BeanDefinitionParser{
             }
         }
 
-        if(interfaceClass == null){
-            new ClassCastException(classObject.getName() + "must implements phobos service interface").printStackTrace();
-            System.exit(0);
-        }
+        if(interfaceClass == null)
+            throw new ClassCastException(classObject.getName() + "must implements phobos service interface");
 
         for(Method method : methods){
             Method interfaceMethod = null;
@@ -72,16 +70,13 @@ public class PhobosServiceDefinitionParser implements BeanDefinitionParser{
                         ?interfaceClass.getAnnotation(PhobosGroup.class)
                         :interfaceMethod.getAnnotation(PhobosGroup.class);
                 if(version == null){
-                    new NullPointerException("Annotation PhobosVersion is null for " + interfaceMethod.getName()).printStackTrace();
-                    System.exit(0);
+                    throw new NullPointerException("Annotation PhobosVersion is null for " + interfaceMethod.getName());
                 }
                 if(group == null){
-                    new NullPointerException("Annotation PhobosGroup is null for " + interfaceMethod.getName()).printStackTrace();
-                    System.exit(0);
+                    throw new NullPointerException("Annotation PhobosGroup is null for " + interfaceMethod.getName());
                 }
                 phobosContext.setMethodMap(interfaceClass.getName(),method.getName(),group.value(),version.version(),method);
             }
-
         }
 
         return beanDefinition;

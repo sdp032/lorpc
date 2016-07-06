@@ -1,4 +1,4 @@
-package com.jkys.phobos.spring.server;
+package com.jkys.phobos.server;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -10,15 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * 服务上下文 保存服务端注册信息、服务方法存储   该类为单例
  */
 public class PhobosContext {
-
-    private PhobosContext(){}
-
-    public synchronized static PhobosContext getInstance(){
-        if(phobosContext == null){
-            phobosContext = new PhobosContext();
-        }
-        return  phobosContext;
-    }
 
     private static PhobosContext phobosContext = null;
 
@@ -38,6 +29,14 @@ public class PhobosContext {
      */
     private Integer port;
 
+    private PhobosContext(){}
+
+    public synchronized static PhobosContext getInstance(){
+        if(phobosContext == null){
+            phobosContext = new PhobosContext();
+        }
+        return  phobosContext;
+    }
 
     public Method getMethod(String serviceName,String methodName,String group,String version){
         return methodMap.get(generateMethodKey(serviceName,methodName,group,version));

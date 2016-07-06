@@ -7,11 +7,9 @@
        http://jkys.com/mars/phobos
        http://jkys.com/mars/phobos.xsd">
 
-    <phobos:registry xbusAddr="localhost:8080,127.0.0.1:8080,localhost:8080,localhost:8081" servicePort="8080"/>
+    <phobos:subscribe xbusAddr="localhost:8082,localhost:8083" addr="localhost:8080"/>
 
-    <phobos:service id="testService" class="com.jkys.phobos.service.impl.TestServiceImpl" />
-
-    <bean id="test" class="com.jkys.phobos.spring.client.PhobosFactoryBean">
+    <bean id="test" class="com.jkys.phobos.spring.client.beans.PhobosFactoryBean">
         <property name="phobosInterface" value="com.jkys.phobos.service.TestService"/>
     </bean>
 </beans>

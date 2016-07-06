@@ -26,7 +26,7 @@ public class NettyServer {
 
     public void open() throws Exception{
         if(handler == null)
-            handler  = new DefaultChannelHandler();
+            handler  = new DefaultServerChannelHandler();
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try{
@@ -42,6 +42,7 @@ public class NettyServer {
                 });
             ChannelFuture future = bootstrap.bind(port).sync();
             future.channel().closeFuture().sync();
+
         }finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();

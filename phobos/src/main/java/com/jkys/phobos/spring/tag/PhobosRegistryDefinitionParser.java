@@ -1,7 +1,7 @@
 package com.jkys.phobos.spring.tag;
 
 import com.jkys.phobos.spring.server.PhobosApplicationListener;
-import com.jkys.phobos.spring.server.PhobosContext;
+import com.jkys.phobos.server.PhobosContext;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
@@ -28,7 +28,7 @@ public class PhobosRegistryDefinitionParser implements BeanDefinitionParser {
             phobosContext.setXbus(addr);
         }
 
-        //注册容器初始化完成启动netty服务端事件
+        //容器初始化完成后启动netty服务端监听器
         RootBeanDefinition beanDefinition = new RootBeanDefinition();
         beanDefinition.setBeanClass(PhobosApplicationListener.class);
         parserContext.getRegistry().registerBeanDefinition("phobosApplicationListener", beanDefinition);

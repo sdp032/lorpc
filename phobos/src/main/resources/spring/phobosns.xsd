@@ -20,4 +20,10 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
+
+    <xsd:element name="subscribe" type="subscribeType"/>
+    <xsd:complexType name="subscribeType">
+        <xsd:attribute name="xbusAddr" type="xsd:string"/>
+        <xsd:attribute name="addr" type="xsd:string"/>
+    </xsd:complexType>
 </xsd:schema>

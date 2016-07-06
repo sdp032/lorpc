@@ -1,4 +1,4 @@
-package com.jkys.phobos.spring.client;
+package com.jkys.phobos.spring.client.beans;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;

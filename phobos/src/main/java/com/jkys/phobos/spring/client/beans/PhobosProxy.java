@@ -1,4 +1,4 @@
-package com.jkys.phobos.spring.client;
+package com.jkys.phobos.spring.client.beans;
 
 import com.jkys.phobos.spring.client.Handler.PhobosHandler;
 
