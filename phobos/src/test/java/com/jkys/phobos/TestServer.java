@@ -10,7 +10,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class TestServer {
 
     @Test
-    private void test(){
+    public void test(){
         ApplicationContext context = new ClassPathXmlApplicationContext("spring/server-application.xml");
 
     }

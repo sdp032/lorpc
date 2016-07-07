@@ -1,6 +1,6 @@
 package com.jkys.phobos.netty;
 
-import com.jkys.phobos.remote.Response;
+import com.jkys.phobos.remote.protocol.Response;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerAdapter;
@@ -15,9 +15,10 @@ public class DefaultServerChannelHandler extends ChannelHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         System.out.println(msg.getClass().getName());
 
-        Response response = new Response();
-        ByteBuf buf = Unpooled.copiedBuffer("待编码".getBytes());
-        ctx.writeAndFlush(buf);
+        String s = "收到";
+        ByteBuf bb = Unpooled.buffer(s.length());
+        bb.writeBytes(s.getBytes());
+        ctx.writeAndFlush(bb);
     }
 
     @Override

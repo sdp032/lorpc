@@ -1,19 +1,26 @@
 package com.jkys.phobos.client;
 
+import com.jkys.phobos.remote.protocol.Header;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.logging.Handler;
 
 /**
  * Created by zdj on 2016/7/6.
  */
 public class PhobosClientContext {
 
-    private HashSet<String> xbusAddr;
+    private String clientAppName;
 
-    private HashSet<String> addr;
+    private char serializationType;
 
-    private HashMap<Class,List<String>> connectInfo;
+    private HashSet<String> xbusAddr = new HashSet();
+
+    private HashSet<String> addr = new HashSet();
+
+    private HashMap<Class,List<String>> connectInfo = new HashMap();
 
     private static PhobosClientContext phobosClientContext = null;
 
@@ -48,5 +55,21 @@ public class PhobosClientContext {
 
     public void setConnectInfo(HashMap<Class, List<String>> connectInfo) {
         this.connectInfo = connectInfo;
+    }
+
+    public String getClientAppName() {
+        return clientAppName;
+    }
+
+    public void setClientAppName(String clientAppName) {
+        this.clientAppName = clientAppName;
+    }
+
+    public char getSerializationType() {
+        return serializationType;
+    }
+
+    public void setSerializationType(char serializationType) {
+        this.serializationType = serializationType;
     }
 }

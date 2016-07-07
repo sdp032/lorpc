@@ -15,14 +15,6 @@ public class PhobosFactoryBean<T> implements FactoryBean<T>{
 
     private PhobosHandler phobosHandler;
 
-    public void setPhobosInterface(Class<T> phobosInterface){
-        this.phobosInterface = phobosInterface;
-    }
-
-    public void setPhobosHandler(PhobosHandler phobosHandler){
-        this.phobosHandler = phobosHandler;
-    }
-
     public T getObject() throws Exception {
         PhobosProxy phobosProxy = new PhobosProxy(phobosHandler == null ? new DefaultPhobosHandler() : phobosHandler);
         T t = (T)Proxy.newProxyInstance(phobosInterface.getClassLoader(),new Class[]{phobosInterface},phobosProxy);
@@ -35,5 +27,21 @@ public class PhobosFactoryBean<T> implements FactoryBean<T>{
 
     public boolean isSingleton() {
         return false;
+    }
+
+    public void setPhobosInterface(Class<T> phobosInterface){
+        this.phobosInterface = phobosInterface;
+    }
+
+    public void setPhobosHandler(PhobosHandler phobosHandler){
+        this.phobosHandler = phobosHandler;
+    }
+
+    public Class<T> getPhobosInterface() {
+        return phobosInterface;
+    }
+
+    public PhobosHandler getPhobosHandler() {
+        return phobosHandler;
     }
 }

@@ -1,13 +1,11 @@
-package com.jkys.phobos.remote;
+package com.jkys.phobos.remote.protocol;
 
 /**
  * Created by frio on 16/7/4.
  */
 public class Response {
 
-    private long sequenceId; /** we got from request **/
-
-    private boolean isSuccess;
+    private boolean success;
 
     private String errCode;
 
@@ -17,20 +15,12 @@ public class Response {
 
     private Object data;
 
-    public long getSequenceId() {
-        return sequenceId;
-    }
-
-    public void setSequenceId(long sequenceId) {
-        this.sequenceId = sequenceId;
-    }
-
     public boolean isSuccess() {
-        return isSuccess;
+        return success;
     }
 
     public void setSuccess(boolean success) {
-        isSuccess = success;
+        this.success = success;
     }
 
     public String getErrCode() {

@@ -22,7 +22,7 @@ public class NettyClient {
         this.port = port;
     }
 
-    public void connect(String host,int port) throws Exception{
+    public void connect() throws Exception{
         if(handler == null)
             handler = new DefaultClientChannelHandler();
         EventLoopGroup group = new NioEventLoopGroup();

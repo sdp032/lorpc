@@ -6,25 +6,26 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by frio on 16/7/4.
  */
 public class NettyServer {
 
-    private Integer port;
+    private static Logger logger = LoggerFactory.getLogger(NettyServer.class);
+
+    private final Integer port;
 
     private ChannelHandlerAdapter handler;
-
-    public NettyServer(URL url){
-
-    }
 
     public NettyServer(Integer port){
         this.port = port;
     }
 
     public void open() throws Exception{
+        System.out.println("服务启动中。。。");
         if(handler == null)
             handler  = new DefaultServerChannelHandler();
         EventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -41,8 +42,10 @@ public class NettyServer {
                     }
                 });
             ChannelFuture future = bootstrap.bind(port).sync();
+            synchronized (this){
+                this.notify();
+            }
             future.channel().closeFuture().sync();
-
         }finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
@@ -51,5 +54,11 @@ public class NettyServer {
 
     public void setHandler(ChannelHandlerAdapter handler) {
         this.handler = handler;
+    }
+
+    public void listenOpen() throws InterruptedException{
+        synchronized (this){
+            this.wait();
+        }
     }
 }

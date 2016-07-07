@@ -21,9 +21,19 @@
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:element name="subscribe" type="subscribeType"/>
-    <xsd:complexType name="subscribeType">
+    <xsd:element name="client" type="clientType"/>
+    <xsd:complexType name="clientType">
         <xsd:attribute name="xbusAddr" type="xsd:string"/>
         <xsd:attribute name="addr" type="xsd:string"/>
+        <xsd:attribute name="clientAppName" type="xsd:string" use="required"/>
+        <xsd:attribute name="serialization" default="PROTOBUFF">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="JSON"/>
+                    <xsd:enumeration value="MAGPACK"/>
+                    <xsd:enumeration value="PROTOBUFF"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
     </xsd:complexType>
 </xsd:schema>

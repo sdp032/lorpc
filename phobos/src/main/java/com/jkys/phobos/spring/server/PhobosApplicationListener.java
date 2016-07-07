@@ -17,16 +17,28 @@ public class PhobosApplicationListener implements ApplicationListener<ContextRef
 
 
         PhobosContext phobosContext = PhobosContext.getInstance();
-        Integer port = phobosContext.getPort();
+        final Integer port = phobosContext.getPort();
         Set<String> xbusAddr = phobosContext.getXbusSet();
 
         //启动netty服务
-        try {
-            new NettyServer(port).open();
-        }catch (Exception e){
+        final NettyServer server = new NettyServer(port);
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    server.open();
+                }catch (Exception e){
+                    e.printStackTrace();
+                    System.exit(0);
+                }
+            }
+        }).start();
+        try{
+            server.listenOpen();
+        }catch (InterruptedException e){
             e.printStackTrace();
             System.exit(0);
         }
+        System.out.println("启动完成");
         //TODO 向xbus注册服务
     }
 }
