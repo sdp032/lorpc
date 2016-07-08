@@ -22,6 +22,10 @@ public class PhobosClientContext {
 
     private HashMap<Class,List<String>> connectInfo = new HashMap();
 
+    private int startTimeOut;
+
+    private int requestTimeOut;
+
     private static PhobosClientContext phobosClientContext = null;
 
     private PhobosClientContext(){}
@@ -71,5 +75,21 @@ public class PhobosClientContext {
 
     public void setSerializationType(char serializationType) {
         this.serializationType = serializationType;
+    }
+
+    public int getStartTimeOut() {
+        return startTimeOut;
+    }
+
+    public void setStartTimeOut(int startTimeOut) {
+        this.startTimeOut = startTimeOut;
+    }
+
+    public int getRequestTimeOut() {
+        return requestTimeOut;
+    }
+
+    public void setRequestTimeOut(int requestTimeOut) {
+        this.requestTimeOut = requestTimeOut;
     }
 }

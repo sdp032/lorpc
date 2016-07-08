@@ -1,5 +1,7 @@
 package com.jkys.phobos.netty;
 
+import com.jkys.phobos.netty.listener.PhobosChannelActiveListener;
+import com.jkys.phobos.netty.listener.PhobosTestListener;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -15,16 +17,18 @@ public class NettyClient {
 
     private final int port;
 
-    private ChannelHandlerAdapter handler;
+    private int startTimeOut;
 
-    public NettyClient(String host,int port){
+    private AbstractClientChannelHandler handler = new DefaultClientChannelHandler();
+
+    public NettyClient(String host,int port,int startTimeOut){
         this.host = host;
         this.port = port;
+        this.startTimeOut = startTimeOut;
     }
 
     public void connect() throws Exception{
-        if(handler == null)
-            handler = new DefaultClientChannelHandler();
+        handler.addPhobosListener(new PhobosChannelActiveListener());
         EventLoopGroup group = new NioEventLoopGroup();
         try{
             Bootstrap bootstrap = new Bootstrap();
@@ -42,7 +46,26 @@ public class NettyClient {
         }
     }
 
-    public void setHandler(ChannelHandlerAdapter handler) {
+    public void setHandler(AbstractClientChannelHandler handler) {
         this.handler = handler;
+    }
+
+    public void noBlockConnect() throws Exception{
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    connect();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        synchronized (handler){
+            handler.wait(startTimeOut*1000);
+            if(!handler.isActive()){
+                throw new RuntimeException("start netty client time out");
+            }
+        }
+        System.out.println("client启动成功");
     }
 }

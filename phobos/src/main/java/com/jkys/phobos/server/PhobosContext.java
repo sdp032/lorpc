@@ -29,6 +29,11 @@ public class PhobosContext {
      */
     private Integer port;
 
+    /**
+     * 服务是否阻塞
+     */
+    private boolean blocking;
+
     private PhobosContext(){}
 
     public synchronized static PhobosContext getInstance(){
@@ -60,6 +65,14 @@ public class PhobosContext {
 
     public void setPort(Integer port) {
         this.port = port;
+    }
+
+    public boolean isBlocking() {
+        return blocking;
+    }
+
+    public void setBlocking(boolean blocking) {
+        this.blocking = blocking;
     }
 
     private String generateMethodKey(String serviceName, String methodName, String group, String version){

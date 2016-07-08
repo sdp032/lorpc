@@ -25,11 +25,10 @@ public class NettyServer {
     }
 
     public void open() throws Exception{
-        System.out.println("服务启动中。。。");
         if(handler == null)
             handler  = new DefaultServerChannelHandler();
-        EventLoopGroup bossGroup = new NioEventLoopGroup();
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        EventLoopGroup bossGroup = new NioEventLoopGroup(3);
+        EventLoopGroup workerGroup = new NioEventLoopGroup(3);
         try{
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup,workerGroup)
@@ -60,5 +59,26 @@ public class NettyServer {
         synchronized (this){
             this.wait();
         }
+    }
+
+    public void noBlockOpen(){
+        System.out.println("netty启动中");
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    open();
+                }catch (Exception e){
+                    e.printStackTrace();
+                    System.exit(0);
+                }
+            }
+        }).start();
+        try{
+            listenOpen();
+        }catch (InterruptedException e){
+            e.printStackTrace();
+            System.exit(0);
+        }
+        System.out.println("netty启动完成");
     }
 }

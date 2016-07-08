@@ -10,6 +10,7 @@
     <xsd:complexType name="registryType">
         <xsd:attribute name="xbusAddr" type="xsd:string" />
         <xsd:attribute name="servicePort" type="xsd:int" use="required"/>
+        <xsd:attribute name="blocking" type="xsd:boolean" default="false"/>
     </xsd:complexType>
 
     <xsd:element name="service" type="serviceType" />
@@ -35,5 +36,7 @@
                 </xsd:restriction>
             </xsd:simpleType>
         </xsd:attribute>
+        <xsd:attribute name="startTimeOut" type="xsd:int" default="60"/>
+        <xsd:attribute name="requestTimeOut" type="xsd:int" default="60" />
     </xsd:complexType>
 </xsd:schema>

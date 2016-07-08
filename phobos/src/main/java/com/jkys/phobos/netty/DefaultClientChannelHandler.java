@@ -1,12 +1,12 @@
 package com.jkys.phobos.netty;
 
 import com.jkys.phobos.client.PhobosClientContext;
+import com.jkys.phobos.netty.listener.PhobosChannelActiveEvent;
 import com.jkys.phobos.remote.protocol.Header;
 import com.jkys.phobos.remote.protocol.PhobosRequest;
 import com.jkys.phobos.remote.protocol.Request;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Date;
@@ -14,7 +14,7 @@ import java.util.Date;
 /**
  * Created by zdj on 2016/7/6.
  */
-public class DefaultClientChannelHandler extends ChannelHandlerAdapter {
+public class DefaultClientChannelHandler extends AbstractClientChannelHandler {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -32,12 +32,17 @@ public class DefaultClientChannelHandler extends ChannelHandlerAdapter {
         bb.writeBytes(s.getBytes());
         ctx.writeAndFlush(bb);
         System.out.println("******请求服务器信息******");
+        notify(new PhobosChannelActiveEvent(this));
+        synchronized (this){
+            setActive(true);
+            this.notify();
+        }
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         //TODO 处理相应
-        System.out.println(msg.getClass().getName());
+        System.out.println("客户端收到");
     }
 
     @Override

@@ -14,7 +14,7 @@ import java.util.*;
 /**
  * Created by zdj on 2016/7/6.
  */
-public class PhobosClientListener implements ApplicationListener<ContextRefreshedEvent> {
+    public class PhobosClientListener implements ApplicationListener<ContextRefreshedEvent> {
 
     private static Logger logger = LoggerFactory.getLogger(PhobosClientListener.class);
 
@@ -42,11 +42,10 @@ public class PhobosClientListener implements ApplicationListener<ContextRefreshe
         //创建netty客户端
         for(String s : addr){
            try{
-               new NettyClient(s.split(":")[0],Integer.valueOf(s.split(":")[1])).connect();
+               new NettyClient(s.split(":")[0],Integer.valueOf(s.split(":")[1]),clientContext.getStartTimeOut()).noBlockConnect();
            }catch (Exception e){
                e.printStackTrace();
            }
         }
-        System.out.print(111);
     }
 }

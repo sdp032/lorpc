@@ -19,6 +19,7 @@ public class PhobosRegistryDefinitionParser implements BeanDefinitionParser {
 
         String xbusAddr = element.getAttribute("xbusAddr");
         Integer port = Integer.valueOf(element.getAttribute("servicePort"));
+        boolean blocking = Boolean.valueOf(element.getAttribute("blocking"));
         if(StringUtils.isEmpty(xbusAddr)) throw new NullPointerException("phobos registry tag attribte xbusAddr is empty");
         String[] s = xbusAddr.split(",");
 
@@ -27,6 +28,8 @@ public class PhobosRegistryDefinitionParser implements BeanDefinitionParser {
         for(String addr : s){
             phobosContext.setXbus(addr);
         }
+
+        phobosContext.setBlocking(blocking);
 
         //容器初始化完成后启动netty服务端监听器
         RootBeanDefinition beanDefinition = new RootBeanDefinition();
