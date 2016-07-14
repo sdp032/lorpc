@@ -2,6 +2,7 @@ package com.jkys.phobos.server;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -34,6 +35,13 @@ public class PhobosContext {
      */
     private boolean blocking;
 
+    /**
+     * 需要进行序列化的类型集合 （服务参数类型及返回值类型）
+     */
+    private Set<Class> serializeSet = new HashSet();
+
+    private String serverName;
+
     private PhobosContext(){}
 
     public synchronized static PhobosContext getInstance(){
@@ -47,7 +55,11 @@ public class PhobosContext {
         return methodMap.get(generateMethodKey(serviceName,methodName,group,version));
     }
 
-    public void setMethodMap(String serviceName,String methodName,String group,String version,Method method){
+    public ConcurrentHashMap<String, Method> getMethodMap() {
+        return methodMap;
+    }
+
+    public void setMethodMap(String serviceName, String methodName, String group, String version, Method method){
         methodMap.put(generateMethodKey(serviceName,methodName,group,version),method);
     }
 
@@ -73,6 +85,22 @@ public class PhobosContext {
 
     public void setBlocking(boolean blocking) {
         this.blocking = blocking;
+    }
+
+    public Set<Class> getSerializeSet() {
+        return serializeSet;
+    }
+
+    public void setSerializeSet(Set<Class> serializeSet) {
+        this.serializeSet = serializeSet;
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
     }
 
     private String generateMethodKey(String serviceName, String methodName, String group, String version){

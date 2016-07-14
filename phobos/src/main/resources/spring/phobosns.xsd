@@ -11,6 +11,7 @@
         <xsd:attribute name="xbusAddr" type="xsd:string" />
         <xsd:attribute name="servicePort" type="xsd:int" use="required"/>
         <xsd:attribute name="blocking" type="xsd:boolean" default="false"/>
+        <xsd:attribute name="serverName" type="xsd:string"/>
     </xsd:complexType>
 
     <xsd:element name="service" type="serviceType" />
@@ -27,7 +28,7 @@
         <xsd:attribute name="xbusAddr" type="xsd:string"/>
         <xsd:attribute name="addr" type="xsd:string"/>
         <xsd:attribute name="clientAppName" type="xsd:string" use="required"/>
-        <xsd:attribute name="serialization" default="PROTOBUFF">
+        <xsd:attribute name="serialization" default="MAGPACK">
             <xsd:simpleType>
                 <xsd:restriction base="xsd:string">
                     <xsd:enumeration value="JSON"/>

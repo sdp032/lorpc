@@ -1,14 +1,17 @@
 package com.jkys.phobos.remote.protocol;
 
+import org.msgpack.annotation.Message;
+
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by frio on 16/7/4.
  */
+@Message
 public class Request {
 
-    private int traceId;
+    private long traceId;
 
     private String serviceName;
 
@@ -18,13 +21,13 @@ public class Request {
 
     private String clientAppName;
 
-    private List<?> object; /*请求参数列表*/
+    private List<byte[]> object; /*请求参数列表*/
 
-    public int getTraceId() {
+    public long getTraceId() {
         return traceId;
     }
 
-    public void setTraceId(int traceId) {
+    public void setTraceId(long traceId) {
         this.traceId = traceId;
     }
 
@@ -60,11 +63,11 @@ public class Request {
         this.clientAppName = clientAppName;
     }
 
-    public List<?> getObject() {
+    public List<byte[]> getObject() {
         return object;
     }
 
-    public void setObject(List<?> object) {
+    public void setObject(List<byte[]> object) {
         this.object = object;
     }
 }

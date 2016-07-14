@@ -13,6 +13,7 @@ public class PhobosCodec implements ICodec {
 
     public void encode(ChannelPromise channelPromise, ByteBuf out, Object message) {
 
+
     }
 
     public void decode(ChannelPromise channelPromise, ByteBuf in) {

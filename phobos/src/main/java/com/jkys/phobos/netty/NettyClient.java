@@ -1,7 +1,6 @@
 package com.jkys.phobos.netty;
 
 import com.jkys.phobos.netty.listener.PhobosChannelActiveListener;
-import com.jkys.phobos.netty.listener.PhobosTestListener;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -19,7 +18,9 @@ public class NettyClient {
 
     private int startTimeOut;
 
-    private AbstractClientChannelHandler handler = new DefaultClientChannelHandler();
+    private boolean isConnect = false;
+
+    private Class<? extends AbstractClientChannelHandler> handlerClass;
 
     public NettyClient(String host,int port,int startTimeOut){
         this.host = host;
@@ -28,7 +29,9 @@ public class NettyClient {
     }
 
     public void connect() throws Exception{
-        handler.addPhobosListener(new PhobosChannelActiveListener());
+        final NettyClient sourse = this;
+        if(handlerClass == null)
+            handlerClass = DefaultClientChannelHandler.class;
         EventLoopGroup group = new NioEventLoopGroup();
         try{
             Bootstrap bootstrap = new Bootstrap();
@@ -36,7 +39,11 @@ public class NettyClient {
                     .option(ChannelOption.TCP_NODELAY,true)
                     .handler(new ChannelInitializer<SocketChannel>() {
                         public void initChannel(SocketChannel socketChannel) throws Exception {
-                            socketChannel.pipeline().addLast(handler);
+                            socketChannel.pipeline().addLast(new PhobosRequestEncoder());
+                            socketChannel.pipeline().addLast(new PhobosResponseDecoder());
+                            socketChannel.pipeline().addLast(handlerClass.getConstructor(NettyClient.class).newInstance(sourse)
+                                    .addPhobosListener(new PhobosChannelActiveListener())
+                            );
                         }
                     });
             ChannelFuture f = bootstrap.connect(host,port).sync();
@@ -44,10 +51,6 @@ public class NettyClient {
         }finally {
             group.shutdownGracefully();
         }
-    }
-
-    public void setHandler(AbstractClientChannelHandler handler) {
-        this.handler = handler;
     }
 
     public void noBlockConnect() throws Exception{
@@ -60,12 +63,28 @@ public class NettyClient {
                 }
             }
         }).start();
-        synchronized (handler){
-            handler.wait(startTimeOut*1000);
-            if(!handler.isActive()){
+        synchronized (this){
+            this.wait(startTimeOut*1000);
+            if(!this.isConnect()){
                 throw new RuntimeException("start netty client time out");
             }
         }
         System.out.println("client启动成功");
+    }
+
+    public boolean isConnect() {
+        return isConnect;
+    }
+
+    public void setConnect(boolean connect) {
+        isConnect = connect;
+    }
+
+    public Class<? extends AbstractClientChannelHandler> getHandlerClass() {
+        return handlerClass;
+    }
+
+    public void setHandlerClass(Class<? extends AbstractClientChannelHandler> handlerClass) {
+        this.handlerClass = handlerClass;
     }
 }

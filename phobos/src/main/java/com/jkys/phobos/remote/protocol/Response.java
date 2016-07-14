@@ -1,8 +1,11 @@
 package com.jkys.phobos.remote.protocol;
 
+import org.msgpack.annotation.Message;
+
 /**
  * Created by frio on 16/7/4.
  */
+@Message
 public class Response {
 
     private boolean success;
@@ -13,7 +16,7 @@ public class Response {
 
     private String applicationErrorType;
 
-    private Object data;
+    private byte[] data;
 
     public boolean isSuccess() {
         return success;
@@ -47,11 +50,11 @@ public class Response {
         this.applicationErrorType = applicationErrorType;
     }
 
-    public Object getData() {
+    public byte[] getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(byte[] data) {
         this.data = data;
     }
 }

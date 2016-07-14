@@ -5,6 +5,7 @@ import com.jkys.phobos.remote.protocol.Header;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Handler;
 
 /**
@@ -25,6 +26,8 @@ public class PhobosClientContext {
     private int startTimeOut;
 
     private int requestTimeOut;
+
+    private Set<Class> serializeSet = new HashSet();
 
     private static PhobosClientContext phobosClientContext = null;
 
@@ -91,5 +94,13 @@ public class PhobosClientContext {
 
     public void setRequestTimeOut(int requestTimeOut) {
         this.requestTimeOut = requestTimeOut;
+    }
+
+    public Set<Class> getSerializeSet() {
+        return serializeSet;
+    }
+
+    public void setSerializeSet(Set<Class> serializeSet) {
+        this.serializeSet = serializeSet;
     }
 }

@@ -1,0 +1,16 @@
+//Request proto file Created by zdj on 2016/7/10
+
+syntax = "proto3";
+
+package com.jkys.phobos.remote.protocol.protobuf;
+
+import "google/protobuf/any.proto";
+
+message Request {
+    int32 trace_id = 1;
+    string service_name = 2;
+    string service_version = 3;
+    string method_name = 4;
+    string client_app_name = 5;
+    repeated google.protobuf.Any object = 6;
+}

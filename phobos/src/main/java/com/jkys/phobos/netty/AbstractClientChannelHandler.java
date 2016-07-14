@@ -13,16 +13,22 @@ import java.util.List;
  */
 public abstract class AbstractClientChannelHandler extends ChannelHandlerAdapter {
 
-    private boolean isActive = false;
-
     private List<PhobosListener> listeners = new ArrayList();
 
-    public void addPhobosListener(PhobosListener listener){
-        listeners.add(listener);
+    private NettyClient source;
+
+    public AbstractClientChannelHandler(NettyClient source){
+        this.source = source;
     }
 
-    public void removePhobosListener(PhobosListener listener){
+    public AbstractClientChannelHandler addPhobosListener(PhobosListener listener){
+        listeners.add(listener);
+        return this;
+    }
+
+    public AbstractClientChannelHandler removePhobosListener(PhobosListener listener){
         listeners.remove(listener);
+        return this;
     }
 
     public void notify(PhobosEvent event){
@@ -35,11 +41,11 @@ public abstract class AbstractClientChannelHandler extends ChannelHandlerAdapter
         }
     }
 
-    public boolean isActive() {
-        return isActive;
+    public NettyClient getSource() {
+        return source;
     }
 
-    public void setActive(boolean active) {
-        isActive = active;
+    public void setSource(NettyClient source) {
+        this.source = source;
     }
 }

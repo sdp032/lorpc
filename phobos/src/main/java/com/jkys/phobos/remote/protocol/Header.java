@@ -7,15 +7,15 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class Header {
 
-    private final short protocolVersion = 1;
-
-    private final long sequenceId;
+    private short protocolVersion = 1;
 
     private char serializationType;
 
     private char type;
 
     private int size;
+
+    private long sequenceId;
 
     private long timestamp;
 
@@ -58,6 +58,10 @@ public class Header {
         return protocolVersion;
     }
 
+    public void setProtocolVersion(short protocolVersion) {
+        this.protocolVersion = protocolVersion;
+    }
+
     public long getTimestamp() {
         return timestamp;
     }
@@ -68,6 +72,10 @@ public class Header {
 
     public long getSequenceId() {
         return sequenceId;
+    }
+
+    public void setSequenceId(long sequenceId) {
+        this.sequenceId = sequenceId;
     }
 
     public int getSize() {

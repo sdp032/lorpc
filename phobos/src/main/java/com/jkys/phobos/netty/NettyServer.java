@@ -1,6 +1,6 @@
 package com.jkys.phobos.netty;
 
-import com.jkys.phobos.remote.URL;
+import com.jkys.phobos.server.PhobosContext;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -18,17 +18,22 @@ public class NettyServer {
 
     private final Integer port;
 
-    private ChannelHandlerAdapter handler;
+    private PhobosContext context = PhobosContext.getInstance();
+
+    private Class<? extends AbstractServerChannelHandler> handlerClass;
 
     public NettyServer(Integer port){
         this.port = port;
     }
 
     public void open() throws Exception{
-        if(handler == null)
-            handler  = new DefaultServerChannelHandler();
-        EventLoopGroup bossGroup = new NioEventLoopGroup(3);
-        EventLoopGroup workerGroup = new NioEventLoopGroup(3);
+
+        if(handlerClass == null){
+            handlerClass = DefaultServerChannelHandler.class;
+        }
+
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
         try{
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup,workerGroup)
@@ -37,7 +42,12 @@ public class NettyServer {
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        socketChannel.pipeline().addLast(handler);
+                        //PhobosRequest解码器
+                        socketChannel.pipeline().addLast(new PhotosRequestDecoder());
+                        //PhobosResponse编码器
+                        socketChannel.pipeline().addLast(new PhobosResponseEncoder());
+                        //业务处理器
+                        socketChannel.pipeline().addLast(handlerClass.getConstructor().newInstance());
                     }
                 });
             ChannelFuture future = bootstrap.bind(port).sync();
@@ -49,10 +59,6 @@ public class NettyServer {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
-    }
-
-    public void setHandler(ChannelHandlerAdapter handler) {
-        this.handler = handler;
     }
 
     public void listenOpen() throws InterruptedException{
@@ -80,5 +86,13 @@ public class NettyServer {
             System.exit(0);
         }
         System.out.println("netty启动完成");
+    }
+
+    public Class<? extends AbstractServerChannelHandler> getHandlerClass() {
+        return handlerClass;
+    }
+
+    public void setHandlerClass(Class<? extends AbstractServerChannelHandler> handlerClass) {
+        this.handlerClass = handlerClass;
     }
 }

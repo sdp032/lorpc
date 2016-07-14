@@ -1,0 +1,10 @@
+//PhobosRequest proto file Created by zdj on 2016/7/10
+
+syntax = "proto3";
+package com.jkys.phobos.remote.protocol.protobuf;
+import "Header.proto";
+import "Request.proto";
+message PhobosRequest {
+    com.jkys.phobos.remote.protocol.protobuf.Header header = 1;
+    com.jkys.phobos.remote.protocol.protobuf.Request request = 2;
+}

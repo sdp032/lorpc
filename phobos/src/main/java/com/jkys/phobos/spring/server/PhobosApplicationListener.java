@@ -1,10 +1,13 @@
 package com.jkys.phobos.spring.server;
 
+import com.jkys.phobos.codec.MsgpackUtil;
 import com.jkys.phobos.netty.NettyServer;
 import com.jkys.phobos.server.PhobosContext;
+import com.jkys.phobos.util.TypeUtil;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
+import java.lang.reflect.Method;
 import java.util.Set;
 
 /**
@@ -19,6 +22,16 @@ public class PhobosApplicationListener implements ApplicationListener<ContextRef
         PhobosContext phobosContext = PhobosContext.getInstance();
         final Integer port = phobosContext.getPort();
         Set<String> xbusAddr = phobosContext.getXbusSet();
+        Set<Class> serializeSet = phobosContext.getSerializeSet();
+
+        for(Method m : phobosContext.getMethodMap().values()){
+            TypeUtil.getAllSerializeType(serializeSet,m.getReturnType());
+            for(Class c : m.getParameterTypes()){
+                TypeUtil.getAllSerializeType(serializeSet,c);
+            }
+        }
+
+        MsgpackUtil.register(serializeSet);
 
         //启动netty服务
         if(phobosContext.isBlocking()) {
@@ -31,9 +44,6 @@ public class PhobosApplicationListener implements ApplicationListener<ContextRef
         }else{
             new NettyServer(port).noBlockOpen();
         }
-
-
-
 
         //TODO 向xbus注册服务
     }
