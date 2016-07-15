@@ -31,7 +31,7 @@ public abstract class AbstractClientChannelHandler extends ChannelHandlerAdapter
         return this;
     }
 
-    public void notify(PhobosEvent event){
+    public void notify(PhobosEvent event) throws Exception{
         Iterator<PhobosListener> iterator = listeners.iterator();
         while (iterator.hasNext()){
             PhobosListener listener = iterator.next();

@@ -1,11 +1,9 @@
 package com.jkys.phobos.client;
 
+import com.jkys.phobos.netty.NettyClient;
 import com.jkys.phobos.remote.protocol.Header;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Handler;
 
 /**
@@ -21,13 +19,15 @@ public class PhobosClientContext {
 
     private HashSet<String> addr = new HashSet();
 
-    private HashMap<Class,List<String>> connectInfo = new HashMap();
+    private HashMap<String,List<NettyClient>> connectInfo = new HashMap();
 
     private int startTimeOut;
 
     private int requestTimeOut;
 
     private Set<Class> serializeSet = new HashSet();
+
+    private Map<Long,InvokeInfo> invokeInfoMap = new HashMap();
 
     private static PhobosClientContext phobosClientContext = null;
 
@@ -56,11 +56,11 @@ public class PhobosClientContext {
         this.addr = addr;
     }
 
-    public HashMap<Class, List<String>> getConnectInfo() {
+    public HashMap<String, List<NettyClient>> getConnectInfo() {
         return connectInfo;
     }
 
-    public void setConnectInfo(HashMap<Class, List<String>> connectInfo) {
+    public void setConnectInfo(HashMap<String, List<NettyClient>> connectInfo) {
         this.connectInfo = connectInfo;
     }
 
@@ -102,5 +102,9 @@ public class PhobosClientContext {
 
     public void setSerializeSet(Set<Class> serializeSet) {
         this.serializeSet = serializeSet;
+    }
+
+    public Map<Long, InvokeInfo> getInvokeInfoMap() {
+        return invokeInfoMap;
     }
 }

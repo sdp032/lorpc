@@ -41,7 +41,6 @@ public class DefaultPhobosRouter implements PhobosRouter {
                 phobosResponse.getResponse().setData(MsgpackUtil.MESSAGE_PACK.write(serverInfo));
             }
 
-
             return phobosResponse;
         }
 

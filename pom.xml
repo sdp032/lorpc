@@ -19,4 +19,5 @@
         <spring.version>4.3.0.RELEASE</spring.version>
         <log4j.version>2.6.1</log4j.version>
     </properties>
+
 </project>

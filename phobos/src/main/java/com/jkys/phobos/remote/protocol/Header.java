@@ -19,7 +19,7 @@ public class Header {
 
     private long timestamp;
 
-    private static final AtomicLong INVOKE_ID = new AtomicLong(0);
+    private static final AtomicLong INVOKE_ID = new AtomicLong(1);
 
     public Header(){
         sequenceId = INVOKE_ID.getAndIncrement();

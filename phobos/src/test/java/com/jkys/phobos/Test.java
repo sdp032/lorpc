@@ -168,4 +168,14 @@ public class Test {
 
         System.out.println(set.size());
     }
+
+    @org.junit.Test
+    public void test3(){
+
+        Header header = new Header();
+        Header header1 = new Header();
+
+        System.out.println(header.getSequenceId());
+        System.out.println(header1.getSequenceId());
+    }
 }

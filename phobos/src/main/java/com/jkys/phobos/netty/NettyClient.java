@@ -1,6 +1,7 @@
 package com.jkys.phobos.netty;
 
 import com.jkys.phobos.netty.listener.PhobosChannelActiveListener;
+import com.jkys.phobos.netty.listener.PhobosChannelReadListener;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -42,6 +43,7 @@ public class NettyClient {
                             socketChannel.pipeline().addLast(new PhobosRequestEncoder());
                             socketChannel.pipeline().addLast(new PhobosResponseDecoder());
                             socketChannel.pipeline().addLast(handlerClass.getConstructor(NettyClient.class).newInstance(sourse)
+                                    .addPhobosListener(new PhobosChannelReadListener())
                                     .addPhobosListener(new PhobosChannelActiveListener())
                             );
                         }

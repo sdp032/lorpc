@@ -1,16 +1,15 @@
 package com.jkys.phobos.netty.listener;
 
 import com.jkys.phobos.client.InvokeInfo;
-import com.jkys.phobos.netty.NettyClient;
 
 /**
- * Created by zdj on 2016/7/8.
+ * Created by zdj on 2016/7/15.
  */
-public class PhobosChannelActiveEvent extends PhobosEvent {
+public class PhobosChannelReadEvent extends PhobosEvent{
 
     private final InvokeInfo invokeInfo;
 
-    public PhobosChannelActiveEvent(NettyClient source, InvokeInfo invokeInfo){
+    public PhobosChannelReadEvent(Object source,InvokeInfo invokeInfo) {
         super(source);
         this.invokeInfo = invokeInfo;
     }

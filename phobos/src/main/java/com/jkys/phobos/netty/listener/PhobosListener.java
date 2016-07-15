@@ -7,7 +7,7 @@ import java.util.EventListener;
  */
 public interface PhobosListener<E extends PhobosEvent> extends EventListener {
 
-    void onPhobosEvent(E event);
+    void onPhobosEvent(E event) throws Exception;
 
     Class<E> getEventClass();
 }

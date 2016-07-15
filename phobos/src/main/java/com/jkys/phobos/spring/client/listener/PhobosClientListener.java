@@ -33,21 +33,21 @@ import java.util.*;
         PhobosClientContext clientContext = PhobosClientContext.getInstance();
         Set<String> xbusAddr = clientContext.getXbusAddr();
         Set<String> addr = clientContext.getAddr();
-        HashMap<Class,List<String>> connectInfo = clientContext.getConnectInfo();
         Set<Class> serializeSet = clientContext.getSerializeSet();
+        HashMap<String,List<NettyClient>> connectInfo = clientContext.getConnectInfo();
 
         Iterator<Map.Entry<String,PhobosFactoryBean>> iterator = clients.entrySet().iterator();
         while (null!=iterator && iterator.hasNext()){
             Class serviceInterface = iterator.next().getValue().getPhobosInterface();
             Method[] serviceMethods = serviceInterface.getMethods();
             for (Method m : serviceMethods){
+                //注册需要序列化的类型
                 TypeUtil.getAllSerializeType(serializeSet,m.getReturnType());
                 for(Class c : m.getParameterTypes()){
                     TypeUtil.getAllSerializeType(serializeSet,c);
                 }
+                //
             }
-
-            connectInfo.put(serviceInterface,new ArrayList<String>());
         }
 
         MsgpackUtil.register(serializeSet);
@@ -57,7 +57,7 @@ import java.util.*;
         //创建netty客户端
         for(String s : addr){
            try{
-               new NettyClient(s.split(":")[0],Integer.valueOf(s.split(":")[1]),clientContext.getStartTimeOut()).connect();
+               new NettyClient(s.split(":")[0],Integer.valueOf(s.split(":")[1]),clientContext.getStartTimeOut()).noBlockConnect();
            }catch (Exception e){
                e.printStackTrace();
            }

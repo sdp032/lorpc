@@ -1,7 +1,9 @@
 package com.jkys.phobos.netty;
 
+import com.jkys.phobos.client.InvokeInfo;
 import com.jkys.phobos.client.PhobosClientContext;
 import com.jkys.phobos.netty.listener.PhobosChannelActiveEvent;
+import com.jkys.phobos.netty.listener.PhobosChannelReadEvent;
 import com.jkys.phobos.remote.protocol.Header;
 import com.jkys.phobos.remote.protocol.PhobosRequest;
 import com.jkys.phobos.remote.protocol.PhobosResponse;
@@ -31,12 +33,9 @@ public class DefaultClientChannelHandler extends AbstractClientChannelHandler {
 
         ctx.writeAndFlush(request);
 
-        notify(new PhobosChannelActiveEvent(this));
-        //TODO 唤醒主线程  需要响应的地方
-        synchronized (getSource()){
-            getSource().setConnect(true);
-            getSource().notify();
-        }
+        InvokeInfo invokeInfo = new InvokeInfo();
+        invokeInfo.setRequest(request);
+        PhobosClientContext.getInstance().getInvokeInfoMap().put(request.getHeader().getSequenceId(),invokeInfo);
     }
 
     @Override
@@ -47,8 +46,16 @@ public class DefaultClientChannelHandler extends AbstractClientChannelHandler {
         }
 
         PhobosResponse phobosResponse = (PhobosResponse)msg;
-
-        System.out.println("客户端收到");
+        InvokeInfo invokeInfo = PhobosClientContext.getInstance().getInvokeInfoMap().remove(phobosResponse.getHeader().getSequenceId());
+        if(invokeInfo == null){
+            throw new NullPointerException("invokeInfo is null for sequenceId : " + phobosResponse.getHeader().getSequenceId());
+        }
+        invokeInfo.setResponse(phobosResponse);
+        if("server-info".equals(invokeInfo.getRequest().getRequest().getServiceName())){
+            notify(new PhobosChannelActiveEvent(getSource(),invokeInfo));
+        }else{
+            notify(new PhobosChannelReadEvent(this,invokeInfo));
+        }
     }
 
     @Override
