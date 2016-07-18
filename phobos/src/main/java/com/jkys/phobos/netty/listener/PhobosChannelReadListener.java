@@ -18,7 +18,14 @@ public class PhobosChannelReadListener implements PhobosListener <PhobosChannelR
 
     public void onPhobosEvent(PhobosChannelReadEvent event) throws Exception{
 
-
+        InvokeInfo invokeInfo = event.getInvokeInfo();
+        if(invokeInfo == null){
+            throw new NullPointerException("invokeInfo is null");
+        }
+        synchronized (invokeInfo){
+            invokeInfo.setTimeOut(false);
+            invokeInfo.notify();
+        }
     }
 
     public Class<PhobosChannelReadEvent> getEventClass() {

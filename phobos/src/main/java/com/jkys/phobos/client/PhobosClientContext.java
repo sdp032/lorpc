@@ -104,7 +104,19 @@ public class PhobosClientContext {
         this.serializeSet = serializeSet;
     }
 
-    public Map<Long, InvokeInfo> getInvokeInfoMap() {
-        return invokeInfoMap;
+    public InvokeInfo getInvokeInfo(Long key){
+        return invokeInfoMap.get(key);
+    }
+
+    public InvokeInfo removeInvokeInfo(Long key){
+        return invokeInfoMap.remove(key);
+    }
+
+    public void setInvokeInfo (InvokeInfo invokeInfo){
+        if(invokeInfo == null)
+            throw new NullPointerException("invokeInfo is null");
+        if(invokeInfo.getRequest() == null)
+            throw new NullPointerException("PhobosRequest is null");
+        invokeInfoMap.put(invokeInfo.getRequest().getHeader().getSequenceId(),invokeInfo);
     }
 }

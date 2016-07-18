@@ -4,6 +4,7 @@ import com.jkys.phobos.codec.MsgpackUtil;
 import com.jkys.phobos.remote.protocol.Header;
 import com.jkys.phobos.remote.protocol.PhobosResponse;
 import com.jkys.phobos.remote.protocol.Response;
+import com.jkys.phobos.util.SerializaionUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -49,11 +50,7 @@ public class PhobosResponseDecoder extends ByteToMessageDecoder {
         byte[] body = new byte[size];
         in.readBytes(body);
 
-        Response response = null;
-
-        if(Header.SerializationType.MAGPACK.serializationType == serializationType){
-            response = MsgpackUtil.MESSAGE_PACK.read(body,Response.class);
-        }
+        Response response = SerializaionUtil.bytesToObject(body,Response.class,header.getSerializationType());
 
         out.add(new PhobosResponse(header,response));
     }

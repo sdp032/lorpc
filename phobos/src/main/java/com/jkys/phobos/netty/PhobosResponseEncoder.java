@@ -4,6 +4,7 @@ import com.jkys.phobos.codec.MsgpackUtil;
 import com.jkys.phobos.remote.protocol.Header;
 import com.jkys.phobos.remote.protocol.PhobosResponse;
 import com.jkys.phobos.remote.protocol.Response;
+import com.jkys.phobos.util.SerializaionUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -29,11 +30,7 @@ public class PhobosResponseEncoder extends MessageToByteEncoder<PhobosResponse> 
             throw new NullPointerException("Response is null");
         }
 
-        byte[] body = null;
-
-        if(header.getSerializationType() == Header.SerializationType.MAGPACK.serializationType){
-            body = MsgpackUtil.MESSAGE_PACK.write(response);
-        }
+        byte[] body = SerializaionUtil.objectToBytes(response,header.getSerializationType());
 
         header.setSize(body.length);
 

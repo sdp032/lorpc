@@ -7,5 +7,5 @@ import java.lang.reflect.Method;
  */
 public interface PhobosHandler{
 
-    Object execution(Method method,Object[] args);
+    Object execution(Method method,Object[] args) throws Exception;
 }

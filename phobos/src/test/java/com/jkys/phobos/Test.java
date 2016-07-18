@@ -6,6 +6,8 @@ import com.jkys.phobos.netty.DefaultServerChannelHandler;
 import com.jkys.phobos.remote.protocol.Header;
 import com.jkys.phobos.remote.protocol.PhobosRequest;
 import com.jkys.phobos.remote.protocol.Request;
+import com.jkys.phobos.service.TestService;
+import com.jkys.phobos.service.impl.TestServiceImpl;
 import com.jkys.phobos.util.TypeUtil;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
 import org.msgpack.MessagePack;
@@ -15,6 +17,7 @@ import org.msgpack.type.ValueType;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -148,7 +151,7 @@ public class Test {
         request.setObject(ll);
 
 
-        byte[] bb = pack.write(request);
+        byte[] bb = pack.write(null);
 
         Request request1 = pack.read(bb,Request.class);
         PhobosRequest phobosRequest = pack.read(request1.getObject().get(2),PhobosRequest.class);
@@ -170,12 +173,7 @@ public class Test {
     }
 
     @org.junit.Test
-    public void test3(){
+    public void test3() throws Exception{
 
-        Header header = new Header();
-        Header header1 = new Header();
-
-        System.out.println(header.getSequenceId());
-        System.out.println(header1.getSequenceId());
     }
 }

@@ -3,6 +3,7 @@ package com.jkys.phobos.netty;
 import com.jkys.phobos.codec.ICodec;
 import com.jkys.phobos.codec.MsgpackUtil;
 import com.jkys.phobos.remote.protocol.*;
+import com.jkys.phobos.util.SerializaionUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -39,12 +40,7 @@ public class PhobosRequestEncoder extends MessageToByteEncoder <PhobosRequest>{
         if(request == null)
             throw new NullPointerException("Request is null");
 
-        byte[] body = null;
-
-        if(header.getSerializationType() == Header.SerializationType.MAGPACK.serializationType){
-            body = MsgpackUtil.MESSAGE_PACK.write(request);
-        }
-        //TODO 其他序列化方式
+        byte[] body = SerializaionUtil.objectToBytes(request,header.getSerializationType());
 
         header.setSize(body.length);
 

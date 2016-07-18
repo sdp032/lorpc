@@ -20,7 +20,7 @@ public class MsgpackUtil {
             try {
                 MESSAGE_PACK.register(list.get(0));
                 Class c = list.remove(0);
-                System.out.println("register type " + c.getName() + "for MessagePack");
+                System.out.println("register type " + c.getName() + " for MessagePack");
             }catch (Exception e){
                 list.add(list.remove(0));
             }

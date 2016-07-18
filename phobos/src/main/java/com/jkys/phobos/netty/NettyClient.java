@@ -1,12 +1,18 @@
 package com.jkys.phobos.netty;
 
+import com.jkys.phobos.client.InvokeInfo;
+import com.jkys.phobos.client.PhobosClientContext;
 import com.jkys.phobos.netty.listener.PhobosChannelActiveListener;
 import com.jkys.phobos.netty.listener.PhobosChannelReadListener;
+import com.jkys.phobos.remote.protocol.PhobosRequest;
+import com.jkys.phobos.remote.protocol.PhobosResponse;
+import com.jkys.phobos.remote.protocol.Response;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.timeout.TimeoutException;
 
 /**
  * Created by frio on 16/7/4.
@@ -22,6 +28,8 @@ public class NettyClient {
     private boolean isConnect = false;
 
     private Class<? extends AbstractClientChannelHandler> handlerClass;
+
+    private ChannelFuture future;
 
     public NettyClient(String host,int port,int startTimeOut){
         this.host = host;
@@ -48,8 +56,8 @@ public class NettyClient {
                             );
                         }
                     });
-            ChannelFuture f = bootstrap.connect(host,port).sync();
-            f.channel().closeFuture().sync();
+            future = bootstrap.connect(host,port).sync();
+            future.channel().closeFuture().sync();
         }finally {
             group.shutdownGracefully();
         }
@@ -72,6 +80,26 @@ public class NettyClient {
             }
         }
         System.out.println("client启动成功");
+    }
+
+    public InvokeInfo send(final PhobosRequest request) throws Exception{
+
+        InvokeInfo invokeInfo = new InvokeInfo();
+        invokeInfo.setRequest(request);
+        PhobosClientContext.getInstance().setInvokeInfo(invokeInfo);
+        new Thread(new Runnable() {
+            public void run() {
+                future.channel().writeAndFlush(request);
+            }
+        }).start();
+        synchronized (invokeInfo){
+            invokeInfo.wait(startTimeOut*1000);
+            PhobosClientContext.getInstance().removeInvokeInfo(request.getHeader().getSequenceId());
+            if(invokeInfo.isTimeOut()){
+                throw new RuntimeException("invoke service time out for "+ request.getRequest().getServiceName() + "_" + request.getRequest().getMethodName());
+            }
+        }
+        return invokeInfo;
     }
 
     public boolean isConnect() {

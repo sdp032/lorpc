@@ -15,5 +15,13 @@ public class TestClient {
 
         TestService testService = (TestService) context.getBean("test");
         testService.test();
+
+        User u = new User();
+        u.setAge(22);
+        u.setName("zzz");
+        House house = new House();
+        house.setLandlord(u);
+        house = testService.getHouse(house);
+        System.out.println(house);
     }
 }

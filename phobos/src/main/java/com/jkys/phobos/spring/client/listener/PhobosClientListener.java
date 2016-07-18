@@ -1,5 +1,7 @@
 package com.jkys.phobos.spring.client.listener;
 
+import com.jkys.phobos.annotation.PhobosGroup;
+import com.jkys.phobos.annotation.PhobosVersion;
 import com.jkys.phobos.client.PhobosClientContext;
 import com.jkys.phobos.codec.MsgpackUtil;
 import com.jkys.phobos.netty.NettyClient;
@@ -38,15 +40,24 @@ import java.util.*;
 
         Iterator<Map.Entry<String,PhobosFactoryBean>> iterator = clients.entrySet().iterator();
         while (null!=iterator && iterator.hasNext()){
-            Class serviceInterface = iterator.next().getValue().getPhobosInterface();
+            Class<?> serviceInterface = iterator.next().getValue().getPhobosInterface();
             Method[] serviceMethods = serviceInterface.getMethods();
+            String serviceName = serviceInterface.getName();
             for (Method m : serviceMethods){
-                //注册需要序列化的类型
+                String methodName = m.getName();
                 TypeUtil.getAllSerializeType(serializeSet,m.getReturnType());
                 for(Class c : m.getParameterTypes()){
                     TypeUtil.getAllSerializeType(serializeSet,c);
                 }
-                //
+
+                PhobosVersion version = m.getAnnotation(PhobosVersion.class) == null
+                        ?serviceInterface.getAnnotation(PhobosVersion.class)
+                        :m.getAnnotation(PhobosVersion.class);
+
+                PhobosGroup group = m.getAnnotation(PhobosGroup.class) == null
+                        ?serviceInterface.getAnnotation(PhobosGroup.class)
+                        :m.getAnnotation(PhobosGroup.class);
+                connectInfo.put(serviceName + "_" + methodName + "_" + group.value() + "_" + version.version(),new ArrayList<NettyClient>());
             }
         }
 

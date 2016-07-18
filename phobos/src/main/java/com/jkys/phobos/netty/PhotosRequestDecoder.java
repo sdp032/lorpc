@@ -5,6 +5,7 @@ import com.jkys.phobos.codec.MsgpackUtil;
 import com.jkys.phobos.remote.protocol.Header;
 import com.jkys.phobos.remote.protocol.PhobosRequest;
 import com.jkys.phobos.remote.protocol.Request;
+import com.jkys.phobos.util.SerializaionUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -63,12 +64,7 @@ import java.util.List;
         byte[] body = new byte[size];
         in.readBytes(body);
 
-        Request request = null;
-
-        if(Header.SerializationType.MAGPACK.serializationType == serializationType){
-            request = MsgpackUtil.MESSAGE_PACK.read(body,Request.class);
-        }
-        //TODO 其他反序列化方式
+        Request request = SerializaionUtil.bytesToObject(body,Request.class,header.getSerializationType());
 
         out.add(new PhobosRequest(header,request));
     }

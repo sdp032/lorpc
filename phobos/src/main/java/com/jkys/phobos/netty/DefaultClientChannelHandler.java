@@ -35,7 +35,7 @@ public class DefaultClientChannelHandler extends AbstractClientChannelHandler {
 
         InvokeInfo invokeInfo = new InvokeInfo();
         invokeInfo.setRequest(request);
-        PhobosClientContext.getInstance().getInvokeInfoMap().put(request.getHeader().getSequenceId(),invokeInfo);
+        PhobosClientContext.getInstance().setInvokeInfo(invokeInfo);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class DefaultClientChannelHandler extends AbstractClientChannelHandler {
         }
 
         PhobosResponse phobosResponse = (PhobosResponse)msg;
-        InvokeInfo invokeInfo = PhobosClientContext.getInstance().getInvokeInfoMap().remove(phobosResponse.getHeader().getSequenceId());
+        InvokeInfo invokeInfo = PhobosClientContext.getInstance().removeInvokeInfo(phobosResponse.getHeader().getSequenceId());
         if(invokeInfo == null){
             throw new NullPointerException("invokeInfo is null for sequenceId : " + phobosResponse.getHeader().getSequenceId());
         }
