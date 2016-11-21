@@ -3,6 +3,7 @@ package com.jkys.phobos.spring.tag;
 import com.jkys.phobos.annotation.PhobosVersion;
 import com.jkys.phobos.annotation.PhobosGroup;
 import com.jkys.phobos.server.PhobosContext;
+import com.jkys.phobos.server.ServiceBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
@@ -75,7 +76,16 @@ public class PhobosServiceDefinitionParser implements BeanDefinitionParser{
                 if(group == null){
                     throw new NullPointerException("Annotation PhobosGroup is null for " + interfaceMethod.getName());
                 }
-                phobosContext.setMethodMap(interfaceClass.getName(),method.getName(),group.value(),version.version(),method);
+                phobosContext.setMethod(interfaceClass.getName(),method.getName(),group.value(),version.version(),method);
+                try {
+                    phobosContext.setService(interfaceClass.getName(), group.value(), version.version(),
+                            new ServiceBean(interfaceClass.getName(), group.value(), version.version(), classObject.newInstance(), interfaceClass));
+                }catch (InstantiationException e){
+                    throw new InstantiationError(e.getMessage());
+                }catch (IllegalAccessException e){
+                    throw new RuntimeException(e.getMessage());
+                }
+
             }
         }
 

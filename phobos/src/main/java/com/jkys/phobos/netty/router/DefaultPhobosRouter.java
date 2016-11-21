@@ -1,8 +1,6 @@
 package com.jkys.phobos.netty.router;
 
-import com.jkys.phobos.codec.MsgpackUtil;
 import com.jkys.phobos.constant.ErrorEnum;
-import com.jkys.phobos.remote.protocol.Header;
 import com.jkys.phobos.remote.protocol.PhobosRequest;
 import com.jkys.phobos.remote.protocol.PhobosResponse;
 import com.jkys.phobos.remote.protocol.Response;
@@ -74,7 +72,8 @@ public class DefaultPhobosRouter implements PhobosRouter {
             }
         }
 
-        Object service = method.getDeclaringClass().newInstance();
+        //Object service = method.getDeclaringClass().newInstance();
+        Object service = PhobosContext.getInstance().getService(serviceName, group, serviceVersion).getService();
 
         Object value = null;
         try{

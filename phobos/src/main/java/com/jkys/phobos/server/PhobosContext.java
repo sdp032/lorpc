@@ -21,9 +21,25 @@ public class PhobosContext {
     private ConcurrentHashMap<String,Method> methodMap = new ConcurrentHashMap();
 
     /**
+     * key = serviceName_group_version
+     * value = Service
+     */
+    private ConcurrentHashMap<String, ServiceBean> serviceMap = new ConcurrentHashMap();
+
+    /**
      * xbus注册地址集合
      */
-    private HashSet<String> xbusSet = new HashSet();
+    private String[] xbusAddrs;
+
+    /**
+     * xbus keystore路径
+     */
+    private String keystorePath;
+
+    /**
+     * xbus keystore 密码
+     */
+    private String keystorePassword;
 
     /**
      *  服务端口号
@@ -55,20 +71,32 @@ public class PhobosContext {
         return methodMap.get(generateMethodKey(serviceName,methodName,group,version));
     }
 
+    public ServiceBean getService(String serviceName,String group,String version){
+        return this.serviceMap.get(this.generateServiceKey(serviceName, group, version));
+    }
+
     public ConcurrentHashMap<String, Method> getMethodMap() {
         return methodMap;
     }
 
-    public void setMethodMap(String serviceName, String methodName, String group, String version, Method method){
+    public void setMethod(String serviceName, String methodName, String group, String version, Method method){
         methodMap.put(generateMethodKey(serviceName,methodName,group,version),method);
     }
 
-    public HashSet<String> getXbusSet() {
-        return xbusSet;
+    public ConcurrentHashMap<String, ServiceBean> getServiceMap(){
+        return this.serviceMap;
     }
 
-    public void setXbus(String xbus) {
-       xbusSet.add(xbus);
+    public void setService(String serviceName, String group, String version, ServiceBean service){
+        this.serviceMap.put(this.generateServiceKey(serviceName, group, version), service);
+    }
+
+    public String[] getXbusAddrs() {
+        return xbusAddrs;
+    }
+
+    public void setXbusAddrs(String[] xbusAddrs) {
+        this.xbusAddrs = xbusAddrs;
     }
 
     public Integer getPort() {
@@ -103,11 +131,37 @@ public class PhobosContext {
         this.serverName = serverName;
     }
 
+    public String getKeystorePath() {
+        return keystorePath;
+    }
+
+    public void setKeystorePath(String keystorePath) {
+        this.keystorePath = keystorePath;
+    }
+
+    public String getKeystorePassword() {
+        return keystorePassword;
+    }
+
+    public void setKeystorePassword(String keystorePassword) {
+        this.keystorePassword = keystorePassword;
+    }
+
     private String generateMethodKey(String serviceName, String methodName, String group, String version){
         StringBuffer sb = new StringBuffer();
         sb.append(serviceName);
         sb.append("_");
         sb.append(methodName);
+        sb.append("_");
+        sb.append(group);
+        sb.append("_");
+        sb.append(version);
+        return sb.toString();
+    }
+
+    private String generateServiceKey(String serviceName, String group, String version){
+        StringBuffer sb = new StringBuffer();
+        sb.append(serviceName);
         sb.append("_");
         sb.append(group);
         sb.append("_");

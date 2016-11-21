@@ -21,7 +21,9 @@ public class TypeUtil {
         if(isBaseDataType(clz)||clz == Unsafe.class||clz.getPackage().getName().indexOf("java.util")!=-1){
             return;
         }
-        set.add(clz);
+        if(!set.add(clz)){
+            return;
+        }
         Field[] fields = clz.getDeclaredFields();
         for (Field f : fields){
             f.setAccessible(true);

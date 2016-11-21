@@ -4,7 +4,6 @@ import com.jkys.phobos.netty.router.DefaultPhobosRouter;
 import com.jkys.phobos.netty.router.PhobosRouter;
 import com.jkys.phobos.remote.protocol.PhobosRequest;
 import com.jkys.phobos.remote.protocol.PhobosResponse;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
 /**

@@ -72,5 +72,17 @@
             <artifactId>msgpack</artifactId>
             <version>0.6.7</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.infrmods.xbus</groupId>
+            <artifactId>xbus-client</artifactId>
+            <version>0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.17</version>
+        </dependency>
     </dependencies>
 </project>
