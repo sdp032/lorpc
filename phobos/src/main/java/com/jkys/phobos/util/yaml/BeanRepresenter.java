@@ -1,10 +1,7 @@
 package com.jkys.phobos.util.yaml;
+import com.jkys.phobos.annotation.Param;
 
-import javassist.*;
-import javassist.bytecode.CodeAttribute;
-import javassist.bytecode.LocalVariableAttribute;
-import javassist.bytecode.MethodInfo;
-
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -14,14 +11,10 @@ import java.lang.reflect.ParameterizedType;
  */
 public class BeanRepresenter implements Representer <Class>{
 
-    public String represent(Class aClass) throws NotFoundException {
+    public String represent(Class aClass) {
+
         StringBuffer sb = new StringBuffer();
-
-        ClassPool pool = ClassPool.getDefault();
-        CtClass cc = pool.get(aClass.getName());
-
         String name = aClass.getName();
-
         Method[] methods = aClass.getDeclaredMethods();
 
         sb.append(name);
@@ -38,13 +31,13 @@ public class BeanRepresenter implements Representer <Class>{
                 if(field.getGenericType() instanceof ParameterizedType){
                     if(((ParameterizedType) field.getGenericType()).getActualTypeArguments().length == 1){
                         sb.append("\t\titem_type: ");
-                        sb.append(((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0].getTypeName());
+                        sb.append(((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0].toString());
                         sb.append("\n\t\titem_nullable: true\n");
                     }else if(((ParameterizedType) field.getGenericType()).getActualTypeArguments().length == 2){
                         sb.append("\t\tkey_type: ");
-                        sb.append(((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0].getTypeName());
+                        sb.append(((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0].toString());
                         sb.append("\n\t\tvalue_type: ");
-                        sb.append(((ParameterizedType) field.getGenericType()).getActualTypeArguments()[1].getTypeName());
+                        sb.append(((ParameterizedType) field.getGenericType()).getActualTypeArguments()[1].toString());
                         sb.append("\n\t\tvalue_nullable: true\n");
                     }
 
@@ -63,28 +56,20 @@ public class BeanRepresenter implements Representer <Class>{
                 sb.append("\n\t\t\tnullable: true\n");
             }
 
-            if(method.getParameterTypes().length>0){
-                CtClass[] params = new CtClass[method.getParameterTypes().length];
-                for (int i = 0; i < method.getParameterTypes().length; i++){
-                    params[i] = pool.getCtClass(method.getParameterTypes()[i].getName());
-                }
-                CtMethod cm = cc.getDeclaredMethod(method.getName(), params);
-                MethodInfo methodInfo = cm.getMethodInfo();
-                CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
-                LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
-
-                if(attr != null){
-                    int pos = Modifier.isStatic(cm.getModifiers()) ? 0 : 1;
-                    sb.append("\t\tparams:\n");
-                    for(int i = 0; i < cm.getParameterTypes().length; i++){
-                        sb.append("\t\t  -\n\t\t\tname: ");
-                        sb.append(attr.variableName(i + pos));
-                        sb.append("\n\t\t\ttype: ");
-                        sb.append(method.getGenericParameterTypes()[i].getTypeName());
-                       // sb.append(method.getParameterTypes()[i].getName());
-                        sb.append("\n\t\t\tnullable: false\n");
+            Annotation[][] annotations = method.getParameterAnnotations();
+            if(method.getParameterTypes().length > 0) sb.append("\t\tparams:\n");
+            for (int i = 0; i < method.getParameterTypes().length; i++){
+                sb.append("\t\t  -\n");
+                for(Annotation annotation : annotations[i]){
+                    if(annotation instanceof Param){
+                        sb.append("\t\t\tname: ");
+                        sb.append(((Param)annotation).name());
+                        sb.append("\n");
                     }
                 }
+                sb.append("\t\t\ttype: ");
+                sb.append(method.getParameterTypes()[i].getName());
+                sb.append("\n");
             }
 
             if(method.getExceptionTypes().length>0){

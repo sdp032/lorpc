@@ -1,5 +1,6 @@
 package com.jkys.phobos.spring.tag;
 
+import com.jkys.phobos.annotation.Param;
 import com.jkys.phobos.annotation.PhobosVersion;
 import com.jkys.phobos.annotation.PhobosGroup;
 import com.jkys.phobos.server.PhobosContext;
@@ -62,7 +63,6 @@ public class PhobosServiceDefinitionParser implements BeanDefinitionParser{
                 interfaceMethod = interfaceClass.getMethod(method.getName(),method.getParameterTypes());
             }catch (NoSuchMethodException e){
             }
-
             if(interfaceMethod != null){
                 PhobosVersion version = interfaceMethod.getAnnotation(PhobosVersion.class) == null
                         ?interfaceClass.getAnnotation(PhobosVersion.class)

@@ -13,10 +13,12 @@ public class PhobosFactoryBean<T> implements FactoryBean<T>{
 
     private Class<T> phobosInterface;
 
+    private String serviceAppName;
+
     private PhobosHandler phobosHandler;
 
     public T getObject() throws Exception {
-        PhobosProxy phobosProxy = new PhobosProxy(phobosHandler == null ? new DefaultPhobosHandler() : phobosHandler);
+        PhobosProxy phobosProxy = new PhobosProxy(phobosHandler == null ? new DefaultPhobosHandler(serviceAppName) : phobosHandler);
         T t = (T)Proxy.newProxyInstance(phobosInterface.getClassLoader(),new Class[]{phobosInterface},phobosProxy);
         return t;
     }
@@ -43,5 +45,13 @@ public class PhobosFactoryBean<T> implements FactoryBean<T>{
 
     public PhobosHandler getPhobosHandler() {
         return phobosHandler;
+    }
+
+    public String getServiceAppName() {
+        return serviceAppName;
+    }
+
+    public void setServiceAppName(String serviceAppName) {
+        this.serviceAppName = serviceAppName;
     }
 }

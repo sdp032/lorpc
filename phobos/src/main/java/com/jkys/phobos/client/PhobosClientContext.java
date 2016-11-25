@@ -15,7 +15,7 @@ public class PhobosClientContext {
 
     private char serializationType;
 
-    private HashSet<String> xbusAddr = new HashSet();
+    private String[] xbusAddr;
 
     private HashSet<String> addr = new HashSet();
 
@@ -40,11 +40,11 @@ public class PhobosClientContext {
         return phobosClientContext;
     }
 
-    public HashSet<String> getXbusAddr() {
+    public String[] getXbusAddr() {
         return xbusAddr;
     }
 
-    public void setXbusAddr(HashSet<String> xbusAddr) {
+    public void setXbusAddr(String[] xbusAddr) {
         this.xbusAddr = xbusAddr;
     }
 

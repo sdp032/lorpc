@@ -27,7 +27,7 @@ public class TestServiceImpl implements TestService {
         return house;
     }
 
-    public House getHouse(String[] str, Integer i, boolean b, Map<String, Integer> m,  List<Map<String,String>> list) throws Exception {
+    public House getHouse(String str, Integer i, boolean b, Map<String, Integer> m,  List<Map<String,String>> list) throws Exception {
         return null;
     }
 }

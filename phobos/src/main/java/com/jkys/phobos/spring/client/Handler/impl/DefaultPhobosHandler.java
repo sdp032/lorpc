@@ -23,6 +23,14 @@ import java.util.Random;
  */
 public class DefaultPhobosHandler implements PhobosHandler {
 
+    private String serviceAppName;
+
+    public DefaultPhobosHandler(){}
+
+    public DefaultPhobosHandler(String serviceAppName){
+        this.serviceAppName = serviceAppName;
+    }
+
     public Object execution(Method method,Object[] args) throws Exception{
 
         PhobosGroup phobosGroupAnnotation = method.getAnnotation(PhobosGroup.class) == null ?
@@ -40,7 +48,7 @@ public class DefaultPhobosHandler implements PhobosHandler {
         String version = phobosVersionAnnotation.version();
         String group = phobosGroupAnnotation.value();
 
-        String serveiceKey = method.getDeclaringClass().getName() + "_" + method.getName() + "_" + group + "_" + version;
+        String serveiceKey = this.serviceAppName + "." + method.getDeclaringClass().getName() + "." + method.getName() + "." + group + "." + version;
 
         List<NettyClient> clientList = PhobosClientContext.getInstance().getConnectInfo().get(serveiceKey);
         if(null == clientList || clientList.size() == 0){
@@ -75,5 +83,13 @@ public class DefaultPhobosHandler implements PhobosHandler {
         return SerializaionUtil.bytesToObject(invokeInfo.getResponse().getResponse().getData(),
                 method.getReturnType(),
                 PhobosClientContext.getInstance().getSerializationType());
+    }
+
+    public String getServiceAppName() {
+        return serviceAppName;
+    }
+
+    public void setServiceAppName(String serviceAppName) {
+        this.serviceAppName = serviceAppName;
     }
 }

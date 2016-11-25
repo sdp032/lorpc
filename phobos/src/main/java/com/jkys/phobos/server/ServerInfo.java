@@ -13,10 +13,10 @@ import java.util.List;
 public class ServerInfo implements Serializable{
 
     public ServerInfo(){
-        this.serverName = PhobosContext.getInstance().getServerName();
+        this.serverAppName = PhobosContext.getInstance().getServerAppName();
     }
 
-    private String serverName;
+    private String serverAppName;
 
     private List<String> serviceList = new ArrayList();
 
@@ -28,11 +28,11 @@ public class ServerInfo implements Serializable{
         this.serviceList = serviceList;
     }
 
-    public String getServerName() {
-        return serverName;
+    public String getServerAppName() {
+        return serverAppName;
     }
 
-    public void setServerName(String serverName) {
-        this.serverName = serverName;
+    public void setServerAppName(String serverAppName) {
+        this.serverAppName = serverAppName;
     }
 }

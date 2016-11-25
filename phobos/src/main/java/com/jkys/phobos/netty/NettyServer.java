@@ -1,5 +1,8 @@
 package com.jkys.phobos.netty;
 
+import com.github.infrmods.xbus.item.ServiceEndpoint;
+import com.jkys.phobos.job.Scheduled;
+import com.jkys.phobos.job.XbusTask;
 import com.jkys.phobos.server.PhobosContext;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -8,6 +11,9 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.InetAddress;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by frio on 16/7/4.
@@ -54,6 +60,15 @@ public class NettyServer {
             synchronized (this){
                 this.notify();
             }
+            //启动完成后启动定时器
+            //获取本机IP地址
+            String ip = InetAddress.getLocalHost().getHostAddress();
+
+            new Scheduled().addTask(
+                    new XbusTask(1, 60, TimeUnit.SECONDS, context.getXbusAddrs(), context.getKeystorePath(), context.getKeystorePassword())
+                        .plug(context.getServiceDescs(), new ServiceEndpoint(ip + ":" + context.getPort(), null), 120)
+            ).run();
+
             future.channel().closeFuture().sync();
         }finally {
             bossGroup.shutdownGracefully();

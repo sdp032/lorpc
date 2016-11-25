@@ -14,8 +14,12 @@ import com.jkys.phobos.service.impl.TestServiceImpl;
 import com.jkys.phobos.util.TypeUtil;
 import com.jkys.phobos.util.yaml.BeanRepresenter;
 import com.jkys.phobos.util.yaml.Yaml;
-import javassist.ClassPool;
-import javassist.CtClass;
+import io.netty.util.*;
+import io.netty.util.TimerTask;
+import javassist.*;
+import javassist.bytecode.CodeAttribute;
+import javassist.bytecode.LocalVariableAttribute;
+import javassist.bytecode.MethodInfo;
 import org.msgpack.MessagePack;
 import org.msgpack.MessageTypeException;
 import org.msgpack.template.*;
@@ -23,10 +27,16 @@ import org.msgpack.template.builder.TemplateBuilder;
 import org.msgpack.template.builder.TemplateBuilderChain;
 import org.msgpack.type.Value;
 import org.msgpack.type.ValueType;
+
 import java.io.*;
 import java.lang.reflect.*;
+import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -35,14 +45,14 @@ import java.util.concurrent.atomic.AtomicLong;
 public class Test {
 
     @org.junit.Test
-    public void tset() throws Exception{
+    public void tset() throws Exception {
         MessagePack m = new MessagePack();
 
         Class<MessagePack> clazz = MessagePack.class;
         Field field = clazz.getDeclaredField("registry");
         field.setAccessible(true);
 
-        TemplateRegistry registry = (TemplateRegistry)field.get(m);
+        TemplateRegistry registry = (TemplateRegistry) field.get(m);
         Class<TemplateRegistry> registryClass = TemplateRegistry.class;
 
 //        Template reference1 = new TemplateReference(registry,User.class);
@@ -70,38 +80,58 @@ public class Test {
 
         byte[] b = m.write(new User());
 
-        User u = m.read(b,User.class);
+        User u = m.read(b, User.class);
     }
 
 
     @org.junit.Test
-    public void xbuxTest() throws Exception{
-        XBusClient xBusClient = new XBusClient(new XbusConfig(new String[]{"xbus.qa.91jkys.com:4433"}, "D://clitest.ks" , "123456"));
+    public void xbuxTest() throws Exception {
+        XBusClient xBusClient = new XBusClient(new XbusConfig(new String[]{"xbus.qa.91jkys.com:4433"}, "D://clitest.ks", "123456"));
 
         System.out.println(xBusClient.toString());
     }
 
     @org.junit.Test
-    public void yamlTest() throws Exception{
+    public void yamlTest() throws Exception {
         Yaml yaml = new Yaml(new BeanRepresenter());
 
-        String s = yaml.dump(TestServiceImpl.class);
+        String s = yaml.dump(TestService.class);
 
         System.out.print(s);
     }
 
-/*    @org.junit.Test
-    public void mapType(){
-        Map<String, House> map = new HashMap<String, House>();
-        Class c = map.getClass();
+    @org.junit.Test
+    public void mapType() throws Exception{
+        System.out.println(System.getProperty("java.version"));
+        ClassPool classPool = ClassPool.getDefault();
+        CtClass ctClass = classPool.makeClass(new FileInputStream(new File("C:\\Users\\zdj\\Desktop\\Test.class")));
 
-        ParameterizedType t = (ParameterizedType)c.getGenericSuperclass();
 
-        Type[] tps = t.getActualTypeArguments();
+        for(CtMethod m : ctClass.getDeclaredMethods()){
 
-        for(Type i : tps){
-            System.out.println(i.getTypeName());
+            System.out.println("方法名称：" + m.getName());
+
+            MethodInfo methodInfo = m.getMethodInfo();
+            CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
+            LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
+
+            if(attr != null) {
+                int pos = javassist.Modifier.isStatic(m.getModifiers()) ? 0 : 1;
+                for(int i = 0; i < m.getParameterTypes().length; i++){
+                    System.out.println("参数名称：" + attr.variableName(i + pos));
+                }
+            }
         }
+    }
 
-    }*/
+    @org.junit.Test
+    public void address() throws Exception{
+        io.netty.util.Timer timer = new HashedWheelTimer(100, TimeUnit.MILLISECONDS, 16);
+
+        timer.newTimeout((timeout)->{
+            System.out.println(2);
+        }, 5, TimeUnit.SECONDS);
+
+        System.in.read();
+    }
 }

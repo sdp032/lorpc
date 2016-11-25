@@ -1,5 +1,7 @@
 package com.jkys.phobos.server;
 
+import com.github.infrmods.xbus.item.ServiceDesc;
+
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,13 +17,13 @@ public class PhobosContext {
     private static PhobosContext phobosContext = null;
 
     /**
-     * key = serviceName_methodName_group_version
+     * key = serviceName.methodName.group.version
      * value = Method
      */
     private ConcurrentHashMap<String,Method> methodMap = new ConcurrentHashMap();
 
     /**
-     * key = serviceName_group_version
+     * key = serviceName.group.version
      * value = Service
      */
     private ConcurrentHashMap<String, ServiceBean> serviceMap = new ConcurrentHashMap();
@@ -42,6 +44,11 @@ public class PhobosContext {
     private String keystorePassword;
 
     /**
+     * xbus描述文件
+     */
+    private ServiceDesc[] serviceDescs;
+
+    /**
      *  服务端口号
      */
     private Integer port;
@@ -56,7 +63,7 @@ public class PhobosContext {
      */
     private Set<Class> serializeSet = new HashSet();
 
-    private String serverName;
+    private String serverAppName;
 
     private PhobosContext(){}
 
@@ -123,12 +130,12 @@ public class PhobosContext {
         this.serializeSet = serializeSet;
     }
 
-    public String getServerName() {
-        return serverName;
+    public String getServerAppName() {
+        return serverAppName;
     }
 
-    public void setServerName(String serverName) {
-        this.serverName = serverName;
+    public void setServerAppName(String serverAppName) {
+        this.serverAppName = serverAppName;
     }
 
     public String getKeystorePath() {
@@ -147,14 +154,22 @@ public class PhobosContext {
         this.keystorePassword = keystorePassword;
     }
 
+    public ServiceDesc[] getServiceDescs() {
+        return serviceDescs;
+    }
+
+    public void setServiceDescs(ServiceDesc[] serviceDescs) {
+        this.serviceDescs = serviceDescs;
+    }
+
     private String generateMethodKey(String serviceName, String methodName, String group, String version){
         StringBuffer sb = new StringBuffer();
         sb.append(serviceName);
-        sb.append("_");
+        sb.append(".");
         sb.append(methodName);
-        sb.append("_");
+        sb.append(".");
         sb.append(group);
-        sb.append("_");
+        sb.append(".");
         sb.append(version);
         return sb.toString();
     }
@@ -162,9 +177,9 @@ public class PhobosContext {
     private String generateServiceKey(String serviceName, String group, String version){
         StringBuffer sb = new StringBuffer();
         sb.append(serviceName);
-        sb.append("_");
+        sb.append(".");
         sb.append(group);
-        sb.append("_");
+        sb.append(".");
         sb.append(version);
         return sb.toString();
     }

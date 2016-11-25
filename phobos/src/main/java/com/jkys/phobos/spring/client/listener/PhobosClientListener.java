@@ -1,5 +1,11 @@
 package com.jkys.phobos.spring.client.listener;
 
+import com.github.infrmods.xbus.client.TLSInitException;
+import com.github.infrmods.xbus.client.XBusClient;
+import com.github.infrmods.xbus.client.XbusConfig;
+import com.github.infrmods.xbus.exceptions.XBusException;
+import com.github.infrmods.xbus.item.Service;
+import com.github.infrmods.xbus.item.ServiceEndpoint;
 import com.jkys.phobos.annotation.PhobosGroup;
 import com.jkys.phobos.annotation.PhobosVersion;
 import com.jkys.phobos.client.PhobosClientContext;
@@ -12,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -33,14 +40,16 @@ import java.util.*;
         Map<String,PhobosFactoryBean> clients = context.getBeansOfType(PhobosFactoryBean.class);
 
         PhobosClientContext clientContext = PhobosClientContext.getInstance();
-        Set<String> xbusAddr = clientContext.getXbusAddr();
+        String[] xbusAddrs = clientContext.getXbusAddr();
         Set<String> addr = clientContext.getAddr();
         Set<Class> serializeSet = clientContext.getSerializeSet();
         HashMap<String,List<NettyClient>> connectInfo = clientContext.getConnectInfo();
 
         Iterator<Map.Entry<String,PhobosFactoryBean>> iterator = clients.entrySet().iterator();
+        Set<String> endpoints = new HashSet();
         while (null!=iterator && iterator.hasNext()){
-            Class<?> serviceInterface = iterator.next().getValue().getPhobosInterface();
+            PhobosFactoryBean factoryBean = iterator.next().getValue();
+            Class<?> serviceInterface = factoryBean.getPhobosInterface();
             Method[] serviceMethods = serviceInterface.getMethods();
             String serviceName = serviceInterface.getName();
             for (Method m : serviceMethods){
@@ -57,21 +66,46 @@ import java.util.*;
                 PhobosGroup group = m.getAnnotation(PhobosGroup.class) == null
                         ?serviceInterface.getAnnotation(PhobosGroup.class)
                         :m.getAnnotation(PhobosGroup.class);
-                connectInfo.put(serviceName + "_" + methodName + "_" + group.value() + "_" + version.version(),new ArrayList<NettyClient>());
+                connectInfo.put(factoryBean.getServiceAppName() + "." + serviceName + "." + methodName + "." + group.value() + "." + version.version(),new ArrayList<NettyClient>());
+
+                //获取xbus上该服务的地址
+                try {
+                    if(!StringUtils.isEmpty(xbusAddrs)){
+                        XBusClient xBusClient = new XBusClient(new XbusConfig(xbusAddrs, "D:\\clitest.ks", "123456"));
+                        Service service = xBusClient.getService(factoryBean.getServiceAppName() + "." + serviceName,version.version());
+                        for(ServiceEndpoint endpoint : service.endpoints){
+                            endpoints.add(endpoint.address);
+                        }
+                    }
+                }catch (TLSInitException e){
+                    e.printStackTrace();
+                    throw new RuntimeException(e.getMessage());
+                }catch (XBusException e){
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                }
             }
         }
 
         MsgpackUtil.register(serializeSet);
 
-        //TODO 获取xbus上符合条件的服务地址
-
-        //创建netty客户端
-        for(String s : addr){
-           try{
-               new NettyClient(s.split(":")[0],Integer.valueOf(s.split(":")[1]),clientContext.getStartTimeOut()).noBlockConnect();
-           }catch (Exception e){
-               e.printStackTrace();
-           }
+        //创建netty客户端  优先连接xbus上的服务  没有设置xbus时使用直连
+        if(endpoints.size() > 0){
+            for(String s : endpoints){
+                try{
+                    new NettyClient(s.split(":")[0],Integer.valueOf(s.split(":")[1]),clientContext.getStartTimeOut()).noBlockConnect();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }else {
+            for(String s : addr){
+                try{
+                    new NettyClient(s.split(":")[0],Integer.valueOf(s.split(":")[1]),clientContext.getStartTimeOut()).noBlockConnect();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

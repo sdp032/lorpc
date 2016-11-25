@@ -11,6 +11,8 @@
                      servicePort="8085"
                      keystorePath="D://clitest.ks"
                      keystorePassword="123456"
+                     serverAppName="clitest"
+                     blocking="true"
                      />
 
     <phobos:service id="testService" class="com.jkys.phobos.service.impl.TestServiceImpl" />

@@ -11,7 +11,7 @@
         <xsd:attribute name="xbusAddr" type="xsd:string"/>
         <xsd:attribute name="servicePort" type="xsd:int" use="required"/>
         <xsd:attribute name="blocking" type="xsd:boolean" default="false"/>
-        <xsd:attribute name="serverName" type="xsd:string"/>
+        <xsd:attribute name="serverAppName" type="xsd:string"/>
         <xsd:attribute name="keystorePath" type="xsd:string" use="required"/>
         <xsd:attribute name="keystorePassword" type="xsd:string" use="required"/>
     </xsd:complexType>

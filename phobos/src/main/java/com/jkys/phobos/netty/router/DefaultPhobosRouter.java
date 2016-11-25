@@ -37,7 +37,7 @@ public class DefaultPhobosRouter implements PhobosRouter {
             ServerInfo serverInfo = new ServerInfo();
             Iterator<String> iterator = map.keySet().iterator();
             while (iterator.hasNext()){
-                serverInfo.getServiceList().add(iterator.next());
+                serverInfo.getServiceList().add(context.getServerAppName() + "." + iterator.next());
             }
             phobosResponse.getResponse().setSuccess(true);
             phobosResponse.getResponse().setData(SerializaionUtil.objectToBytes(serverInfo,request.getHeader().getSerializationType()));

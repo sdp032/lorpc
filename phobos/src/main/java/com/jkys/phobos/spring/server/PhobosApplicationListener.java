@@ -17,6 +17,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.lang.reflect.Method;
+import java.net.InetAddress;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -34,49 +35,39 @@ public class PhobosApplicationListener implements ApplicationListener<ContextRef
         PhobosContext phobosContext = PhobosContext.getInstance();
         final Integer port = phobosContext.getPort();
         Set<Class> serializeSet = phobosContext.getSerializeSet();
-        String keystorePath = phobosContext.getKeystorePath();
-        String keystorePassword = phobosContext.getKeystorePassword();
 
-        for(Method m : phobosContext.getMethodMap().values()){
-            TypeUtil.getAllSerializeType(serializeSet,m.getReturnType());
-            for(Class c : m.getParameterTypes()){
-                TypeUtil.getAllSerializeType(serializeSet,c);
+        for (Method m : phobosContext.getMethodMap().values()) {
+            TypeUtil.getAllSerializeType(serializeSet, m.getReturnType());
+            for (Class c : m.getParameterTypes()) {
+                TypeUtil.getAllSerializeType(serializeSet, c);
             }
         }
 
         MsgpackUtil.register(serializeSet);
 
-        //启动netty服务
-        if(phobosContext.isBlocking()) {
-            try {
-                new NettyServer(port).open();
-            }catch (Exception e){
-                e.printStackTrace();
-                System.exit(0);
-            }
-        }else{
-            new NettyServer(port).noBlockOpen();
-        }
-
-        //TODO 向xbus注册服务
+        ServiceDesc[] serviceDescs = new ServiceDesc[phobosContext.getServiceMap().values().size()];
+        Yaml yaml = new Yaml(new BeanRepresenter());
         try {
-            XBusClient xBusClient = new XBusClient(new XbusConfig(phobosContext.getXbusAddrs(), keystorePath, keystorePassword));
-            Yaml yaml = new Yaml(new BeanRepresenter());
-            for(ServiceBean service : phobosContext.getServiceMap().values()){
-                ServiceDesc desc = new ServiceDesc(service.getServiceName(), service.getVersion(), service.getServiceName(), yaml.dump(service.getInterfaceClass()));
-                ServiceEndpoint endpoint = new ServiceEndpoint();
-                try {
-                    xBusClient.plugService(desc, endpoint);
-                }catch (XBusException e){
-                    //new RuntimeException("plug service exception for " + );
-                }
+            for(int i = 0; i < phobosContext.getServiceMap().values().size(); i++){
+                ServiceBean service = (ServiceBean)phobosContext.getServiceMap().values().toArray()[i];
+                serviceDescs[i] = new ServiceDesc(phobosContext.getServerAppName() + "." + service.getServiceName(), service.getVersion(), service.getServiceName(), yaml.dump(service.getInterfaceClass()));
             }
-        }catch (TLSInitException e){
-            e.printStackTrace();
-            System.exit(0);
         }catch (Exception e){
             e.printStackTrace();
             System.exit(0);
+        }
+        phobosContext.setServiceDescs(serviceDescs);
+
+        //启动netty服务
+        if (phobosContext.isBlocking()) {
+            try {
+                new NettyServer(port).open();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.exit(0);
+            }
+        } else {
+            new NettyServer(port).noBlockOpen();
         }
     }
 }

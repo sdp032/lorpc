@@ -26,9 +26,7 @@ public class PhobosClientDefinitionParser implements BeanDefinitionParser {
         Integer requestTimeOut = Integer.valueOf(element.getAttribute("requestTimeOut"));
 
         if(!StringUtils.isEmpty(xbusAddr)){
-            for(String s : xbusAddr.split(",")){
-                phobosClientContext.getXbusAddr().add(s);
-            }
+            phobosClientContext.setXbusAddr(xbusAddr.split(","));
         }
         if(!StringUtils.isEmpty(addr)){
             for (String s : addr.split(",")){

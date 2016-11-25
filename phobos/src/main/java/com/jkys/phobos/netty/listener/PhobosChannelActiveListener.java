@@ -36,7 +36,7 @@ public class PhobosChannelActiveListener implements PhobosListener<PhobosChannel
         if(header.getSerializationType() == Header.SerializationType.MAGPACK.serializationType){
             serverInfo = MsgpackUtil.MESSAGE_PACK.read(data,ServerInfo.class);
         }
-        logger.info("serverNane:{}-->",serverInfo.getServerName());
+        logger.info("serverName:{}-->",serverInfo.getServerAppName());
         for (String s : serverInfo.getServiceList()){
             logger.info("service:{}",s);
             System.out.println(s);
