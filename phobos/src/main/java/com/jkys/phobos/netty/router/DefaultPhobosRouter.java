@@ -1,12 +1,15 @@
 package com.jkys.phobos.netty.router;
 
 import com.jkys.phobos.constant.ErrorEnum;
+import com.jkys.phobos.remote.protocol.Header;
 import com.jkys.phobos.remote.protocol.PhobosRequest;
 import com.jkys.phobos.remote.protocol.PhobosResponse;
 import com.jkys.phobos.remote.protocol.Response;
 import com.jkys.phobos.server.PhobosContext;
 import com.jkys.phobos.server.ServerInfo;
 import com.jkys.phobos.util.SerializaionUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.Iterator;
@@ -18,35 +21,47 @@ import java.util.Map;
  */
 public class DefaultPhobosRouter implements PhobosRouter {
 
+    private final Logger logger = LoggerFactory.getLogger(DefaultPhobosRouter.class);
+
     private static final String SERVER_INFO = "server-info";
     private static final String SERVER_INFO_VER = "V1";
 
-    public PhobosResponse route(PhobosRequest request) throws Exception{
+    public PhobosResponse route(PhobosRequest request) throws Exception {
 
         PhobosContext context = PhobosContext.getInstance();
-        PhobosResponse phobosResponse = new PhobosResponse(request.getHeader(),new Response());
+        PhobosResponse phobosResponse = new PhobosResponse(request.getHeader(), new Response());
+
+        //ping pong
+        if(request.getHeader().getType() == Header.Type.PING.type){
+            logger.debug("pong -> sequenceId: {}", request.getHeader().getSequenceId());
+            phobosResponse.getHeader().setType(Header.Type.PONG.type);
+            return phobosResponse;
+        }
 
         String serviceName = request.getRequest().getServiceName();
         String serviceVersion = request.getRequest().getServiceVersion();
         String methodName = request.getRequest().getMethodName();
         String group = request.getRequest().getGroup();
 
+        logger.info("{}.{}.{}.{}", serviceName, methodName, serviceVersion, group);
+
         //client初次连接 返回server信息
-        if(SERVER_INFO.equals(serviceName)&&SERVER_INFO.equals(methodName)&&SERVER_INFO_VER.equals(serviceVersion)){
-            Map<String,Method> map = context.getMethodMap();
+        if (SERVER_INFO.equals(serviceName) && SERVER_INFO.equals(methodName) && SERVER_INFO_VER.equals(serviceVersion)) {
+            Map<String, Method> map = context.getMethodMap();
             ServerInfo serverInfo = new ServerInfo();
             Iterator<String> iterator = map.keySet().iterator();
-            while (iterator.hasNext()){
+            while (iterator.hasNext()) {
                 serverInfo.getServiceList().add(context.getServerAppName() + "." + iterator.next());
             }
             phobosResponse.getResponse().setSuccess(true);
-            phobosResponse.getResponse().setData(SerializaionUtil.objectToBytes(serverInfo,request.getHeader().getSerializationType()));
+            phobosResponse.getResponse().setData(SerializaionUtil.objectToBytes(serverInfo, request.getHeader().getSerializationType()));
             return phobosResponse;
         }
 
         //调用client端请求的服务
-        Method method = PhobosContext.getInstance().getMethod(serviceName,methodName,group,serviceVersion);
-        if(method == null){
+        PhobosContext c = PhobosContext.getInstance();
+        Method method = PhobosContext.getInstance().getMethod(serviceName + "." + methodName + "."  + group + "." + serviceVersion);
+        if (method == null) {
             phobosResponse.getResponse().setErrCode(ErrorEnum.UNKNOWN_METHOD.name());
             phobosResponse.getResponse().setSuccess(false);
             return phobosResponse;
@@ -55,16 +70,16 @@ public class DefaultPhobosRouter implements PhobosRouter {
         List<byte[]> list = request.getRequest().getObject();
         int listSize = list == null ? 0 : list.size();
         Class<?>[] paramsType = method.getParameterTypes();
-        if(paramsType.length!=listSize){
+        if (paramsType.length != listSize) {
             phobosResponse.getResponse().setErrCode(ErrorEnum.INVALID_PARAMS.name());
             phobosResponse.getResponse().setSuccess(false);
             return phobosResponse;
         }
         Object[] params = new Object[paramsType.length];
-        for(int i=0; i<paramsType.length; i++){
+        for (int i = 0; i < paramsType.length; i++) {
             try {
-                params[i] = SerializaionUtil.bytesToObject(list.get(i), paramsType[i],request.getHeader().getSerializationType());
-            }catch (Exception e){
+                params[i] = SerializaionUtil.bytesToObject(list.get(i), paramsType[i], request.getHeader().getSerializationType());
+            } catch (Exception e) {
                 e.printStackTrace();
                 phobosResponse.getResponse().setErrCode(ErrorEnum.INVALID_PARAMS.name());
                 phobosResponse.getResponse().setSuccess(false);
@@ -76,15 +91,15 @@ public class DefaultPhobosRouter implements PhobosRouter {
         Object service = PhobosContext.getInstance().getService(serviceName, group, serviceVersion).getService();
 
         Object value = null;
-        try{
-            value = method.invoke(service,params);
-        }catch (Exception e){
+        try {
+            value = method.invoke(service, params);
+        } catch (Exception e) {
             e.printStackTrace();
             phobosResponse.getResponse().setErrCode(ErrorEnum.SYSTEM_ERROR.name());
             phobosResponse.getResponse().setSuccess(false);
             return phobosResponse;
         }
-        phobosResponse.getResponse().setData(SerializaionUtil.objectToBytes(value,request.getHeader().getSerializationType()));
+        phobosResponse.getResponse().setData(SerializaionUtil.objectToBytes(value, request.getHeader().getSerializationType()));
         phobosResponse.getResponse().setSuccess(true);
         return phobosResponse;
     }

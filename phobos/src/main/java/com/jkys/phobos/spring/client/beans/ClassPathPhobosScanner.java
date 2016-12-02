@@ -8,10 +8,10 @@ import java.util.Set;
 
 /**
  * Created by zdj on 2016/6/30.
- *
+ * <p>
  * 自定义spring bean扫描器 用于扫描并注册phobos客户端
  */
-public class ClassPathPhobosScanner extends ClassPathBeanDefinitionScanner{
+public class ClassPathPhobosScanner extends ClassPathBeanDefinitionScanner {
 
     public ClassPathPhobosScanner(BeanDefinitionRegistry registry) {
         super(registry, false);
@@ -21,7 +21,7 @@ public class ClassPathPhobosScanner extends ClassPathBeanDefinitionScanner{
     protected Set<BeanDefinitionHolder> doScan(String... basePackages) {
         Set beanDefinitions = super.doScan(basePackages);
 
-        if(beanDefinitions.isEmpty()){
+        if (beanDefinitions.isEmpty()) {
 
         }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:phobos="http://jkys.com/mars/phobos"
+<beans xmlns:phobos="http://jkys.com/mars/phobos"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://jkys.com/mars/phobos
@@ -9,11 +9,11 @@
 
     <phobos:registry xbusAddr="xbus.qa.91jkys.com:4433"
                      servicePort="8085"
-                     keystorePath="D://clitest.ks"
+                     keystorePath="/usr/dev/clitest.ks"
                      keystorePassword="123456"
                      serverAppName="clitest"
                      blocking="true"
-                     />
+    />
 
-    <phobos:service id="testService" class="com.jkys.phobos.service.impl.TestServiceImpl" />
+    <phobos:service id="testService" class="com.jkys.phobos.service.impl.TestServiceImpl"/>
 </beans>

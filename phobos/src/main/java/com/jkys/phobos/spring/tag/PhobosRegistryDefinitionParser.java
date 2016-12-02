@@ -1,7 +1,7 @@
 package com.jkys.phobos.spring.tag;
 
-import com.jkys.phobos.spring.server.PhobosApplicationListener;
 import com.jkys.phobos.server.PhobosContext;
+import com.jkys.phobos.spring.server.PhobosApplicationListener;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
@@ -23,7 +23,8 @@ public class PhobosRegistryDefinitionParser implements BeanDefinitionParser {
         Integer port = Integer.valueOf(element.getAttribute("servicePort"));
         boolean blocking = Boolean.valueOf(element.getAttribute("blocking"));
         String serverAppName = element.getAttribute("serverAppName");
-        if(StringUtils.isEmpty(xbusAddr)) throw new NullPointerException("phobos registry tag attribte xbusAddr is empty");
+        if (StringUtils.isEmpty(xbusAddr))
+            throw new NullPointerException("phobos registry tag attribte xbusAddr is empty");
 
         PhobosContext phobosContext = PhobosContext.getInstance();
         phobosContext.setPort(port);

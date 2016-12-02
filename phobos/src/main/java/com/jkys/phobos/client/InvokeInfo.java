@@ -1,10 +1,7 @@
 package com.jkys.phobos.client;
 
-import com.jkys.phobos.codec.MsgpackUtil;
-import com.jkys.phobos.remote.protocol.Header;
 import com.jkys.phobos.remote.protocol.PhobosRequest;
 import com.jkys.phobos.remote.protocol.PhobosResponse;
-import com.jkys.phobos.util.SerializaionUtil;
 
 /**
  * Created by zdj on 2016/7/15.
@@ -21,12 +18,12 @@ public class InvokeInfo {
         return request;
     }
 
-    public PhobosResponse getResponse() {
-        return response;
-    }
-
     public void setRequest(PhobosRequest request) {
         this.request = request;
+    }
+
+    public PhobosResponse getResponse() {
+        return response;
     }
 
     public void setResponse(PhobosResponse response) {

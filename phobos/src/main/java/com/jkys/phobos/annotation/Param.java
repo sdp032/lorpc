@@ -9,5 +9,5 @@ import java.lang.annotation.*;
 @Target({ElementType.PARAMETER})
 @Documented
 public @interface Param {
-    String name ();
+    String name();
 }

@@ -11,8 +11,10 @@ public class ServiceBean {
     private Object service;
     private Class interfaceClass;
 
-    public ServiceBean(){}
-    public ServiceBean(String serviceName, String group, String version, Object service, Class interfaceClass){
+    public ServiceBean() {
+    }
+
+    public ServiceBean(String serviceName, String group, String version, Object service, Class interfaceClass) {
         this.serviceName = serviceName;
         this.group = group;
         this.version = version;

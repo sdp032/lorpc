@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 
 /**
  * Created by zdj on 2016/7/1.
- *
+ * <p>
  * 该注解定义服务的版本号、访问地址或xbus注册地址
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -13,12 +13,12 @@ import java.lang.annotation.*;
 public @interface PhobosAddr {
 
     /**
-     *  服务地址 与xbusAddr必须有一项，都有取addr
+     * 服务地址 与xbusAddr必须有一项，都有取addr
      */
     String[] addr() default {};
 
     /**
-     *  注册地址 与addr必须有一项，都有取addr
+     * 注册地址 与addr必须有一项，都有取addr
      */
     String[] xbusAddr() default {};
 }

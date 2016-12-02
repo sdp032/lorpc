@@ -2,42 +2,27 @@ package com.jkys.phobos;
 
 import com.github.infrmods.xbus.client.XBusClient;
 import com.github.infrmods.xbus.client.XbusConfig;
-import com.jkys.phobos.codec.MsgpackUtil;
 import com.jkys.phobos.codec.MyJavassistTemplateBuilder;
-import com.jkys.phobos.netty.AbstractServerChannelHandler;
-import com.jkys.phobos.netty.DefaultServerChannelHandler;
 import com.jkys.phobos.remote.protocol.Header;
-import com.jkys.phobos.remote.protocol.PhobosRequest;
-import com.jkys.phobos.remote.protocol.Request;
 import com.jkys.phobos.service.TestService;
-import com.jkys.phobos.service.impl.TestServiceImpl;
-import com.jkys.phobos.util.TypeUtil;
+import com.jkys.phobos.util.SerializaionUtil;
 import com.jkys.phobos.util.yaml.BeanRepresenter;
 import com.jkys.phobos.util.yaml.Yaml;
-import io.netty.util.*;
-import io.netty.util.TimerTask;
-import javassist.*;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 import javassist.bytecode.MethodInfo;
 import org.msgpack.MessagePack;
-import org.msgpack.MessageTypeException;
-import org.msgpack.template.*;
-import org.msgpack.template.builder.TemplateBuilder;
-import org.msgpack.template.builder.TemplateBuilderChain;
-import org.msgpack.type.Value;
-import org.msgpack.type.ValueType;
+import org.msgpack.template.TemplateRegistry;
 
-import java.io.*;
-import java.lang.reflect.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.lang.reflect.Field;
 import java.net.InetAddress;
-import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by zdj on 2016/7/8.
@@ -101,13 +86,13 @@ public class Test {
     }
 
     @org.junit.Test
-    public void mapType() throws Exception{
+    public void mapType() throws Exception {
         System.out.println(System.getProperty("java.version"));
         ClassPool classPool = ClassPool.getDefault();
         CtClass ctClass = classPool.makeClass(new FileInputStream(new File("C:\\Users\\zdj\\Desktop\\Test.class")));
 
 
-        for(CtMethod m : ctClass.getDeclaredMethods()){
+        for (CtMethod m : ctClass.getDeclaredMethods()) {
 
             System.out.println("方法名称：" + m.getName());
 
@@ -115,9 +100,9 @@ public class Test {
             CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
             LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
 
-            if(attr != null) {
+            if (attr != null) {
                 int pos = javassist.Modifier.isStatic(m.getModifiers()) ? 0 : 1;
-                for(int i = 0; i < m.getParameterTypes().length; i++){
+                for (int i = 0; i < m.getParameterTypes().length; i++) {
                     System.out.println("参数名称：" + attr.variableName(i + pos));
                 }
             }
@@ -125,13 +110,43 @@ public class Test {
     }
 
     @org.junit.Test
-    public void address() throws Exception{
-        io.netty.util.Timer timer = new HashedWheelTimer(100, TimeUnit.MILLISECONDS, 16);
+    public void address() throws Exception {
+        InetAddress ip = null;
+        List<String> ipList = new ArrayList<String>();
+        Enumeration<NetworkInterface> netInterfaces = (Enumeration<NetworkInterface>) NetworkInterface
+                .getNetworkInterfaces();
+        while (netInterfaces.hasMoreElements()) {
+            NetworkInterface ni = (NetworkInterface) netInterfaces
+                    .nextElement();
+            Enumeration<InetAddress> ips = ni.getInetAddresses();
+            while (ips.hasMoreElements()) {
+                ip = (InetAddress) ips.nextElement();
+                if (!ip.isLoopbackAddress()
+                        && ip.getHostAddress().matches(
+                        "(\\d{1,3}\\.){3}\\d{1,3}")) {
+                    ipList.add(ip.getHostAddress());
+                }
+            }
+        }
+    }
 
-        timer.newTimeout((timeout)->{
-            System.out.println(2);
-        }, 5, TimeUnit.SECONDS);
+    @org.junit.Test
+    public void ser() throws Exception{
 
-        System.in.read();
+        System.out.println(HashMap.class.getSuperclass());
+
+        HashMap<String, List<Map<String,String>>> map = new HashMap<>();
+        List<Map<String,String>> list = new ArrayList<>();
+        Map<String,String> m = new HashMap<>();
+        m.put("level3", "hahaha");
+        m.put("l3","xxhxh");
+        list.add(m);
+        map.put("1", list);
+
+        byte[] b = SerializaionUtil.objectToBytes(map, Header.SerializationType.MAGPACK.serializationType);
+
+        HashMap map1 = SerializaionUtil.bytesToObject(b, map.getClass(), Header.SerializationType.MAGPACK.serializationType);
+
+        System.out.println(1);
     }
 }

@@ -10,7 +10,7 @@ public class PhobosChannelActiveEvent extends PhobosEvent {
 
     private final InvokeInfo invokeInfo;
 
-    public PhobosChannelActiveEvent(NettyClient source, InvokeInfo invokeInfo){
+    public PhobosChannelActiveEvent(NettyClient source, InvokeInfo invokeInfo) {
         super(source);
         this.invokeInfo = invokeInfo;
     }

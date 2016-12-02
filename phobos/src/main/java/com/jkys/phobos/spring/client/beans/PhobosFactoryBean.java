@@ -9,7 +9,7 @@ import java.lang.reflect.Proxy;
 /**
  * Created by zdj on 2016/6/30.
  */
-public class PhobosFactoryBean<T> implements FactoryBean<T>{
+public class PhobosFactoryBean<T> implements FactoryBean<T> {
 
     private Class<T> phobosInterface;
 
@@ -19,7 +19,7 @@ public class PhobosFactoryBean<T> implements FactoryBean<T>{
 
     public T getObject() throws Exception {
         PhobosProxy phobosProxy = new PhobosProxy(phobosHandler == null ? new DefaultPhobosHandler(serviceAppName) : phobosHandler);
-        T t = (T)Proxy.newProxyInstance(phobosInterface.getClassLoader(),new Class[]{phobosInterface},phobosProxy);
+        T t = (T) Proxy.newProxyInstance(phobosInterface.getClassLoader(), new Class[]{phobosInterface}, phobosProxy);
         return t;
     }
 
@@ -31,20 +31,20 @@ public class PhobosFactoryBean<T> implements FactoryBean<T>{
         return false;
     }
 
-    public void setPhobosInterface(Class<T> phobosInterface){
-        this.phobosInterface = phobosInterface;
-    }
-
-    public void setPhobosHandler(PhobosHandler phobosHandler){
-        this.phobosHandler = phobosHandler;
-    }
-
     public Class<T> getPhobosInterface() {
         return phobosInterface;
     }
 
+    public void setPhobosInterface(Class<T> phobosInterface) {
+        this.phobosInterface = phobosInterface;
+    }
+
     public PhobosHandler getPhobosHandler() {
         return phobosHandler;
+    }
+
+    public void setPhobosHandler(PhobosHandler phobosHandler) {
+        this.phobosHandler = phobosHandler;
     }
 
     public String getServiceAppName() {

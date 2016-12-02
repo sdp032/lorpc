@@ -13,13 +13,13 @@ public class Scheduled {
     List<Task> tasks = new ArrayList();
     ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 
-    public void run(){
-        for(Task task : tasks){
+    public void run() {
+        for (Task task : tasks) {
             scheduledExecutorService.scheduleAtFixedRate(task.getRunnable(), task.initialDelay, task.period, task.timeUnit);
         }
     }
 
-    public Scheduled addTask(Task task){
+    public Scheduled addTask(Task task) {
         tasks.add(task);
         return this;
     }

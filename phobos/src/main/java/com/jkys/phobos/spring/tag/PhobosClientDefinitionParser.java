@@ -22,14 +22,14 @@ public class PhobosClientDefinitionParser implements BeanDefinitionParser {
         String addr = element.getAttribute("addr");
         String clientAppName = element.getAttribute("clientAppName");
         String serialization = element.getAttribute("serialization");
-        Integer startTimeOut = Integer .valueOf(element.getAttribute("startTimeOut"));
+        Integer startTimeOut = Integer.valueOf(element.getAttribute("startTimeOut"));
         Integer requestTimeOut = Integer.valueOf(element.getAttribute("requestTimeOut"));
 
-        if(!StringUtils.isEmpty(xbusAddr)){
+        if (!StringUtils.isEmpty(xbusAddr)) {
             phobosClientContext.setXbusAddr(xbusAddr.split(","));
         }
-        if(!StringUtils.isEmpty(addr)){
-            for (String s : addr.split(",")){
+        if (!StringUtils.isEmpty(addr)) {
+            for (String s : addr.split(",")) {
                 phobosClientContext.getAddr().add(s);
             }
         }
@@ -39,11 +39,11 @@ public class PhobosClientDefinitionParser implements BeanDefinitionParser {
         phobosClientContext.setRequestTimeOut(requestTimeOut);
 
         //TODO 待优化
-        if("JSON".equals(serialization))
+        if ("JSON".equals(serialization))
             phobosClientContext.setSerializationType(Header.SerializationType.JSON.serializationType);
-        else if("MAGPACK".equals(serialization))
+        else if ("MAGPACK".equals(serialization))
             phobosClientContext.setSerializationType(Header.SerializationType.MAGPACK.serializationType);
-        else if("PROTOBUFF".equals(serialization))
+        else if ("PROTOBUFF".equals(serialization))
             phobosClientContext.setSerializationType(Header.SerializationType.PROTOBUFF.serializationType);
 
         //spring容器初始化完成后启动netty客户端监听

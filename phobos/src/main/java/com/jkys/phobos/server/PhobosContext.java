@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by zdj on 2016/7/4.
- *
+ * <p>
  * 服务上下文 保存服务端注册信息、服务方法存储   该类为单例
  */
 public class PhobosContext {
@@ -20,7 +20,7 @@ public class PhobosContext {
      * key = serviceName.methodName.group.version
      * value = Method
      */
-    private ConcurrentHashMap<String,Method> methodMap = new ConcurrentHashMap();
+    private ConcurrentHashMap<String, Method> methodMap = new ConcurrentHashMap();
 
     /**
      * key = serviceName.group.version
@@ -49,7 +49,7 @@ public class PhobosContext {
     private ServiceDesc[] serviceDescs;
 
     /**
-     *  服务端口号
+     * 服务端口号
      */
     private Integer port;
 
@@ -65,20 +65,25 @@ public class PhobosContext {
 
     private String serverAppName;
 
-    private PhobosContext(){}
+    private PhobosContext() {
+    }
 
-    public synchronized static PhobosContext getInstance(){
-        if(phobosContext == null){
+    public synchronized static PhobosContext getInstance() {
+        if (phobosContext == null) {
             phobosContext = new PhobosContext();
         }
-        return  phobosContext;
+        return phobosContext;
     }
 
-    public Method getMethod(String serviceName,String methodName,String group,String version){
-        return methodMap.get(generateMethodKey(serviceName,methodName,group,version));
+    public Method getMethod(String serviceName, String methodName, String group, String version, Class<?>[] params) {
+        return methodMap.get(generateMethodKey(serviceName, methodName, group, version, params));
     }
 
-    public ServiceBean getService(String serviceName,String group,String version){
+    public Method getMethod(String key){
+        return methodMap.get(key);
+    }
+
+    public ServiceBean getService(String serviceName, String group, String version) {
         return this.serviceMap.get(this.generateServiceKey(serviceName, group, version));
     }
 
@@ -86,15 +91,15 @@ public class PhobosContext {
         return methodMap;
     }
 
-    public void setMethod(String serviceName, String methodName, String group, String version, Method method){
-        methodMap.put(generateMethodKey(serviceName,methodName,group,version),method);
+    public void setMethod(String serviceName, String methodName, String group, String version, Class<?>[] params, Method method) {
+        methodMap.put(generateMethodKey(serviceName, methodName, group, version, params), method);
     }
 
-    public ConcurrentHashMap<String, ServiceBean> getServiceMap(){
+    public ConcurrentHashMap<String, ServiceBean> getServiceMap() {
         return this.serviceMap;
     }
 
-    public void setService(String serviceName, String group, String version, ServiceBean service){
+    public void setService(String serviceName, String group, String version, ServiceBean service) {
         this.serviceMap.put(this.generateServiceKey(serviceName, group, version), service);
     }
 
@@ -162,11 +167,21 @@ public class PhobosContext {
         this.serviceDescs = serviceDescs;
     }
 
-    private String generateMethodKey(String serviceName, String methodName, String group, String version){
+    public static String generateMethodKey(String serviceName, String methodName, String group, String version, Class<?>[] params) {
         StringBuffer sb = new StringBuffer();
         sb.append(serviceName);
         sb.append(".");
         sb.append(methodName);
+        sb.append("(");
+        if(params != null){
+            for (int i=0; i<params.length; i++){
+                sb.append(params[i].getName());
+                if(i < params.length -1){
+                    sb.append(",");
+                }
+            }
+        }
+        sb.append(")");
         sb.append(".");
         sb.append(group);
         sb.append(".");
@@ -174,7 +189,7 @@ public class PhobosContext {
         return sb.toString();
     }
 
-    private String generateServiceKey(String serviceName, String group, String version){
+    public static String generateServiceKey(String serviceName, String group, String version) {
         StringBuffer sb = new StringBuffer();
         sb.append(serviceName);
         sb.append(".");

@@ -9,10 +9,10 @@ import java.lang.annotation.Annotation;
 
 /**
  * Created by zdj on 2016/6/30.
- *
+ * <p>
  * 该类需配置在spring容器内，spring容器启动时通过该类将指定包（含子包）下的phobos客户端注册到spring容器
  */
-public class PhobosScannerConfigurer implements BeanDefinitionRegistryPostProcessor{
+public class PhobosScannerConfigurer implements BeanDefinitionRegistryPostProcessor {
 
     private String basePackage;
 

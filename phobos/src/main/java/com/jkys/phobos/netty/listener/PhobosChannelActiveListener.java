@@ -21,10 +21,10 @@ public class PhobosChannelActiveListener implements PhobosListener<PhobosChannel
 
     private static Logger logger = LoggerFactory.getLogger(PhobosChannelActiveListener.class);
 
-    public void onPhobosEvent(PhobosChannelActiveEvent event) throws Exception{
+    public void onPhobosEvent(PhobosChannelActiveEvent event) throws Exception {
 
         NettyClient client = (NettyClient) event.getSource();
-        Map<String,List<NettyClient>> connectInfo = PhobosClientContext.getInstance().getConnectInfo();
+        Map<String, List<NettyClient>> connectInfo = PhobosClientContext.getInstance().getConnectInfo();
 
         InvokeInfo invokeInfo = event.getInvokeInfo();
         Header header = invokeInfo.getRequest().getHeader();
@@ -33,20 +33,19 @@ public class PhobosChannelActiveListener implements PhobosListener<PhobosChannel
 
         ServerInfo serverInfo = null;
         byte[] data = response.getData();
-        if(header.getSerializationType() == Header.SerializationType.MAGPACK.serializationType){
-            serverInfo = MsgpackUtil.MESSAGE_PACK.read(data,ServerInfo.class);
+        if (header.getSerializationType() == Header.SerializationType.MAGPACK.serializationType) {
+            serverInfo = MsgpackUtil.MESSAGE_PACK.read(data, ServerInfo.class);
         }
-        logger.info("serverName:{}-->",serverInfo.getServerAppName());
-        for (String s : serverInfo.getServiceList()){
-            logger.info("service:{}",s);
-            System.out.println(s);
+        logger.info("serverName:{}-->", serverInfo.getServerAppName());
+        for (String s : serverInfo.getServiceList()) {
+            logger.info("service:{}", s);
             List<NettyClient> list = connectInfo.get(s);
-            if(list != null){
+            if (list != null) {
                 list.add(client);
             }
         }
 
-        synchronized (event.getSource()){
+        synchronized (event.getSource()) {
             client.setConnect(true);
             client.notify();
         }

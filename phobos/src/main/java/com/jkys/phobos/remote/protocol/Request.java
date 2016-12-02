@@ -3,7 +3,6 @@ package com.jkys.phobos.remote.protocol;
 import org.msgpack.annotation.Message;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by frio on 16/7/4.

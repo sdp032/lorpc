@@ -9,11 +9,11 @@ public class PhobosRequest {
 
     private Request request;
 
-    public PhobosRequest(){
+    public PhobosRequest() {
 
     }
 
-    public PhobosRequest(Header header,Request request){
+    public PhobosRequest(Header header, Request request) {
         this.header = header;
         this.request = request;
     }

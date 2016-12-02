@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns="http://jkys.com/mars/phobos"
-        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-        xmlns:beans="http://www.springframework.org/schema/beans"
-        targetNamespace="http://jkys.com/mars/phobos">
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:beans="http://www.springframework.org/schema/beans"
+            xmlns="http://jkys.com/mars/phobos"
+            targetNamespace="http://jkys.com/mars/phobos">
 
-    <xsd:import namespace="http://www.springframework.org/schema/beans" />
+    <xsd:import namespace="http://www.springframework.org/schema/beans"/>
 
-    <xsd:element name="registry" type="registryType" />
+    <xsd:element name="registry" type="registryType"/>
     <xsd:complexType name="registryType">
         <xsd:attribute name="xbusAddr" type="xsd:string"/>
         <xsd:attribute name="servicePort" type="xsd:int" use="required"/>
@@ -16,7 +16,7 @@
         <xsd:attribute name="keystorePassword" type="xsd:string" use="required"/>
     </xsd:complexType>
 
-    <xsd:element name="service" type="serviceType" />
+    <xsd:element name="service" type="serviceType"/>
     <xsd:complexType name="serviceType">
         <xsd:complexContent>
             <xsd:extension base="beans:identifiedType">
@@ -40,6 +40,6 @@
             </xsd:simpleType>
         </xsd:attribute>
         <xsd:attribute name="startTimeOut" type="xsd:int" default="60"/>
-        <xsd:attribute name="requestTimeOut" type="xsd:int" default="60" />
+        <xsd:attribute name="requestTimeOut" type="xsd:int" default="60"/>
     </xsd:complexType>
 </xsd:schema>

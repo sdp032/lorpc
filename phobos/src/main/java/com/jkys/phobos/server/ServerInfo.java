@@ -10,15 +10,14 @@ import java.util.List;
  * Created by zdj on 2016/7/12.
  */
 @Message
-public class ServerInfo implements Serializable{
-
-    public ServerInfo(){
-        this.serverAppName = PhobosContext.getInstance().getServerAppName();
-    }
+public class ServerInfo implements Serializable {
 
     private String serverAppName;
-
     private List<String> serviceList = new ArrayList();
+
+    public ServerInfo() {
+        this.serverAppName = PhobosContext.getInstance().getServerAppName();
+    }
 
     public List<String> getServiceList() {
         return serviceList;

@@ -15,7 +15,7 @@ public class TestServiceImpl implements TestService {
 
     private ArrayList<String> list;
 
-    private HashMap<String,House> map;
+    private HashMap<String, House> map;
 
     public void test() {
         System.out.println("hello phobos");
@@ -27,7 +27,12 @@ public class TestServiceImpl implements TestService {
         return house;
     }
 
-    public House getHouse(String str, Integer i, boolean b, Map<String, Integer> m,  List<Map<String,String>> list) throws Exception {
-        return null;
+    public List<Map<String, House[]>> getHouse(String str[], Integer i, boolean b, Map<String, Integer[]> m, List<Map<String, House[]>> list) throws Exception {
+        System.out.println(str[1]);
+        System.out.print(m.get("1")[1]);
+        System.out.println(b);
+        System.out.println(list.get(1).get("1")[1]);
+        list.get(1).get("1")[1].getLandlord().setName("hah");
+        return list;
     }
 }

@@ -7,15 +7,15 @@ public class Yaml {
 
     private Representer representer;
 
-    public Yaml(){
+    public Yaml() {
 
     }
 
-    public Yaml(Representer representer){
+    public Yaml(Representer representer) {
         this.representer = representer;
     }
 
-    public String dump(Object o) throws Exception{
+    public String dump(Object o) throws Exception {
 
         return representer.represent(o);
     }

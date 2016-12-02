@@ -1,9 +1,5 @@
 package com.jkys.phobos;
 
-import org.msgpack.annotation.Message;
-
-import java.util.List;
-
 /**
  * Created by zdj on 2016/7/18.
  */

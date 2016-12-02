@@ -3,12 +3,21 @@ package com.jkys.phobos.netty;
 import com.github.infrmods.xbus.item.ServiceEndpoint;
 import com.jkys.phobos.job.Scheduled;
 import com.jkys.phobos.job.XbusTask;
+import com.jkys.phobos.netty.channel.AbstractServerChannelHandler;
+import com.jkys.phobos.netty.channel.DefaultServerChannelHandler;
+import com.jkys.phobos.netty.codec.PhobosResponseEncoder;
+import com.jkys.phobos.netty.codec.PhotosRequestDecoder;
 import com.jkys.phobos.server.PhobosContext;
+import com.jkys.phobos.util.CommonUtil;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,75 +37,75 @@ public class NettyServer {
 
     private Class<? extends AbstractServerChannelHandler> handlerClass;
 
-    public NettyServer(Integer port){
+    public NettyServer(Integer port) {
         this.port = port;
     }
 
-    public void open() throws Exception{
+    public void open() throws Exception {
 
-        if(handlerClass == null){
+        if (handlerClass == null) {
             handlerClass = DefaultServerChannelHandler.class;
         }
 
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
-        try{
+        try {
             ServerBootstrap bootstrap = new ServerBootstrap();
-            bootstrap.group(bossGroup,workerGroup)
-                .channel(NioServerSocketChannel.class)
-                .option(ChannelOption.SO_BACKLOG,1024)
-                .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        //PhobosRequest解码器
-                        socketChannel.pipeline().addLast(new PhotosRequestDecoder());
-                        //PhobosResponse编码器
-                        socketChannel.pipeline().addLast(new PhobosResponseEncoder());
-                        //业务处理器
-                        socketChannel.pipeline().addLast(handlerClass.getConstructor().newInstance());
-                    }
-                });
+            bootstrap.group(bossGroup, workerGroup)
+                    .channel(NioServerSocketChannel.class)
+                    .option(ChannelOption.SO_BACKLOG, 1024)
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel socketChannel) throws Exception {
+                            //PhobosRequest解码器
+                            socketChannel.pipeline().addLast(new PhotosRequestDecoder());
+                            //PhobosResponse编码器
+                            socketChannel.pipeline().addLast(new PhobosResponseEncoder());
+                            socketChannel.pipeline().addLast(new ReadTimeoutHandler(60));
+                            //业务处理器
+                            socketChannel.pipeline().addLast(handlerClass.getConstructor().newInstance());
+                        }
+                    });
             ChannelFuture future = bootstrap.bind(port).sync();
-            synchronized (this){
+            synchronized (this) {
                 this.notify();
             }
             //启动完成后启动定时器
             //获取本机IP地址
-            String ip = InetAddress.getLocalHost().getHostAddress();
-
+            String ip = CommonUtil.getIpAddresses().get(0);
             new Scheduled().addTask(
                     new XbusTask(1, 60, TimeUnit.SECONDS, context.getXbusAddrs(), context.getKeystorePath(), context.getKeystorePassword())
-                        .plug(context.getServiceDescs(), new ServiceEndpoint(ip + ":" + context.getPort(), null), 120)
+                            .plug(context.getServiceDescs(), new ServiceEndpoint(ip + ":" + context.getPort(), null), 120)
             ).run();
 
             future.channel().closeFuture().sync();
-        }finally {
+        } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
     }
 
-    public void listenOpen() throws InterruptedException{
-        synchronized (this){
+    public void listenOpen() throws InterruptedException {
+        synchronized (this) {
             this.wait();
         }
     }
 
-    public void noBlockOpen(){
+    public void noBlockOpen() {
         System.out.println("netty启动中");
         new Thread(new Runnable() {
             public void run() {
                 try {
                     open();
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                     System.exit(0);
                 }
             }
         }).start();
-        try{
+        try {
             listenOpen();
-        }catch (InterruptedException e){
+        } catch (InterruptedException e) {
             e.printStackTrace();
             System.exit(0);
         }

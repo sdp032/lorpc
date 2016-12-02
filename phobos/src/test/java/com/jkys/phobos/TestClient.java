@@ -6,27 +6,32 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by zdj on 2016/7/6.
  */
 public class TestClient {
     @Test
-    public void test(){
+    public void test() throws Exception{
         ApplicationContext context = new ClassPathXmlApplicationContext("spring/client-application.xml");
 
         TestService testService = (TestService) context.getBean("test");
         //testService.test();
+        String[] s = new String[]{"s", "i am string[]"};
+        Map<String, Integer[]> map = new HashMap<>();
+        map.put("1", new Integer[]{0,1});
+        List<Map<String, House[]>> list = new ArrayList<>();
+        Map<String,House[]> m = new HashMap<>();
+        House h = new House();
+        h.setLandlord(new User());
+        m.put("1", new House[]{null,h});
+        list.add(null);
+        list.add(m);
+        List<Map<String, House[]>> r = testService.getHouse(s, 1, false, map, list);
+        System.out.print(r.get(1).get("1")[1].getLandlord().getName());
 
-        User u = new User();
-        u.setAge(22);
-        u.setName("zzz");
-        House house = new House();
-        house.setLandlord(u);
-        List<House> list = new ArrayList();
-        list.add(house);
-        house = testService.getHouse(house);
-        System.out.println(house);
     }
 }

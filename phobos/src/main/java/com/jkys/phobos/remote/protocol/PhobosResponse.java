@@ -9,11 +9,11 @@ public class PhobosResponse {
 
     private Response response;
 
-    public PhobosResponse(){
+    public PhobosResponse() {
 
     }
 
-    public PhobosResponse(Header header, Response response){
+    public PhobosResponse(Header header, Response response) {
         this.header = header;
         this.response = response;
     }

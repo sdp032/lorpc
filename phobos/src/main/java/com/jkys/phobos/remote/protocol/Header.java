@@ -7,51 +7,16 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class Header {
 
+    private static final AtomicLong INVOKE_ID = new AtomicLong(1);
     private short protocolVersion = 1;
-
     private char serializationType;
-
     private char type;
-
     private int size;
-
     private long sequenceId;
-
     private long timestamp;
 
-    private static final AtomicLong INVOKE_ID = new AtomicLong(1);
-
-    public Header(){
+    public Header() {
         sequenceId = INVOKE_ID.getAndIncrement();
-    }
-
-    public enum SerializationType{
-
-        JSON('1'),MAGPACK('2'),PROTOBUFF('3');
-
-        public final char serializationType;
-
-        private SerializationType(char serializationType){
-            this.serializationType = serializationType;
-        }
-
-        public char getSerializationType() {
-            return serializationType;
-        }
-    }
-
-    public enum Type{
-        DEFAULT('0'),WITHSTREAM('1'),STREAM('2'),CLOSESTREAM('3');
-
-        public final char type;
-
-        private Type(char type){
-            this.type = type;
-        }
-
-        public char getType(){
-            return type;
-        }
     }
 
     public short getProtocolVersion() {
@@ -100,5 +65,34 @@ public class Header {
 
     public void setSerializationType(char serializationType) {
         this.serializationType = serializationType;
+    }
+
+    public enum SerializationType {
+
+        JSON('1'), MAGPACK('2'), PROTOBUFF('3');
+
+        public final char serializationType;
+
+        private SerializationType(char serializationType) {
+            this.serializationType = serializationType;
+        }
+
+        public char getSerializationType() {
+            return serializationType;
+        }
+    }
+
+    public enum Type {
+        DEFAULT('0'), WITHSTREAM('1'), STREAM('2'), CLOSESTREAM('3'), PING('p'), PONG('P');
+
+        public final char type;
+
+        private Type(char type) {
+            this.type = type;
+        }
+
+        public char getType() {
+            return type;
+        }
     }
 }
