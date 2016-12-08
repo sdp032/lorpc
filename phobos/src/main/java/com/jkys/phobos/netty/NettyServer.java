@@ -21,7 +21,6 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetAddress;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -61,7 +60,7 @@ public class NettyServer {
                             socketChannel.pipeline().addLast(new PhotosRequestDecoder());
                             //PhobosResponse编码器
                             socketChannel.pipeline().addLast(new PhobosResponseEncoder());
-                            socketChannel.pipeline().addLast(new ReadTimeoutHandler(60));
+                            //socketChannel.pipeline().addLast(new ReadTimeoutHandler(60));
                             //业务处理器
                             socketChannel.pipeline().addLast(handlerClass.getConstructor().newInstance());
                         }
@@ -72,7 +71,7 @@ public class NettyServer {
             }
             //启动完成后启动定时器
             //获取本机IP地址
-            String ip = CommonUtil.getIpAddresses().get(0);
+            String ip = CommonUtil.getIpAddresses();
             new Scheduled().addTask(
                     new XbusTask(1, 60, TimeUnit.SECONDS, context.getXbusAddrs(), context.getKeystorePath(), context.getKeystorePassword())
                             .plug(context.getServiceDescs(), new ServiceEndpoint(ip + ":" + context.getPort(), null), 120)

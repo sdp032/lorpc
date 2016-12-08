@@ -4,7 +4,7 @@ import com.jkys.phobos.client.InvokeInfo;
 import com.jkys.phobos.client.PhobosClientContext;
 import com.jkys.phobos.netty.channel.AbstractClientChannelHandler;
 import com.jkys.phobos.netty.channel.DefaultClientChannelHandler;
-import com.jkys.phobos.netty.channel.HeartBeatPingChannelHandler;
+//import com.jkys.phobos.netty.channel.HeartBeatPingChannelHandler;
 import com.jkys.phobos.netty.codec.PhobosRequestEncoder;
 import com.jkys.phobos.netty.codec.PhobosResponseDecoder;
 import com.jkys.phobos.netty.listener.PhobosChannelActiveListener;
@@ -71,7 +71,7 @@ public class NettyClient {
                             socketChannel.pipeline().addLast(handlerClass.getConstructor(NettyClient.class).newInstance(sourse)
                                     .addPhobosListener(new PhobosChannelReadListener())
                                     .addPhobosListener(new PhobosChannelActiveListener()));
-                            socketChannel.pipeline().addLast(new HeartBeatPingChannelHandler(sourse));
+                            //socketChannel.pipeline().addLast(new HeartBeatPingChannelHandler(sourse));
 
                         }
                     });

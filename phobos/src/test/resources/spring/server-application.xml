@@ -9,7 +9,7 @@
 
     <phobos:registry xbusAddr="xbus.qa.91jkys.com:4433"
                      servicePort="8085"
-                     keystorePath="/usr/dev/clitest.ks"
+                     keystorePath="/home/zdj/Downloads/clitest.ks"
                      keystorePassword="123456"
                      serverAppName="clitest"
                      blocking="true"

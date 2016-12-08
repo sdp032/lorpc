@@ -1,0 +1,16 @@
+{
+  "configuration": {
+    "status": "debug",
+    "name": "mars",
+    "packages": "com.jkys.phobos",
+    "ThresholdFilter": { "level": "debug" },
+    "appenders": {
+      "appender": [
+        { "type": "Console", "name": "STDOUT", "PatternLayout": { "pattern": "[mars]-%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" }}
+      ]
+    },
+    "loggers": {
+      "root": { "level": "debug", "AppenderRef": { "ref": "STDOUT" }}
+    }
+  }
+}

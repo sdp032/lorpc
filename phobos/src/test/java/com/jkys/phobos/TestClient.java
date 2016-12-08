@@ -31,7 +31,7 @@ public class TestClient {
         list.add(null);
         list.add(m);
         List<Map<String, House[]>> r = testService.getHouse(s, 1, false, map, list);
-        System.out.print(r.get(1).get("1")[1].getLandlord().getName());
+        System.out.println("****************"+r.get(1).get("1")[1].getLandlord().getName());
 
     }
 }
