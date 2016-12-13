@@ -91,7 +91,7 @@ public class NettyServer {
     }
 
     public void noBlockOpen() {
-        System.out.println("netty启动中");
+        logger.info("netty服务器启动中。。。");
         new Thread(new Runnable() {
             public void run() {
                 try {
@@ -108,7 +108,7 @@ public class NettyServer {
             e.printStackTrace();
             System.exit(0);
         }
-        System.out.println("netty启动完成");
+        logger.info("netty服务器启动完成。。。");
     }
 
     public Class<? extends AbstractServerChannelHandler> getHandlerClass() {
