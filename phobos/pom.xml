@@ -2,16 +2,19 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>mars</artifactId>
-        <groupId>com.jkys.portal</groupId>
-        <version>${mars.version}</version>
-    </parent>
+    <properties>
+        <mars.version>1.0-SNAPSHOT</mars.version>
+        <curiosity.version>1.0-SNAPSHOT</curiosity.version>
+        <phobos.version>1.0-SNAPSHOT</phobos.version>
+        <spring.version>4.3.0.RELEASE</spring.version>
+        <log4j.version>2.6.1</log4j.version>
+    </properties>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>phobos</artifactId>
+    <groupId>com.jkys.portal</groupId>
     <version>${phobos.version}</version>
-
+    <packaging>jar</packaging>
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -92,4 +95,41 @@
         </dependency>
 
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <name>internal repository for releases</name>
+            <url>http://nexus.91jkys.com/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>internal repository for snapshots</name>
+            <url>http://nexus.91jkys.com/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

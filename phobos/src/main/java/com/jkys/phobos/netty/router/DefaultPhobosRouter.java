@@ -97,6 +97,7 @@ public class DefaultPhobosRouter implements PhobosRouter {
             e.printStackTrace();
             phobosResponse.getResponse().setErrCode(ErrorEnum.SYSTEM_ERROR.name());
             phobosResponse.getResponse().setSuccess(false);
+            phobosResponse.getResponse().setErrMessage("调用服务时出现异常");
             return phobosResponse;
         }
         phobosResponse.getResponse().setData(SerializaionUtil.objectToBytes(value, request.getHeader().getSerializationType()));

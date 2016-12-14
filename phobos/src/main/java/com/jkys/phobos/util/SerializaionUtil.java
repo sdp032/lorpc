@@ -31,6 +31,7 @@ public class SerializaionUtil {
 
     public static <T> T bytesToObject(byte[] bytes, Class<T> clazz, char serializationType) throws Exception {
         T t = null;
+        if(bytes == null ) return  t;
         if (serializationType == Header.SerializationType.MAGPACK.serializationType) {
             if(clazz == HashMap.class || clazz == Map.class){
                 t = (T)MsgpackUtil.MESSAGE_PACK.read(bytes, HashMapMsgpackTemplate.class).toHashMap();

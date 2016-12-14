@@ -9,7 +9,6 @@
     <version>${mars.version}</version>
     <packaging>pom</packaging>
     <modules>
-        <module>curiosity</module>
         <module>phobos</module>
     </modules>
     <properties>
@@ -19,6 +18,18 @@
         <spring.version>4.3.0.RELEASE</spring.version>
         <log4j.version>2.6.1</log4j.version>
     </properties>
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <name>internal repository for releases</name>
+            <url>http://nexus.91jkys.com/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>internal repository for snapshots</name>
+            <url>http://nexus.91jkys.com/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
     <build>
         <plugins>
             <plugin>
@@ -29,6 +40,18 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                            <goals>
+                               <goal>jar</goal>
+                            </goals>
+                       </execution>
+                    </executions>
+                </plugin>
         </plugins>
     </build>
 </project>
