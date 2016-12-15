@@ -128,10 +128,19 @@ public class NettyClient {
         invokeInfo.setRequest(request);
         PhobosClientContext.getInstance().setInvokeInfo(invokeInfo);
         try {
-            future.channel().writeAndFlush(request).await(PhobosClientContext.getInstance().getRequestTimeOut() * 1000);
+            boolean bool = future.channel().writeAndFlush(request).await(PhobosClientContext.getInstance().getRequestTimeOut() * 1000);
             logger.info("send finish");
-        }finally {
+        }catch (Exception e){
             PhobosClientContext.getInstance().removeInvokeInfo(request.getHeader().getSequenceId());
+            throw e;
+        }
+
+        synchronized (invokeInfo) {
+            invokeInfo.wait(PhobosClientContext.getInstance().getRequestTimeOut() * 1000);
+            PhobosClientContext.getInstance().removeInvokeInfo(request.getHeader().getSequenceId());
+            if (invokeInfo.isTimeOut()) {
+                throw new RuntimeException("invoke service time out for " + request.getRequest().getServiceName() + "_" + request.getRequest().getMethodName());
+            }
         }
         /*new Thread(new Runnable() {
             public void run() {
