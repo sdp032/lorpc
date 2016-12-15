@@ -30,7 +30,12 @@ public class TestClient {
         m.put("1", new House[]{null,h});
         list.add(null);
         list.add(m);
-        List<Map<String, House[]>> r = testService.getHouse(null, 1, false, map, list);
+        List<Map<String, House[]>> r = null;
+        try {
+            r = testService.getHouse(null, 1, false, map, list);
+        }catch (Exception e){
+            e.getStackTrace();
+        }
         System.out.println("****************"+r.get(1).get("1")[1].getLandlord().getName());
     }
 }

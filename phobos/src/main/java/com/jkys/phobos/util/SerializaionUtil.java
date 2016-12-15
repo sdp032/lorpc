@@ -17,6 +17,7 @@ public class SerializaionUtil {
 
     public static byte[] objectToBytes(Object o, char serializationType) throws Exception {
         byte[] bytes = null;
+        if (o == null) return bytes;
         if (serializationType == Header.SerializationType.MAGPACK.serializationType) {
             if(o instanceof HashMap){
                 o = new HashMapMsgpackTemplate((HashMap) o);
