@@ -38,6 +38,8 @@ public class DefaultPhobosHandler implements PhobosHandler {
 
     public Object execution(Method method, Object[] args) throws Exception {
 
+        logger.info("executing ...");
+
         PhobosGroup phobosGroupAnnotation = method.getAnnotation(PhobosGroup.class) == null ?
                 method.getDeclaringClass().getAnnotation(PhobosGroup.class) :
                 method.getAnnotation(PhobosGroup.class);
@@ -60,6 +62,8 @@ public class DefaultPhobosHandler implements PhobosHandler {
                 version,
                 method.getParameterTypes()
         );
+
+        logger.info("serveiceKey is {}", serveiceKey);
 
         List<NettyClient> clientList = PhobosClientContext.getInstance().getConnectInfo().get(serveiceKey);
         if (null == clientList || clientList.size() == 0) {
@@ -86,6 +90,9 @@ public class DefaultPhobosHandler implements PhobosHandler {
             }
         }
         methodName.append(")");
+
+        logger.info("methodName is {}", methodName.toString());
+        logger.info("params is {}", args);
 
         PhobosRequest request = new PhobosRequest(new Header(), new Request());
         request.getHeader().setSerializationType(PhobosClientContext.getInstance().getSerializationType());

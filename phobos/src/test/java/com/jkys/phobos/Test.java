@@ -149,4 +149,42 @@ public class Test {
 
         System.out.println(1);
     }
+
+    @org.junit.Test
+    public void testWait() throws Exception{
+        Test test = new Test();
+        List list1 = new ArrayList();
+        new Thread(()->{
+            try {
+                test.testW("a", list1);
+            }catch (Exception e){}
+        }).start();
+        Thread.sleep(1000);
+
+
+        List list2 = new ArrayList();
+        new Thread(()->{
+            try {
+                test.testW("b", list2);
+            }catch (Exception e){}
+        }).start();
+        Thread.sleep(1000);
+
+        synchronized (list2){
+            list2.notify();
+        }
+    }
+
+
+    public void testW(String a, List list) throws Exception{
+
+        list.add(a);
+
+        synchronized (list){
+            System.out.println("syn"+a);
+            list.wait(1000000000);
+        }
+
+        System.out.println(list.get(0));
+    }
 }

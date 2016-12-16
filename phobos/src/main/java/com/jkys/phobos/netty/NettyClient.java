@@ -127,6 +127,7 @@ public class NettyClient {
         InvokeInfo invokeInfo = new InvokeInfo();
         invokeInfo.setRequest(request);
         PhobosClientContext.getInstance().setInvokeInfo(invokeInfo);
+
         try {
             boolean bool = future.channel().writeAndFlush(request).await(PhobosClientContext.getInstance().getRequestTimeOut() * 1000);
             logger.info("send finish");
@@ -135,25 +136,18 @@ public class NettyClient {
             throw e;
         }
 
-        synchronized (invokeInfo) {
-            invokeInfo.wait(PhobosClientContext.getInstance().getRequestTimeOut() * 1000);
-            PhobosClientContext.getInstance().removeInvokeInfo(request.getHeader().getSequenceId());
-            if (invokeInfo.isTimeOut()) {
-                throw new RuntimeException("invoke service time out for " + request.getRequest().getServiceName() + "_" + request.getRequest().getMethodName());
+        //如果异步线程已经notify 则不需要wait
+        if(invokeInfo.isTimeOut()){
+            synchronized (invokeInfo){
+                invokeInfo.wait(PhobosClientContext.getInstance().getRequestTimeOut() * 1000);
             }
         }
-        /*new Thread(new Runnable() {
-            public void run() {
-                future.channel().writeAndFlush(request);
-            }
-        }).start();
-        synchronized (invokeInfo) {
-            invokeInfo.wait(PhobosClientContext.getInstance().getRequestTimeOut() * 1000);
-            PhobosClientContext.getInstance().removeInvokeInfo(request.getHeader().getSequenceId());
-            if (invokeInfo.isTimeOut()) {
-                throw new RuntimeException("invoke service time out for " + request.getRequest().getServiceName() + "_" + request.getRequest().getMethodName());
-            }
-        }*/
+
+        PhobosClientContext.getInstance().removeInvokeInfo(request.getHeader().getSequenceId());
+        if (invokeInfo.isTimeOut()) {
+            throw new RuntimeException("invoke service time out for " + request.getRequest().getServiceName() + "_" + request.getRequest().getMethodName());
+        }
+
         return invokeInfo;
     }
 
