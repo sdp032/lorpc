@@ -7,6 +7,7 @@ import com.jkys.phobos.server.PhobosContext;
 import com.jkys.phobos.server.ServiceBean;
 import com.jkys.phobos.util.TypeUtil;
 import com.jkys.phobos.util.yaml.BeanRepresenter;
+import com.jkys.phobos.util.yaml.PhobosRepresentr;
 import com.jkys.phobos.util.yaml.Yaml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class PhobosApplicationListener implements ApplicationListener<ContextRef
         MsgpackUtil.register(serializeSet);
 
         ServiceDesc[] serviceDescs = new ServiceDesc[phobosContext.getServiceMap().values().size()];
-        Yaml yaml = new Yaml(new BeanRepresenter());
+        Yaml yaml = new Yaml(new PhobosRepresentr(new BeanRepresenter()));
         try {
             for (int i = 0; i < phobosContext.getServiceMap().values().size(); i++) {
                 ServiceBean service = (ServiceBean) phobosContext.getServiceMap().values().toArray()[i];

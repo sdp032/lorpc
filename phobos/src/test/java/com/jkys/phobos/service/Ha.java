@@ -11,11 +11,5 @@ import java.util.Map;
 public class Ha {
 
 
-    public ArrayList<Map<String, String>> test(HashMap<String, ArrayList<Integer>> m)  {
-        return null;
-    }
-
-    public String test(){
-        return  "";
-    }
+    List<Map<String, Integer>> list;
 }
