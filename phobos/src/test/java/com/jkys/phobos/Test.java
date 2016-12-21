@@ -4,9 +4,11 @@ import com.github.infrmods.xbus.client.XBusClient;
 import com.github.infrmods.xbus.client.XbusConfig;
 import com.jkys.phobos.codec.MyJavassistTemplateBuilder;
 import com.jkys.phobos.remote.protocol.Header;
+import com.jkys.phobos.service.Ha;
 import com.jkys.phobos.service.TestService;
 import com.jkys.phobos.util.SerializaionUtil;
 import com.jkys.phobos.util.yaml.BeanRepresenter;
+import com.jkys.phobos.util.yaml.PhobosRepresentr;
 import com.jkys.phobos.util.yaml.Yaml;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -78,9 +80,10 @@ public class Test {
 
     @org.junit.Test
     public void yamlTest() throws Exception {
-        Yaml yaml = new Yaml(new BeanRepresenter());
+        Yaml yaml = new Yaml(new PhobosRepresentr(new BeanRepresenter()));
 
-        String s = yaml.dump(TestService.class);
+
+        String s = yaml.dump(Ha.class);
 
         System.out.print(s);
     }

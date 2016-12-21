@@ -8,6 +8,8 @@ import com.jkys.phobos.server.ServiceBean;
 import com.jkys.phobos.util.TypeUtil;
 import com.jkys.phobos.util.yaml.BeanRepresenter;
 import com.jkys.phobos.util.yaml.Yaml;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
@@ -19,6 +21,8 @@ import java.util.Set;
  * 监听spring容器初始化完成事件
  */
 public class PhobosApplicationListener implements ApplicationListener<ContextRefreshedEvent> {
+
+    private static Logger logger = LoggerFactory.getLogger(PhobosApplicationListener.class);
 
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
 
@@ -43,6 +47,7 @@ public class PhobosApplicationListener implements ApplicationListener<ContextRef
                 ServiceBean service = (ServiceBean) phobosContext.getServiceMap().values().toArray()[i];
                 serviceDescs[i] = new ServiceDesc(phobosContext.getServerAppName() + "." + service.getServiceName(), service.getVersion(), service.getServiceName(), yaml.dump(service.getInterfaceClass()));
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(0);

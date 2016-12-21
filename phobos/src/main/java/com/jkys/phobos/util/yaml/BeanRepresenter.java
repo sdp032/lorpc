@@ -6,6 +6,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by zdj on 2016/11/18.
@@ -27,8 +30,8 @@ public class BeanRepresenter implements Representer<Class> {
                 sb.append("\t  -\n\t\tname: ");
                 sb.append(field.getName());
                 sb.append("\n\t\ttype: ");
-                sb.append(field.getType().getName());
-                sb.append("\n\t\tnullable: true\n");
+                sb.append(field.getType().getName().replace(";", ""));
+                sb.append("\n\t\tnullable: "+ !field.getType().isPrimitive() +"\n");
                 if (field.getGenericType() instanceof ParameterizedType) {
                     if (((ParameterizedType) field.getGenericType()).getActualTypeArguments().length == 1) {
                         sb.append("\t\titem_type: ");
@@ -54,7 +57,7 @@ public class BeanRepresenter implements Representer<Class> {
             if (!"void".equals(method.getReturnType().getName())) {
                 sb.append("\t\treturn:\n\t\t\ttype: ");
                 sb.append(method.getReturnType().getName());
-                sb.append("\n\t\t\tnullable: true\n");
+                sb.append("\n\t\t\tnullable: "+ !method.getReturnType().isPrimitive() +"\n");
             }
 
             Annotation[][] annotations = method.getParameterAnnotations();
@@ -70,7 +73,8 @@ public class BeanRepresenter implements Representer<Class> {
                 }
                 sb.append("\t\t\ttype: ");
                 sb.append(method.getParameterTypes()[i].getName());
-                sb.append("\n");
+
+                sb.append("\n\t\t\tnullable: "+ !method.getParameterTypes()[i].isPrimitive() +"\n");
             }
 
             if (method.getExceptionTypes().length > 0) {
