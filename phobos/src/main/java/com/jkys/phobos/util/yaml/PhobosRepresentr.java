@@ -19,7 +19,7 @@ public class PhobosRepresentr implements Representer<Class> {
 
         String desc = beanRepresenter.represent(aClass);
 
-        System.out.println(desc);
+        //System.out.println(desc);
         desc = desc
                 .replace("type: long\n", "type: i64\n")
                 .replace("type: int\n", "type: i32\n")
@@ -50,7 +50,8 @@ public class PhobosRepresentr implements Representer<Class> {
                 .replace("java.util.Map", "map")
                 .replace("java.util.ArrayList", "list")
                 .replace("java.util.List", "list")
-                .replace("[Ljava.lang.Byte", "bytes");
+                .replace("[Ljava.lang.Byte", "bytes")
+                .replace(" class "," ");
 
 
 

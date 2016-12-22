@@ -12,4 +12,6 @@ public class Ha {
 
 
     List<Map<String, Integer>> list;
+
+    List<String> l;
 }
