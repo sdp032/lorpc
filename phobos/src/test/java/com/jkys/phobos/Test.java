@@ -2,8 +2,10 @@ package com.jkys.phobos;
 
 import com.github.infrmods.xbus.client.XBusClient;
 import com.github.infrmods.xbus.client.XbusConfig;
+import com.jkys.phobos.codec.MsgpackUtil;
 import com.jkys.phobos.codec.MyJavassistTemplateBuilder;
 import com.jkys.phobos.remote.protocol.Header;
+import com.jkys.phobos.remote.protocol.Request;
 import com.jkys.phobos.service.Ha;
 import com.jkys.phobos.service.TestService;
 import com.jkys.phobos.util.SerializaionUtil;
@@ -18,6 +20,9 @@ import javassist.bytecode.LocalVariableAttribute;
 import javassist.bytecode.MethodInfo;
 import org.msgpack.MessagePack;
 import org.msgpack.template.TemplateRegistry;
+import org.msgpack.type.ArrayValue;
+import org.msgpack.type.RawValue;
+import org.msgpack.type.Value;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,41 +38,15 @@ public class Test {
 
     @org.junit.Test
     public void tset() throws Exception {
-        MessagePack m = new MessagePack();
 
-        Class<MessagePack> clazz = MessagePack.class;
-        Field field = clazz.getDeclaredField("registry");
-        field.setAccessible(true);
+        MessagePack mp = MsgpackUtil.MESSAGE_PACK;
 
-        TemplateRegistry registry = (TemplateRegistry) field.get(m);
-        Class<TemplateRegistry> registryClass = TemplateRegistry.class;
+        boolean b = true;
 
-//        Template reference1 = new TemplateReference(registry,User.class);
-//        Template reference2 = new TemplateReference(registry,House.class);
+        byte[] bs = mp.write(b);
 
-//        Field field2 = registryClass.getDeclaredField("cache");
-//        field2.setAccessible(true);
-//        Map<Type, Template<Type>> cache = (Map)field2.get(registry);
-//        cache.put(User.class,reference1);
-//        cache.put(House.class,reference2);
+        System.out.println();
 
-
-//        Field field1 = registryClass.getDeclaredField("chain");
-//        field1.setAccessible(true);
-//        TemplateBuilderChain chain = (TemplateBuilderChain)field1.get(registry);
-//        TemplateBuilder builder = chain.select(User.class,false);
-
-//        Method method = registryClass.getDeclaredMethod("buildAndRegister", TemplateBuilder.class,Class.class,boolean.class, FieldList.class);
-//        method.setAccessible(true);
-//        method.invoke(registry,builder,User.class,false,null);
-
-        MyJavassistTemplateBuilder builder = new MyJavassistTemplateBuilder(registry);
-        builder.buildAndRegister(User.class);
-        builder.buildAndRegister(House.class);
-
-        byte[] b = m.write(new User());
-
-        User u = m.read(b, User.class);
     }
 
 

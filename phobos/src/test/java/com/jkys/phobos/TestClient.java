@@ -32,7 +32,7 @@ public class TestClient {
         list.add(m);
         List<Map<String, House[]>> r = null;
         try {
-            r = testService.getHouse(null, 1, false, map, list);
+            r = testService.getHouse(new String[]{"1","2"}, 1, false, map, list);
         }catch (Exception e){
             e.getStackTrace();
         }

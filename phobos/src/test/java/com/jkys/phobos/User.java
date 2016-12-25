@@ -1,8 +1,11 @@
 package com.jkys.phobos;
 
+import org.msgpack.annotation.Message;
+
 /**
  * Created by zdj on 2016/7/18.
  */
+@Message
 public class User {
 
     private String name;

@@ -172,7 +172,8 @@ public class PhobosContext {
         sb.append(serviceName);
         sb.append(".");
         sb.append(methodName);
-        sb.append("(");
+        //给方法加上参数签名
+       /* sb.append("(");
         if(params != null){
             for (int i=0; i<params.length; i++){
                 sb.append(params[i].getName());
@@ -181,10 +182,10 @@ public class PhobosContext {
                 }
             }
         }
-        sb.append(")");
+        sb.append(")");*/
         sb.append(".");
-        sb.append(group);
-        sb.append(".");
+        /*sb.append(group);
+        sb.append(".");*/
         sb.append(version);
         return sb.toString();
     }
@@ -193,8 +194,8 @@ public class PhobosContext {
         StringBuffer sb = new StringBuffer();
         sb.append(serviceName);
         sb.append(".");
-        sb.append(group);
-        sb.append(".");
+        /*sb.append(group);
+        sb.append(".");*/
         sb.append(version);
         return sb.toString();
     }

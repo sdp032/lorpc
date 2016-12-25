@@ -4,6 +4,7 @@ import com.jkys.phobos.annotation.PhobosGroup;
 import com.jkys.phobos.annotation.PhobosVersion;
 import com.jkys.phobos.client.InvokeInfo;
 import com.jkys.phobos.client.PhobosClientContext;
+import com.jkys.phobos.codec.MsgpackUtil;
 import com.jkys.phobos.exception.PhobosException;
 import com.jkys.phobos.netty.NettyClient;
 import com.jkys.phobos.remote.protocol.Header;
@@ -12,6 +13,7 @@ import com.jkys.phobos.remote.protocol.Request;
 import com.jkys.phobos.server.PhobosContext;
 import com.jkys.phobos.spring.client.Handler.PhobosHandler;
 import com.jkys.phobos.util.SerializaionUtil;
+import org.msgpack.type.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,14 +84,14 @@ public class DefaultPhobosHandler implements PhobosHandler {
 
         StringBuffer methodName = new StringBuffer();
         methodName.append(method.getName());
-        methodName.append("(");
+        /*methodName.append("(");
         for (int i=0; i<method.getParameterTypes().length; i++){
             methodName.append(method.getParameterTypes()[i].getName());
             if(i < method.getParameterTypes().length - 1){
                 methodName.append(",");
             }
         }
-        methodName.append(")");
+        methodName.append(")");*/
 
         logger.info("methodName is {}", methodName.toString());
         logger.info("params is {}", args);
@@ -101,7 +103,7 @@ public class DefaultPhobosHandler implements PhobosHandler {
         request.getRequest().setMethodName(methodName.toString());
         request.getRequest().setGroup(group);
         request.getRequest().setServiceVersion(version);
-        request.getRequest().setTraceId(1l); //TODO 规则待定
+        request.getRequest().setTraceId(new byte[16]); //TODO 规则待定
         request.getRequest().setObject(params);
 
         InvokeInfo invokeInfo = client.send(request);

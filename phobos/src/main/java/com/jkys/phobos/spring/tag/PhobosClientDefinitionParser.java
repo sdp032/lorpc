@@ -38,7 +38,6 @@ public class PhobosClientDefinitionParser implements BeanDefinitionParser {
         phobosClientContext.setStartTimeOut(startTimeOut);
         phobosClientContext.setRequestTimeOut(requestTimeOut);
 
-        //TODO 待优化
         if ("JSON".equals(serialization))
             phobosClientContext.setSerializationType(Header.SerializationType.JSON.serializationType);
         else if ("MAGPACK".equals(serialization))

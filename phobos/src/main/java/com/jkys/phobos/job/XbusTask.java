@@ -44,7 +44,6 @@ public class XbusTask extends Task {
         }catch (XBusException e){
             leaseId = null;
             logger.error("keepAliveLease failed! leaseId : {} , xbus exception code : {}, xbus exception message: {}", leaseId, e.code, e.message);
-
         }
     }
 

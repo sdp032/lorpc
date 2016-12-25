@@ -11,7 +11,7 @@ public class PhobosClientContext {
 
     private static PhobosClientContext phobosClientContext = null;
     private String clientAppName;
-    private char serializationType;
+    private byte serializationType;
     private String[] xbusAddr;
     private HashSet<String> addr = new HashSet();
     private HashMap<String, List<NettyClient>> connectInfo = new HashMap();
@@ -62,11 +62,11 @@ public class PhobosClientContext {
         this.clientAppName = clientAppName;
     }
 
-    public char getSerializationType() {
+    public byte getSerializationType() {
         return serializationType;
     }
 
-    public void setSerializationType(char serializationType) {
+    public void setSerializationType(byte serializationType) {
         this.serializationType = serializationType;
     }
 

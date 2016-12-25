@@ -32,18 +32,19 @@ public class DefaultPhobosRouter implements PhobosRouter {
         PhobosResponse phobosResponse = new PhobosResponse(request.getHeader(), new Response());
 
         //ping pong
-        if(request.getHeader().getType() == Header.Type.PING.type){
+        /*if(request.getHeader().getType() == Header.Type.PING.type){
             logger.debug("pong -> sequenceId: {}", request.getHeader().getSequenceId());
             phobosResponse.getHeader().setType(Header.Type.PONG.type);
             return phobosResponse;
-        }
+        }*/
 
         String serviceName = request.getRequest().getServiceName();
         String serviceVersion = request.getRequest().getServiceVersion();
         String methodName = request.getRequest().getMethodName();
         String group = request.getRequest().getGroup();
 
-        logger.info("{}.{}.{}.{}", serviceName, methodName, serviceVersion, group);
+        //logger.info("{}.{}.{}.{}", serviceName, methodName, serviceVersion, group);
+        logger.info("{}.{}.{}", serviceName, methodName, serviceVersion);
 
         //client初次连接 返回server信息
         if (SERVER_INFO.equals(serviceName) && SERVER_INFO.equals(methodName) && SERVER_INFO_VER.equals(serviceVersion)) {
@@ -60,7 +61,8 @@ public class DefaultPhobosRouter implements PhobosRouter {
 
         //调用client端请求的服务
         PhobosContext c = PhobosContext.getInstance();
-        Method method = PhobosContext.getInstance().getMethod(serviceName + "." + methodName + "."  + group + "." + serviceVersion);
+        //Method method = PhobosContext.getInstance().getMethod(serviceName + "." + methodName + "."  + group + "." + serviceVersion);
+        Method method = PhobosContext.getInstance().getMethod(serviceName + "." + methodName + "." + serviceVersion);
         if (method == null) {
             phobosResponse.getResponse().setErrCode(ErrorEnum.UNKNOWN_METHOD.name());
             phobosResponse.getResponse().setSuccess(false);

@@ -15,9 +15,9 @@ import java.util.Map;
  */
 public class SerializaionUtil {
 
-    public static byte[] objectToBytes(Object o, char serializationType) throws Exception {
+    public static byte[] objectToBytes(Object o, byte serializationType) throws Exception {
         byte[] bytes = null;
-        if (o == null) return bytes;
+        //if (o == null) return bytes;
         if (serializationType == Header.SerializationType.MAGPACK.serializationType) {
             if(o instanceof HashMap){
                 o = new HashMapMsgpackTemplate((HashMap) o);
@@ -30,7 +30,7 @@ public class SerializaionUtil {
         return bytes;
     }
 
-    public static <T> T bytesToObject(byte[] bytes, Class<T> clazz, char serializationType) throws Exception {
+    public static <T> T bytesToObject(byte[] bytes, Class<T> clazz, byte serializationType) throws Exception {
         T t = null;
         if(bytes == null ) return  t;
         if (serializationType == Header.SerializationType.MAGPACK.serializationType) {

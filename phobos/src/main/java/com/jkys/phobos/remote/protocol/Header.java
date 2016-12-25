@@ -9,8 +9,8 @@ public class Header {
 
     private static final AtomicLong INVOKE_ID = new AtomicLong(1);
     private short protocolVersion = 1;
-    private char serializationType;
-    private char type;
+    private byte serializationType;
+    private byte type;
     private int size;
     private long sequenceId;
     private long timestamp;
@@ -51,47 +51,47 @@ public class Header {
         this.size = size;
     }
 
-    public char getType() {
+    public byte getType() {
         return type;
     }
 
-    public void setType(char type) {
+    public void setType(byte type) {
         this.type = type;
     }
 
-    public char getSerializationType() {
+    public byte getSerializationType() {
         return serializationType;
     }
 
-    public void setSerializationType(char serializationType) {
+    public void setSerializationType(byte serializationType) {
         this.serializationType = serializationType;
     }
 
     public enum SerializationType {
 
-        JSON('1'), MAGPACK('2'), PROTOBUFF('3');
+        JSON((byte) 1), MAGPACK((byte) 2), PROTOBUFF((byte) 3);
 
-        public final char serializationType;
+        public final byte serializationType;
 
-        private SerializationType(char serializationType) {
+        private SerializationType(byte serializationType) {
             this.serializationType = serializationType;
         }
 
-        public char getSerializationType() {
+        public byte getSerializationType() {
             return serializationType;
         }
     }
 
     public enum Type {
-        DEFAULT('0'), WITHSTREAM('1'), STREAM('2'), CLOSESTREAM('3'), PING('p'), PONG('P');
+        DEFAULT((byte) 0), WITHSTREAM((byte) 1), STREAM((byte) 2), CLOSESTREAM((byte) 3);
 
-        public final char type;
+        public final byte type;
 
-        private Type(char type) {
+        private Type(byte type) {
             this.type = type;
         }
 
-        public char getType() {
+        public byte getType() {
             return type;
         }
     }
