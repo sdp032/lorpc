@@ -140,6 +140,8 @@ public class MsgpackSerializeHandle implements SerializeHandle {
                     }
                 }
                 result = list;
+            }else {
+                result = MsgpackUtil.MESSAGE_PACK.convert(value, clazz);
             }
         }else if(value.isMapValue()){
             if(!Map.class.isAssignableFrom(clazz)) throw new PhobosException(ErrorEnum.INVALID_PARAMS.name(), "参数类型不匹配！");
