@@ -1,17 +1,20 @@
 package com.jkys.phobos.netty.router;
 
+import com.jkys.phobos.codec.SerializeHandle;
+import com.jkys.phobos.codec.SerializeHandleFactory;
 import com.jkys.phobos.constant.ErrorEnum;
-import com.jkys.phobos.remote.protocol.Header;
 import com.jkys.phobos.remote.protocol.PhobosRequest;
 import com.jkys.phobos.remote.protocol.PhobosResponse;
 import com.jkys.phobos.remote.protocol.Response;
 import com.jkys.phobos.server.PhobosContext;
 import com.jkys.phobos.server.ServerInfo;
-import com.jkys.phobos.util.SerializaionUtil;
+import org.msgpack.type.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,17 +34,12 @@ public class DefaultPhobosRouter implements PhobosRouter {
         PhobosContext context = PhobosContext.getInstance();
         PhobosResponse phobosResponse = new PhobosResponse(request.getHeader(), new Response());
 
-        //ping pong
-        /*if(request.getHeader().getType() == Header.Type.PING.type){
-            logger.debug("pong -> sequenceId: {}", request.getHeader().getSequenceId());
-            phobosResponse.getHeader().setType(Header.Type.PONG.type);
-            return phobosResponse;
-        }*/
-
         String serviceName = request.getRequest().getServiceName();
         String serviceVersion = request.getRequest().getServiceVersion();
         String methodName = request.getRequest().getMethodName();
         String group = request.getRequest().getGroup();
+
+        SerializeHandle handle = SerializeHandleFactory.create(request.getHeader().getSerializationType());
 
         //logger.info("{}.{}.{}.{}", serviceName, methodName, serviceVersion, group);
         logger.info("{}.{}.{}", serviceName, methodName, serviceVersion);
@@ -55,7 +53,7 @@ public class DefaultPhobosRouter implements PhobosRouter {
                 serverInfo.getServiceList().add(context.getServerAppName() + "." + iterator.next());
             }
             phobosResponse.getResponse().setSuccess(true);
-            phobosResponse.getResponse().setData(SerializaionUtil.objectToBytes(serverInfo, request.getHeader().getSerializationType()));
+            phobosResponse.getResponse().setData(handle.objectToBytes(serverInfo));
             return phobosResponse;
         }
 
@@ -69,25 +67,11 @@ public class DefaultPhobosRouter implements PhobosRouter {
             return phobosResponse;
         }
 
-        List<byte[]> list = request.getRequest().getObject();
-        int listSize = list == null ? 0 : list.size();
+        byte[] paramsBytes = (byte[]) request.getRequest().getObject().get(0);
         Class<?>[] paramsType = method.getParameterTypes();
-        if (paramsType.length != listSize) {
-            phobosResponse.getResponse().setErrCode(ErrorEnum.INVALID_PARAMS.name());
-            phobosResponse.getResponse().setSuccess(false);
-            return phobosResponse;
-        }
-        Object[] params = new Object[paramsType.length];
-        for (int i = 0; i < paramsType.length; i++) {
-            try {
-                params[i] = SerializaionUtil.bytesToObject(list.get(i), paramsType[i], request.getHeader().getSerializationType());
-            } catch (Exception e) {
-                e.printStackTrace();
-                phobosResponse.getResponse().setErrCode(ErrorEnum.INVALID_PARAMS.name());
-                phobosResponse.getResponse().setSuccess(false);
-                return phobosResponse;
-            }
-        }
+        Type[] genericParamsType = method.getGenericParameterTypes();
+
+        Object[] params = handle.bytesToParams(paramsBytes, paramsType, genericParamsType);
 
         //Object service = method.getDeclaringClass().newInstance();
         Object service = PhobosContext.getInstance().getService(serviceName, group, serviceVersion).getService();
@@ -102,7 +86,7 @@ public class DefaultPhobosRouter implements PhobosRouter {
             phobosResponse.getResponse().setErrMessage("调用服务时出现异常");
             return phobosResponse;
         }
-        phobosResponse.getResponse().setData(SerializaionUtil.objectToBytes(value, request.getHeader().getSerializationType()));
+        phobosResponse.getResponse().setData(handle.objectToBytes(value));
         phobosResponse.getResponse().setSuccess(true);
         return phobosResponse;
     }

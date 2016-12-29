@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class SerializaionUtil {
 
-    public static byte[] objectToBytes(Object o, byte serializationType) throws Exception {
+    /*public static byte[] objectToBytes(Object o, byte serializationType) throws Exception {
         byte[] bytes = null;
         //if (o == null) return bytes;
         if (serializationType == Header.SerializationType.MAGPACK.serializationType) {
@@ -45,5 +45,6 @@ public class SerializaionUtil {
         }
         //TODO 其他反序列化方式
         return t;
-    }
+    }*/
+
 }

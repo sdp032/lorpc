@@ -8,6 +8,8 @@ import com.jkys.phobos.remote.protocol.Header;
 import com.jkys.phobos.remote.protocol.Request;
 import com.jkys.phobos.service.Ha;
 import com.jkys.phobos.service.TestService;
+import com.jkys.phobos.util.ByteUitl;
+import com.jkys.phobos.util.GenericTypeUtil;
 import com.jkys.phobos.util.SerializaionUtil;
 import com.jkys.phobos.util.yaml.BeanRepresenter;
 import com.jkys.phobos.util.yaml.PhobosRepresentr;
@@ -21,12 +23,15 @@ import javassist.bytecode.MethodInfo;
 import org.msgpack.MessagePack;
 import org.msgpack.template.TemplateRegistry;
 import org.msgpack.type.ArrayValue;
+import org.msgpack.type.MapValue;
 import org.msgpack.type.RawValue;
 import org.msgpack.type.Value;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.lang.reflect.Field;
+import java.lang.reflect.*;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.*;
@@ -41,12 +46,42 @@ public class Test {
 
         MessagePack mp = MsgpackUtil.MESSAGE_PACK;
 
-        boolean b = true;
 
-        byte[] bs = mp.write(b);
+        Method method = Ha.class.getMethods()[0];
+        List<List<String>> lists = new LinkedList<>();
+        List<String> list1 = new ArrayList<>();
+        List<String> list2 = new ArrayList<>();
+        list1.add(null);
+        list1.add("1");
+        list2.add("2");
+        list2.add(null);
+        lists.add(list1);
+        lists.add(list2);
 
-        System.out.println();
+        byte[] param1 = mp.write(lists);
 
+        Map<String, List<String>> map = new HashMap();
+        map.put("1", list1);
+
+        byte[] param2 = mp.write(map);
+        Value value = mp.read(param2);
+        if(value.isMapValue()){
+            MapValue mv = value.asMapValue();
+            Value [] vss = mv.getKeyValueArray();
+            System.out.println();
+        }
+
+
+        Class c = method.getParameterTypes()[0];
+        Type t = method.getGenericParameterTypes()[0];
+
+        System.out.println(String[].class.getName());
+
+        Class cc = Class.forName("java.util.List");
+
+        System.out.println(c.getTypeName());
+        System.out.println(t.getTypeName());
+        System.out.println(((ParameterizedType)t).getActualTypeArguments()[0].getTypeName());
     }
 
 
@@ -114,22 +149,13 @@ public class Test {
 
     @org.junit.Test
     public void ser() throws Exception{
+        String s = "调用服务时出现异常";
+        byte[] b = s.getBytes("UTF-8");
+        short sh = (short) b.length;
+        byte[] bsh = ByteUitl.shortToBytes(sh);
+        short sh_ = (short) ((bsh[0] & 0xff) | (bsh[1] & 0xff) << 8);
 
-        System.out.println(HashMap.class.getSuperclass());
-
-        HashMap<String, List<Map<String,String>>> map = new HashMap<>();
-        List<Map<String,String>> list = new ArrayList<>();
-        Map<String,String> m = new HashMap<>();
-        m.put("level3", "hahaha");
-        m.put("l3","xxhxh");
-        list.add(m);
-        map.put("1", list);
-
-        byte[] b = SerializaionUtil.objectToBytes(map, Header.SerializationType.MAGPACK.serializationType);
-
-        HashMap map1 = SerializaionUtil.bytesToObject(b, map.getClass(), Header.SerializationType.MAGPACK.serializationType);
-
-        System.out.println(1);
+        System.out.println();
     }
 
     @org.junit.Test

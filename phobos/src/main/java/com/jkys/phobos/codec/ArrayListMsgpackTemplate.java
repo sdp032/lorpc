@@ -13,7 +13,7 @@ import java.util.List;
 @Message
 public class ArrayListMsgpackTemplate {
 
-    private List<String> valueTypeNames;
+    /*private List<String> valueTypeNames;
     private List<byte[]> values;
 
     public ArrayListMsgpackTemplate(){}
@@ -63,5 +63,5 @@ public class ArrayListMsgpackTemplate {
 
     public void setValues(List<byte[]> values) {
         this.values = values;
-    }
+    }*/
 }

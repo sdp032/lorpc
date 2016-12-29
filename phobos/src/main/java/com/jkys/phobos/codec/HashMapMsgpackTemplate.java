@@ -14,7 +14,7 @@ import java.util.List;
 @Message
 public class HashMapMsgpackTemplate {
 
-    private List<String> keyTypeNames;
+    /*private List<String> keyTypeNames;
     private List<byte[]> keys;
     private List<String> valueTypeNames;
     private List<byte[]> valus;
@@ -84,5 +84,5 @@ public class HashMapMsgpackTemplate {
 
     public void setValus(List<byte[]> valus) {
         this.valus = valus;
-    }
+    }*/
 }

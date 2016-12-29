@@ -5,6 +5,8 @@ import com.jkys.phobos.annotation.PhobosVersion;
 import com.jkys.phobos.client.InvokeInfo;
 import com.jkys.phobos.client.PhobosClientContext;
 import com.jkys.phobos.codec.MsgpackUtil;
+import com.jkys.phobos.codec.SerializeHandle;
+import com.jkys.phobos.codec.SerializeHandleFactory;
 import com.jkys.phobos.exception.PhobosException;
 import com.jkys.phobos.netty.NettyClient;
 import com.jkys.phobos.remote.protocol.Header;
@@ -19,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -74,12 +77,16 @@ public class DefaultPhobosHandler implements PhobosHandler {
         NettyClient client = clientList.get(new Random().nextInt(clientList.size()));
 
         //参数转化成字节流
-        List<byte[]> params = null;
+        /*List<byte[]> params = null;
         if (args != null && args.length > 0) {
             params = new ArrayList();
             for (Object o : args) {
                 params.add(SerializaionUtil.objectToBytes(o, PhobosClientContext.getInstance().getSerializationType()));
             }
+        }*/
+        List<Object> params = new ArrayList<>();
+        if(args != null && args.length > 0){
+            Collections.addAll(params, args);
         }
 
         StringBuffer methodName = new StringBuffer();
@@ -119,9 +126,10 @@ public class DefaultPhobosHandler implements PhobosHandler {
         if (method.getReturnType() == Void.TYPE) {
             return null;
         }
-        return SerializaionUtil.bytesToObject(invokeInfo.getResponse().getResponse().getData(),
-                method.getReturnType(),
-                PhobosClientContext.getInstance().getSerializationType());
+
+        SerializeHandle handle = SerializeHandleFactory.create(PhobosClientContext.getInstance().getSerializationType());
+
+        return handle.bytesToReturnVal(invokeInfo.getResponse().getResponse().getData(), method.getReturnType(), method.getGenericReturnType());
     }
 
     public String getServiceAppName() {

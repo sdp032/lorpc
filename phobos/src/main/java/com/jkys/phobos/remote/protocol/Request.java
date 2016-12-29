@@ -1,7 +1,10 @@
 package com.jkys.phobos.remote.protocol;
 
 import com.jkys.phobos.codec.MsgpackUtil;
+import com.jkys.phobos.codec.SerializeHandle;
+import com.jkys.phobos.codec.SerializeHandleFactory;
 import com.jkys.phobos.exception.PhobosException;
+import com.jkys.phobos.server.PhobosContext;
 import com.jkys.phobos.util.CommonUtil;
 import com.jkys.phobos.util.SerializaionUtil;
 import io.netty.buffer.ByteBuf;
@@ -10,8 +13,10 @@ import org.msgpack.type.ArrayValue;
 import org.msgpack.type.RawValue;
 import org.msgpack.type.Value;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,6 +24,8 @@ import java.util.List;
  */
 @Message
 public class Request {
+
+    private static final String CHARSET = "UTF-8";
 
     private byte[] traceId;
 
@@ -34,7 +41,8 @@ public class Request {
 
     private String group;
 
-    private List<byte[]> object; /*请求参数列表*/
+    //private List<byte[]> object; /*请求参数列表*/
+    private List<Object> object; /*请求参数列表*/
 
     public byte[] getTraceId() {
         return traceId;
@@ -84,11 +92,19 @@ public class Request {
         this.sign = sign;
     }
 
-    public List<byte[]> getObject() {
+   /* public List<byte[]> getObject() {
         return object;
     }
 
     public void setObject(List<byte[]> object) {
+        this.object = object;
+    }*/
+
+    public List<Object> getObject() {
+        return object;
+    }
+
+    public void setObject(List<Object> object) {
         this.object = object;
     }
 
@@ -131,18 +147,18 @@ public class Request {
             throw new PhobosException(null, "traceId wrongful");
         }
 
-        byte[] serviceName = SerializaionUtil.objectToBytes(request.getServiceName(),type);
-        byte[] serviceNameLen = new byte[]{(byte) (serviceName == null ? 0 : serviceName.length)};
-        byte[] serviceVersion = SerializaionUtil.objectToBytes(request.getServiceVersion(),type);
-        byte[] serviceVersionLen = new byte[]{(byte) (serviceVersion == null ? 0 : serviceVersion.length)};
-        byte[] methodName = SerializaionUtil.objectToBytes(request.getMethodName(),type);
-        byte[] methodNameLen = new byte[]{(byte) (methodName == null ? 0 : methodName.length)};
-        byte[] clientAppName = SerializaionUtil.objectToBytes(request.getClientAppName(),type);
-        byte[] clientAppNameLen = new byte[]{(byte) (clientAppName == null ? 0 : clientAppName.length)};
-        byte[] signMethod = SerializaionUtil.objectToBytes(request.getSign().getMethod(),type);
-        byte[] signMethodLen = new byte[]{(byte)(signMethod == null ? 0 : signMethod.length)};
-        byte[] signDigests = SerializaionUtil.objectToBytes(request.getSign().getDigests(),type);
-        byte[] signDigestsLen = new byte[]{(byte)(signDigests == null ? 0 : signDigests.length)};
+        byte[] serviceName = request.getServiceName() == null ? new byte[0] : request.getServiceName().getBytes(Request.CHARSET);
+        byte[] serviceNameLen = new byte[]{(byte)serviceName.length};
+        byte[] serviceVersion = request.getServiceVersion() == null ? new byte[0] : request.getServiceVersion().getBytes(Request.CHARSET);
+        byte[] serviceVersionLen = new byte[]{(byte) serviceVersion.length};
+        byte[] methodName = request.getMethodName() == null ? new byte[0] : request.getMethodName().getBytes(Request.CHARSET) ;
+        byte[] methodNameLen = new byte[]{(byte)methodName.length};
+        byte[] clientAppName = request.getClientAppName() == null ? new byte[0] : request.getClientAppName().getBytes(Request.CHARSET);
+        byte[] clientAppNameLen = new byte[]{(byte)clientAppName.length};
+        byte[] signMethod = request.getSign().getMethod() == null ? new byte[0] : request.getSign().getMethod().getBytes(Request.CHARSET);
+        byte[] signMethodLen = new byte[]{(byte)signMethod.length};
+        byte[] signDigests = request.getSign().getDigests() == null ? new byte[0] : request.getSign().getDigests().getBytes(Request.CHARSET);
+        byte[] signDigestsLen = new byte[]{(byte)signDigests.length};
         byte[] params = MsgpackUtil.MESSAGE_PACK.write(request.getObject());
 
         byte[] body = CommonUtil.concatBytes(traceId, serviceNameLen, serviceName, serviceVersionLen, serviceVersion,
@@ -160,31 +176,39 @@ public class Request {
         request.setTraceId(traceId);
 
         byte[] serviceName = new byte[in.readByte()];
-        in.readBytes(serviceName);
-        request.setServiceName(SerializaionUtil.bytesToObject(serviceName, String.class,type));
+        if(serviceName.length > 0){
+            in.readBytes(serviceName);
+            request.setServiceName(new String(serviceName, Request.CHARSET));
+        }
 
         byte[] serviceVersion = new byte[in.readByte()];
-        in.readBytes(serviceVersion);
-        request.setServiceVersion(SerializaionUtil.bytesToObject(serviceVersion, String.class, type));
+        if(serviceVersion.length > 0){
+            in.readBytes(serviceVersion);
+            request.setServiceVersion(new String(serviceVersion, Request.CHARSET));
+        }
 
         byte[] methodName = new byte[in.readByte()];
-        in.readBytes(methodName);
-        request.setMethodName(SerializaionUtil.bytesToObject(methodName, String.class, type));
+        if(methodName.length > 0){
+            in.readBytes(methodName);
+            request.setMethodName(new String(methodName, Request.CHARSET));
+        }
 
         byte[] clientAppName = new byte[in.readByte()];
-        in.readBytes(clientAppName);
-        request.setClientAppName(SerializaionUtil.bytesToObject(clientAppName, String.class, type));
+        if(clientAppName.length > 0){
+            in.readBytes(clientAppName);
+            request.setClientAppName(new String(clientAppName, Request.CHARSET));
+        }
 
         byte[] signMethod = new byte[in.readByte()];
         if(signMethod.length > 0){
             in.readBytes(signMethod);
-            request.getSign().setMethod(SerializaionUtil.bytesToObject(signMethod, String.class, type));
+            request.getSign().setMethod(new String(signMethod, Request.CHARSET));
         }
 
         byte[] signDigests = new byte[in.readByte()];
         if(signDigests.length > 0){
             in.readBytes(signDigests);
-            request.getSign().setDigests(SerializaionUtil.bytesToObject(signDigests, String.class, type));
+            request.getSign().setDigests(new String(signDigests, Request.CHARSET));
         }
 
         byte[] params = new byte[
@@ -192,19 +216,11 @@ public class Request {
 
         if(params.length > 0){
             in.readBytes(params);
-            Value value = MsgpackUtil.MESSAGE_PACK.read(params);
-            if(value.isNilValue()){
-                request.setObject(null);
-            }else {
-                ArrayList<byte[]> list = new ArrayList<>();
-                Value[] vs = value.asArrayValue().getElementArray();
-                for(Value v : vs){
-                    list.add(v.asRawValue().getByteArray());
-                    request.setObject(list);
-                }
-            }
         }
 
+        List<Object> list = new ArrayList<>();
+        list.add(params);
+        request.setObject(list);
         return request;
     }
 }
