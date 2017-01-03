@@ -1,9 +1,12 @@
 package com.jkys.phobos;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.github.infrmods.xbus.client.XBusClient;
 import com.github.infrmods.xbus.client.XbusConfig;
 import com.jkys.phobos.codec.MsgpackUtil;
 import com.jkys.phobos.codec.MyJavassistTemplateBuilder;
+import com.jkys.phobos.codec.SerializeHandle;
+import com.jkys.phobos.codec.SerializeHandleFactory;
 import com.jkys.phobos.remote.protocol.Header;
 import com.jkys.phobos.remote.protocol.Request;
 import com.jkys.phobos.service.Ha;
@@ -20,6 +23,8 @@ import javassist.CtMethod;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 import javassist.bytecode.MethodInfo;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.msgpack.MessagePack;
 import org.msgpack.template.TemplateRegistry;
 import org.msgpack.type.ArrayValue;
@@ -149,11 +154,9 @@ public class Test {
 
     @org.junit.Test
     public void ser() throws Exception{
-        String s = "调用服务时出现异常";
-        byte[] b = s.getBytes("UTF-8");
-        short sh = (short) b.length;
-        byte[] bsh = ByteUitl.shortToBytes(sh);
-        short sh_ = (short) ((bsh[0] & 0xff) | (bsh[1] & 0xff) << 8);
+
+        Integer a = 99;
+        char c = (char) (int)a;
 
         System.out.println();
     }

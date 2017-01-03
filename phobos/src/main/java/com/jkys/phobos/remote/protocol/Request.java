@@ -147,6 +147,8 @@ public class Request {
             throw new PhobosException(null, "traceId wrongful");
         }
 
+        SerializeHandle handle = SerializeHandleFactory.create(type);
+
         byte[] serviceName = request.getServiceName() == null ? new byte[0] : request.getServiceName().getBytes(Request.CHARSET);
         byte[] serviceNameLen = new byte[]{(byte)serviceName.length};
         byte[] serviceVersion = request.getServiceVersion() == null ? new byte[0] : request.getServiceVersion().getBytes(Request.CHARSET);
@@ -159,7 +161,8 @@ public class Request {
         byte[] signMethodLen = new byte[]{(byte)signMethod.length};
         byte[] signDigests = request.getSign().getDigests() == null ? new byte[0] : request.getSign().getDigests().getBytes(Request.CHARSET);
         byte[] signDigestsLen = new byte[]{(byte)signDigests.length};
-        byte[] params = MsgpackUtil.MESSAGE_PACK.write(request.getObject());
+        /*byte[] params = MsgpackUtil.MESSAGE_PACK.write(request.getObject());*/
+        byte[] params = handle.objectToBytes(request.getObject());
 
         byte[] body = CommonUtil.concatBytes(traceId, serviceNameLen, serviceName, serviceVersionLen, serviceVersion,
                 methodNameLen, methodName, clientAppNameLen, clientAppName, signMethodLen, signMethod, signDigestsLen, signDigests, params);

@@ -3,6 +3,8 @@ package com.jkys.phobos.netty.listener;
 import com.jkys.phobos.client.InvokeInfo;
 import com.jkys.phobos.client.PhobosClientContext;
 import com.jkys.phobos.codec.MsgpackUtil;
+import com.jkys.phobos.codec.SerializeHandle;
+import com.jkys.phobos.codec.SerializeHandleFactory;
 import com.jkys.phobos.netty.NettyClient;
 import com.jkys.phobos.remote.protocol.Header;
 import com.jkys.phobos.remote.protocol.Request;
@@ -33,9 +35,8 @@ public class PhobosChannelActiveListener implements PhobosListener<PhobosChannel
 
         ServerInfo serverInfo = null;
         byte[] data = response.getData();
-        if (header.getSerializationType() == Header.SerializationType.MAGPACK.serializationType) {
-            serverInfo = MsgpackUtil.MESSAGE_PACK.read(data, ServerInfo.class);
-        }
+        SerializeHandle handle = SerializeHandleFactory.create(header.getSerializationType());
+        serverInfo = (ServerInfo) handle.bytesToReturnVal(data, ServerInfo.class, null);
         logger.info("serverName:{}-->", serverInfo.getServerAppName());
         for (String s : serverInfo.getServiceList()) {
             logger.info("service:{}", s);
