@@ -170,56 +170,51 @@ public class Request {
         return body;
     }
 
-    static public Request toRequest(ByteBuf in, byte type, int size) throws Exception{
+    static public Request toRequest(byte[] bytes) throws Exception{
 
         Request request = new Request();
+        int index = 16;
 
-        byte[] traceId = new byte[16];
-        in.readBytes(traceId);
+        byte[] traceId = Arrays.copyOfRange(bytes,0, 16);
         request.setTraceId(traceId);
 
-        byte[] serviceName = new byte[in.readByte()];
+        byte[] serviceName = Arrays.copyOfRange(bytes, index + 1, bytes[index++] + index);
+        index = index + serviceName.length;
         if(serviceName.length > 0){
-            in.readBytes(serviceName);
             request.setServiceName(new String(serviceName, Request.CHARSET));
         }
 
-        byte[] serviceVersion = new byte[in.readByte()];
+        byte[] serviceVersion = Arrays.copyOfRange(bytes, index + 1 , bytes[index++] + index);
+        index = index + serviceVersion.length;
         if(serviceVersion.length > 0){
-            in.readBytes(serviceVersion);
             request.setServiceVersion(new String(serviceVersion, Request.CHARSET));
         }
 
-        byte[] methodName = new byte[in.readByte()];
+        byte[] methodName = Arrays.copyOfRange(bytes, index + 1, bytes[index++] + index);
+        index = index + methodName.length;
         if(methodName.length > 0){
-            in.readBytes(methodName);
             request.setMethodName(new String(methodName, Request.CHARSET));
         }
 
-        byte[] clientAppName = new byte[in.readByte()];
+        byte[] clientAppName = Arrays.copyOfRange(bytes, index + 1, bytes[index++] + index);
+        index = index + clientAppName.length;
         if(clientAppName.length > 0){
-            in.readBytes(clientAppName);
             request.setClientAppName(new String(clientAppName, Request.CHARSET));
         }
 
-        byte[] signMethod = new byte[in.readByte()];
+        byte[] signMethod = Arrays.copyOfRange(bytes, index + 1, bytes[index++] + index);
+        index = index + signMethod.length;
         if(signMethod.length > 0){
-            in.readBytes(signMethod);
             request.getSign().setMethod(new String(signMethod, Request.CHARSET));
         }
 
-        byte[] signDigests = new byte[in.readByte()];
+        byte[] signDigests = Arrays.copyOfRange(bytes, index + 1, bytes[index++] + index);
+        index = index + signDigests.length;
         if(signDigests.length > 0){
-            in.readBytes(signDigests);
             request.getSign().setDigests(new String(signDigests, Request.CHARSET));
         }
 
-        byte[] params = new byte[
-                size - 16 - 6 - serviceName.length - serviceVersion.length - methodName.length - clientAppName.length - signMethod.length - signDigests.length];
-
-        if(params.length > 0){
-            in.readBytes(params);
-        }
+        byte[] params = Arrays.copyOfRange(bytes, index, bytes.length);
 
         List<Object> list = new ArrayList<>();
         list.add(params);

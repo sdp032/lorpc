@@ -79,7 +79,7 @@ public class PhobosClientListener implements ApplicationListener<ContextRefreshe
                 //获取xbus上该服务的地址
                 try {
                     if (!StringUtils.isEmpty(xbusAddrs)) {
-                        XBusClient xBusClient = new XBusClient(new XbusConfig(xbusAddrs, "/home/zdj/Downloads/clitest.ks", "123456"));
+                        XBusClient xBusClient = new XBusClient(new XbusConfig(xbusAddrs, clientContext.getKeystorePath(), clientContext.getKeystorePassword()));
                         Service service = xBusClient.getService(factoryBean.getServiceAppName() + "." + serviceName, version.version());
                         if(service.endpoints.length <= 0){
                             logger.error("not find any long distance service in xbus : {}.{}.{}", factoryBean.getServiceAppName(), serviceName, version.version());

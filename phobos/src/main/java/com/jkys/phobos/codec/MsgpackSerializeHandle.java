@@ -33,8 +33,7 @@ public class MsgpackSerializeHandle implements SerializeHandle {
 
     @Override
     public byte[] objectToBytes(Object o) throws Exception{
-        Object oo = objectToMap(o);
-        return MsgpackUtil.MESSAGE_PACK.write(this.objectToMap(o));
+        return MsgpackUtil.MESSAGE_PACK.write(objectToMap(o));
     }
 
     @Override

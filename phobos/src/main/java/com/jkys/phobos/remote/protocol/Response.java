@@ -6,6 +6,8 @@ import com.jkys.phobos.util.SerializaionUtil;
 import io.netty.buffer.ByteBuf;
 import org.msgpack.annotation.Message;
 
+import java.util.Arrays;
+
 /**
  * Created by frio on 16/7/4.
  */
@@ -82,36 +84,35 @@ public class Response {
         }
     }
 
-    static public Response toResponse(ByteBuf in, byte type, int size) throws Exception{
+    static public Response toResponse(byte[] bytes) throws Exception{
 
         Response response = new Response();
+        int index = 0;
 
-        boolean success = in.readByte() == (byte) 1;
+        boolean success = bytes[index++] == (byte) 1;
         response.setSuccess(success);
         if(success){
-            byte[] data = new byte[size - 1];
-            in.readBytes(data);
-            response.setData(data);
+            response.setData(Arrays.copyOfRange(bytes, 1, bytes.length));
         }else {
-            byte[] code = new byte[in.readByte()];
+            byte[] code = Arrays.copyOfRange(bytes, index + 1, bytes[index++] + index);
             if(code.length > 0){
-                in.readBytes(code);
                 response.setErrCode(new String(code, Response.CHARSET));
             }
-            short errMessageLen = ByteUitl.bytesToShort(new byte[]{in.readByte(), in.readByte()});
-            byte[] errMessage = new byte[errMessageLen];
+            index = index + code.length;
+            short errMessageLen = ByteUitl.bytesToShort(Arrays.copyOfRange(bytes, index, index + 2));
+            index = index + 2;
+            byte[] errMessage = Arrays.copyOfRange(bytes, index, index + errMessageLen);
             if(errMessage.length > 0){
-                in.readBytes(errMessage);
                 response.setErrMessage(new String(errMessage, Response.CHARSET));
             }
-            byte[] applicationErrorType = new byte[in.readByte()];
+            index = index + errMessageLen;
+            byte[] applicationErrorType = Arrays.copyOfRange(bytes, index + 1, bytes[index++] + index);
             if(applicationErrorType.length > 0){
-                in.readBytes(applicationErrorType);
                 response.setApplicationErrorType(new String(applicationErrorType, Response.CHARSET));
             }
-            byte[] body = new byte[size - 5 - code.length - errMessage.length - applicationErrorType.length];
+            index = index + applicationErrorType.length;
+            byte[] body = Arrays.copyOfRange(bytes, index, bytes.length);
             if(body.length > 0){
-                in.readBytes(body);
                 response.setData(body);
             }
         }

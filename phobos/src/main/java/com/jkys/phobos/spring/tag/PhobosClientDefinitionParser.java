@@ -22,6 +22,8 @@ public class PhobosClientDefinitionParser implements BeanDefinitionParser {
         String addr = element.getAttribute("addr");
         String clientAppName = element.getAttribute("clientAppName");
         String serialization = element.getAttribute("serialization");
+        String keystorePath = element.getAttribute("keystorePath");
+        String keystorePassword = element.getAttribute("keystorePassword");
         Integer startTimeOut = Integer.valueOf(element.getAttribute("startTimeOut"));
         Integer requestTimeOut = Integer.valueOf(element.getAttribute("requestTimeOut"));
 
@@ -35,6 +37,8 @@ public class PhobosClientDefinitionParser implements BeanDefinitionParser {
         }
 
         phobosClientContext.setClientAppName(clientAppName);
+        phobosClientContext.setKeystorePath(keystorePath);
+        phobosClientContext.setKeystorePassword(keystorePassword);
         phobosClientContext.setStartTimeOut(startTimeOut);
         phobosClientContext.setRequestTimeOut(requestTimeOut);
 

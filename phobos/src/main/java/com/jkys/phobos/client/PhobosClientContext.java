@@ -19,6 +19,8 @@ public class PhobosClientContext {
     private int requestTimeOut;
     private Set<Class> serializeSet = new HashSet();
     private Map<Long, InvokeInfo> invokeInfoMap = new HashMap();
+    private String keystorePath;
+    private String keystorePassword;
 
     private PhobosClientContext() {
     }
@@ -100,6 +102,22 @@ public class PhobosClientContext {
 
     public InvokeInfo removeInvokeInfo(Long key) {
         return invokeInfoMap.remove(key);
+    }
+
+    public String getKeystorePath() {
+        return keystorePath;
+    }
+
+    public void setKeystorePath(String keystorePath) {
+        this.keystorePath = keystorePath;
+    }
+
+    public String getKeystorePassword() {
+        return keystorePassword;
+    }
+
+    public void setKeystorePassword(String keystorePassword) {
+        this.keystorePassword = keystorePassword;
     }
 
     public void setInvokeInfo(InvokeInfo invokeInfo) {

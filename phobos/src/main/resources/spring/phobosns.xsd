@@ -30,6 +30,8 @@
         <xsd:attribute name="xbusAddr" type="xsd:string"/>
         <xsd:attribute name="addr" type="xsd:string"/>
         <xsd:attribute name="clientAppName" type="xsd:string" use="required"/>
+        <xsd:attribute name="keystorePath" type="xsd:string" use="required"/>
+        <xsd:attribute name="keystorePassword" type="xsd:string" use="required"/>
         <xsd:attribute name="serialization" default="MAGPACK">
             <xsd:simpleType>
                 <xsd:restriction base="xsd:string">
