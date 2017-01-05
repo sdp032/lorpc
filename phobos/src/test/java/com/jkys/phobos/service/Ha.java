@@ -21,4 +21,10 @@ public class Ha {
     public List<String> test(List<List<Map<String,List<String>>>> lists){
         return null;
     }
+
+    public int t(int i){
+        return 1;
+    }
+
+    public void tt (){}
 }

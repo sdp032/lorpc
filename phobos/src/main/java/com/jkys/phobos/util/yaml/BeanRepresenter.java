@@ -56,7 +56,8 @@ public class BeanRepresenter implements Representer<Class> {
 
             if (!"void".equals(method.getReturnType().getName())) {
                 sb.append("\t\treturn:\n\t\t\ttype: ");
-                sb.append(method.getReturnType().getName());
+                //sb.append(method.getReturnType().getName());
+                sb.append(method.getGenericReturnType().getTypeName());
                 sb.append("\n\t\t\tnullable: "+ !method.getReturnType().isPrimitive() +"\n");
             }
 
@@ -72,7 +73,7 @@ public class BeanRepresenter implements Representer<Class> {
                     }
                 }
                 sb.append("\t\t\ttype: ");
-                sb.append(method.getParameterTypes()[i].getName());
+                sb.append(method.getGenericParameterTypes()[i].getTypeName());
 
                 sb.append("\n\t\t\tnullable: "+ !method.getParameterTypes()[i].isPrimitive() +"\n");
             }

@@ -59,7 +59,6 @@ public class DefaultPhobosRouter implements PhobosRouter {
         }
 
         //调用client端请求的服务
-        PhobosContext c = PhobosContext.getInstance();
         //Method method = PhobosContext.getInstance().getMethod(serviceName + "." + methodName + "."  + group + "." + serviceVersion);
         Method method = PhobosContext.getInstance().getMethod(serviceName + "." + methodName + "." + serviceVersion);
         if (method == null) {
