@@ -4,18 +4,15 @@ import com.jkys.phobos.annotation.PhobosGroup;
 import com.jkys.phobos.annotation.PhobosVersion;
 import com.jkys.phobos.client.InvokeInfo;
 import com.jkys.phobos.client.PhobosClientContext;
-import com.jkys.phobos.codec.MsgpackUtil;
 import com.jkys.phobos.codec.SerializeHandle;
 import com.jkys.phobos.codec.SerializeHandleFactory;
+import com.jkys.phobos.config.PhobosConfig;
 import com.jkys.phobos.exception.PhobosException;
 import com.jkys.phobos.netty.NettyClient;
 import com.jkys.phobos.remote.protocol.Header;
 import com.jkys.phobos.remote.protocol.PhobosRequest;
 import com.jkys.phobos.remote.protocol.Request;
-import com.jkys.phobos.server.PhobosContext;
 import com.jkys.phobos.spring.client.Handler.PhobosHandler;
-import com.jkys.phobos.util.SerializaionUtil;
-import org.msgpack.type.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,21 +57,21 @@ public class DefaultPhobosHandler implements PhobosHandler {
         String version = phobosVersionAnnotation.version();
         String group = phobosGroupAnnotation.value();
 
-        String serveiceKey = PhobosContext.generateMethodKey(
-                serviceAppName + "." + method.getDeclaringClass().getName(),
-                method.getName(),
-                group,
-                version,
-                method.getParameterTypes()
-        );
+//        String serveiceKey = PhobosConfig.generateMethodKey(
+//                serviceAppName + "." + method.getDeclaringClass().getName(),
+//                method.getName(),
+//                group,
+//                version,
+//                method.getParameterTypes()
+//        );
+//
+//        logger.info("serveiceKey is {}", serveiceKey);
 
-        logger.info("serveiceKey is {}", serveiceKey);
-
-        List<NettyClient> clientList = PhobosClientContext.getInstance().getConnectInfo().get(serveiceKey);
-        if (null == clientList || clientList.size() == 0) {
-            throw new NullPointerException("client list is null for " + serveiceKey);
-        }
-        NettyClient client = clientList.get(new Random().nextInt(clientList.size()));
+//        List<NettyClient> clientList = PhobosClientContext.getInstance().getConnectInfo().get(serveiceKey);
+//        if (null == clientList || clientList.size() == 0) {
+//            throw new NullPointerException("client list is null for " + serveiceKey);
+//        }
+//        NettyClient client = clientList.get(new Random().nextInt(clientList.size()));
 
         //参数转化成字节流
         /*List<byte[]> params = null;
@@ -113,15 +110,15 @@ public class DefaultPhobosHandler implements PhobosHandler {
         request.getRequest().setTraceId(new byte[16]); //TODO 规则待定
         request.getRequest().setObject(params);
 
-        InvokeInfo invokeInfo = client.send(request);
+//        InvokeInfo invokeInfo = client.send(request);
 
         //服务端异常
-        if(!invokeInfo.getResponse().getResponse().isSuccess()){
-
-            logger.error("{} : {}" , serveiceKey, methodName);
-            logger.error("err code: {}, err message: {}", invokeInfo.getResponse().getResponse().getErrCode(), invokeInfo.getResponse().getResponse().getErrMessage());
-            throw new PhobosException(invokeInfo.getResponse().getResponse().getErrCode(), invokeInfo.getResponse().getResponse().getErrMessage());
-        }
+//        if(!invokeInfo.getResponse().getResponse().isSuccess()){
+//
+//            logger.error("{} : {}" , serveiceKey, methodName);
+//            logger.error("err code: {}, err message: {}", invokeInfo.getResponse().getResponse().getErrCode(), invokeInfo.getResponse().getResponse().getErrMessage());
+//            throw new PhobosException(invokeInfo.getResponse().getResponse().getErrCode(), invokeInfo.getResponse().getResponse().getErrMessage());
+//        }
 
         if (method.getReturnType() == Void.TYPE) {
             return null;
@@ -129,7 +126,8 @@ public class DefaultPhobosHandler implements PhobosHandler {
 
         SerializeHandle handle = SerializeHandleFactory.create(PhobosClientContext.getInstance().getSerializationType());
 
-        return handle.bytesToReturnVal(invokeInfo.getResponse().getResponse().getData(), method.getReturnType(), method.getGenericReturnType());
+//        return handle.bytesToReturnVal(invokeInfo.getResponse().getResponse().getData(), method.getReturnType(), method.getGenericReturnType());
+        return null;
     }
 
     public String getServiceAppName() {

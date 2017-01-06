@@ -1,5 +1,6 @@
 package com.jkys.phobos.server;
 
+import com.jkys.phobos.config.PhobosConfig;
 import org.msgpack.annotation.Message;
 
 import java.io.Serializable;
@@ -16,7 +17,7 @@ public class ServerInfo implements Serializable {
     private List<String> serviceList = new ArrayList();
 
     public ServerInfo() {
-        this.serverAppName = PhobosContext.getInstance().getServerAppName();
+        this.serverAppName = PhobosConfig.getInstance().getAppName();
     }
 
     public List<String> getServiceList() {

@@ -5,6 +5,7 @@ package com.jkys.phobos.constant;
  */
 public enum ErrorEnum {
     SYSTEM_ERROR,
+    UNKNOWN_SERVICE,
     UNKNOWN_METHOD,
     INVALID_PARAMS,
     UNKNOWN_APP,

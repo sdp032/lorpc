@@ -10,8 +10,8 @@ import com.jkys.phobos.annotation.PhobosGroup;
 import com.jkys.phobos.annotation.PhobosVersion;
 import com.jkys.phobos.client.PhobosClientContext;
 import com.jkys.phobos.codec.MsgpackUtil;
+import com.jkys.phobos.config.PhobosConfig;
 import com.jkys.phobos.netty.NettyClient;
-import com.jkys.phobos.server.PhobosContext;
 import com.jkys.phobos.spring.client.beans.PhobosFactoryBean;
 import com.jkys.phobos.util.TypeUtil;
 import org.slf4j.Logger;
@@ -67,14 +67,14 @@ public class PhobosClientListener implements ApplicationListener<ContextRefreshe
                 PhobosGroup group = m.getAnnotation(PhobosGroup.class) == null
                         ? serviceInterface.getAnnotation(PhobosGroup.class)
                         : m.getAnnotation(PhobosGroup.class);
-                String key = PhobosContext.generateMethodKey(
-                        factoryBean.getServiceAppName() + "." + serviceName,
-                        methodName,
-                        group.value(),
-                        version.version(),
-                        m.getParameterTypes()
-                        );
-                connectInfo.put(key, new ArrayList<NettyClient>());
+//                String key = PhobosConfig.generateMethodKey(
+//                        factoryBean.getServiceAppName() + "." + serviceName,
+//                        methodName,
+//                        group.value(),
+//                        version.version(),
+//                        m.getParameterTypes()
+//                        );
+//                connectInfo.put(key, new ArrayList<NettyClient>());
 
                 //获取xbus上该服务的地址
                 try {

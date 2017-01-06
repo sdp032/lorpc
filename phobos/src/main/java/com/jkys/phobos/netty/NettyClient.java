@@ -80,7 +80,7 @@ public class NettyClient {
         } finally {
             group.shutdownGracefully();
             setConnect(false);
-            //clean client context
+            //clean client config
             HashMap<String ,List<NettyClient>> connectInfo = PhobosClientContext.getInstance().getConnectInfo();
             for(List<NettyClient> list : connectInfo.values()){
                 Iterator<NettyClient> it = list.iterator();

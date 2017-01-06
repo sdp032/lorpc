@@ -13,28 +13,16 @@ import org.w3c.dom.Element;
 /**
  * Created by zdj on 2016/7/6.
  */
-public class PhobosClientDefinitionParser implements BeanDefinitionParser {
+public class ConsumerDefinitionParser0 implements BeanDefinitionParser {
 
     public BeanDefinition parse(Element element, ParserContext parserContext) {
-
         PhobosClientContext phobosClientContext = PhobosClientContext.getInstance();
-        String xbusAddr = element.getAttribute("xbusAddr");
-        String addr = element.getAttribute("addr");
         String clientAppName = element.getAttribute("clientAppName");
         String serialization = element.getAttribute("serialization");
         String keystorePath = element.getAttribute("keystorePath");
         String keystorePassword = element.getAttribute("keystorePassword");
         Integer startTimeOut = Integer.valueOf(element.getAttribute("startTimeOut"));
         Integer requestTimeOut = Integer.valueOf(element.getAttribute("requestTimeOut"));
-
-        if (!StringUtils.isEmpty(xbusAddr)) {
-            phobosClientContext.setXbusAddr(xbusAddr.split(","));
-        }
-        if (!StringUtils.isEmpty(addr)) {
-            for (String s : addr.split(",")) {
-                phobosClientContext.getAddr().add(s);
-            }
-        }
 
         phobosClientContext.setClientAppName(clientAppName);
         phobosClientContext.setKeystorePath(keystorePath);

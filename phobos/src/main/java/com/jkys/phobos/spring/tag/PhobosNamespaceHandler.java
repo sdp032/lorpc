@@ -8,8 +8,10 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 public class PhobosNamespaceHandler extends NamespaceHandlerSupport {
 
     public void init() {
-        registerBeanDefinitionParser("registry", new PhobosRegistryDefinitionParser());
-        registerBeanDefinitionParser("service", new PhobosServiceDefinitionParser());
-        registerBeanDefinitionParser("client", new PhobosClientDefinitionParser());
+        registerBeanDefinitionParser("registry", new RegistryDefinitionParser());
+        registerBeanDefinitionParser("provide", new ProviderDefinitionParser());
+        registerBeanDefinitionParser("server", new ServerDefinitionParser());
+        registerBeanDefinitionParser("client", new ClientDefinitionParser());
+        registerBeanDefinitionParser("consumer", new ConsumerDefinitionParser());
     }
 }
