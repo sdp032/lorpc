@@ -1,19 +1,9 @@
 package com.jkys.phobos;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.github.infrmods.xbus.client.XBusClient;
-import com.github.infrmods.xbus.client.XbusConfig;
+import com.github.infrmods.xbus.client.XBusConfig;
 import com.jkys.phobos.codec.MsgpackUtil;
-import com.jkys.phobos.codec.MyJavassistTemplateBuilder;
-import com.jkys.phobos.codec.SerializeHandle;
-import com.jkys.phobos.codec.SerializeHandleFactory;
-import com.jkys.phobos.remote.protocol.Header;
-import com.jkys.phobos.remote.protocol.Request;
 import com.jkys.phobos.service.Ha;
-import com.jkys.phobos.service.TestService;
-import com.jkys.phobos.util.ByteUitl;
-import com.jkys.phobos.util.GenericTypeUtil;
-import com.jkys.phobos.util.SerializaionUtil;
 import com.jkys.phobos.util.yaml.BeanRepresenter;
 import com.jkys.phobos.util.yaml.PhobosRepresentr;
 import com.jkys.phobos.util.yaml.Yaml;
@@ -23,13 +13,8 @@ import javassist.CtMethod;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 import javassist.bytecode.MethodInfo;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.msgpack.MessagePack;
-import org.msgpack.template.TemplateRegistry;
-import org.msgpack.type.ArrayValue;
 import org.msgpack.type.MapValue;
-import org.msgpack.type.RawValue;
 import org.msgpack.type.Value;
 
 import java.io.File;
@@ -92,7 +77,7 @@ public class Test {
 
     @org.junit.Test
     public void xbuxTest() throws Exception {
-        XBusClient xBusClient = new XBusClient(new XbusConfig(new String[]{"xbus.qa.91jkys.com:4433"}, "D://clitest.ks", "123456"));
+        XBusClient xBusClient = new XBusClient(new XBusConfig(new String[]{"xbus.qa.91jkys.com:4433"}, "D://clitest.ks", "123456"));
 
         System.out.println(xBusClient.toString());
     }

@@ -7,13 +7,7 @@
        http://jkys.com/mars/phobos
        http://jkys.com/mars/phobos.xsd">
 
-    <phobos:registry xbusAddr="xbus.qa.91jkys.com:4433"
-                     servicePort="8085"
-                     keystorePath="/home/zdj/Downloads/clitest.ks"
-                     keystorePassword="123456"
-                     serverAppName="clitest"
-                     blocking="true"
-    />
+    <phobos:server bindHost="localhost" />
 
-    <phobos:service id="testService" class="com.jkys.phobos.service.impl.TestServiceImpl"/>
+    <phobos:provide id="testService" class="com.jkys.phobos.service.impl.TestServiceImpl"/>
 </beans>

@@ -17,15 +17,17 @@ public class TestServiceImpl implements TestService {
 
     private HashMap<String, House> map;
 
-    public void test() {
-        System.out.println("hello phobos");
-    }
 
  /*   public House getHouse(House house) {
         System.out.println(house.getLandlord().getName());
         System.out.println(house.getLandlord().getAge());
         return house;
     }*/
+
+    @Override
+    public String hello(String name) {
+        return "hello " + name;
+    }
 
     public List<Map<String, House[]>> getHouse(String str[], Integer i, boolean b, Map<String, Integer[]> m, List<Map<String, House[]>> list) throws Exception {
         System.out.println(str[1]);

@@ -1,7 +1,12 @@
 package com.jkys.phobos.config;
 
+import com.github.infrmods.xbus.client.TLSInitException;
+import com.github.infrmods.xbus.client.XBusClient;
+import com.github.infrmods.xbus.client.XBusConfig;
+import com.jkys.phobos.util.AppEnv;
 import org.cryptacular.util.CertUtil;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.KeyStore;
@@ -12,21 +17,48 @@ import java.security.cert.X509Certificate;
  */
 public class RegistryConfig {
     public static final String NAME = "_phobosRegistryConfig";
+    public static final String AUTO_JKS = "app.jks";
+    public static final String AUTO_JKS_PASSWORD = "123456";
+
     private String endpoint;
-    private String keystorePath;
-    private String keystorePassword;
     private String appName;
 
+    private String keystorePath;
+    private String keystorePassword;
+
+    private String caCertPath;
+    private String certPath;
+    private String keyPath;
+
     public RegistryConfig() {
-        endpoint = "https://xbus.91jkys.com:4433";
-        keystorePath = "app.ks";
-        keystorePassword = "123456";
+        AppEnv env = AppEnv.get();
+        endpoint = env.getEndpoint();
+        if (new File(AUTO_JKS).exists()) {
+            keystorePath = AUTO_JKS;
+            keystorePassword = AUTO_JKS_PASSWORD;
+        } else {
+            caCertPath = env.getCaCertPath();
+            certPath = env.getCertPath();
+            keyPath = env.getKeyPath();
+        }
     }
 
     public RegistryConfig(RegistryConfig other) {
         endpoint = other.endpoint;
         keystorePath = other.keystorePath;
         keystorePassword = other.keystorePassword;
+    }
+
+    public XBusClient getXBus() {
+        XBusConfig config;
+        if (keystorePath != null) {
+            config = new XBusConfig(new String[]{endpoint}, keystorePath, keystorePassword);
+        } else if (keyPath != null) {
+            config = new XBusConfig(new String[]{endpoint}, caCertPath, certPath, keyPath);
+        } else {
+            throw new RuntimeException("missing key config");
+        }
+        return new XBusClient(config);
     }
 
     public String getAppName() {
@@ -62,16 +94,8 @@ public class RegistryConfig {
         this.endpoint = endpoint;
     }
 
-    public String getKeystorePath() {
-        return keystorePath;
-    }
-
     public void setKeystorePath(String keystorePath) {
         this.keystorePath = keystorePath;
-    }
-
-    public String getKeystorePassword() {
-        return keystorePassword;
     }
 
     public void setKeystorePassword(String keystorePassword) {

@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultServerChannelHandler extends AbstractServerChannelHandler {
 
-    private static Logger logger = LoggerFactory.getLogger(DefaultClientChannelHandler.class);
+    private static Logger logger = LoggerFactory.getLogger(DefaultServerChannelHandler.class);
 
     private PhobosRouter router = new DefaultPhobosRouter();
 
@@ -27,6 +27,7 @@ public class DefaultServerChannelHandler extends AbstractServerChannelHandler {
 
         PhobosResponse phobosResponse = router.route(phobosRequest);
 
+        logger.info("request: {}, response: {}", phobosRequest, phobosResponse);
         ctx.writeAndFlush(phobosResponse);
 
     }

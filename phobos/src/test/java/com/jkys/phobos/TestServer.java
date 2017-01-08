@@ -1,5 +1,6 @@
 package com.jkys.phobos;
 
+import com.jkys.phobos.spring.server.ServerBean;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -10,8 +11,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class TestServer {
 
     @Test
-    public void test() {
+    public void test() throws InterruptedException {
         ApplicationContext context = new ClassPathXmlApplicationContext("spring/server-application.xml");
-
+        ServerBean serverBean = (ServerBean) context.getBean(ServerBean.NAME);
+        serverBean.joinServer();
     }
 }

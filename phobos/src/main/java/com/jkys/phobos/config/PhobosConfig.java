@@ -5,15 +5,12 @@ public class PhobosConfig {
     private ServerConfig server = new ServerConfig();
     private ClientConfig client = new ClientConfig();
 
-    private static PhobosConfig phobosContext = null;
+    private static PhobosConfig phobosContext = new PhobosConfig();
 
     private PhobosConfig() {
     }
 
-    public synchronized static PhobosConfig getInstance() {
-        if (phobosContext == null) {
-            phobosContext = new PhobosConfig();
-        }
+    public static PhobosConfig getInstance() {
         return phobosContext;
     }
 

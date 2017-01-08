@@ -2,8 +2,8 @@ package com.jkys.phobos.service;
 
 import com.jkys.phobos.House;
 import com.jkys.phobos.annotation.Param;
-import com.jkys.phobos.annotation.PhobosGroup;
-import com.jkys.phobos.annotation.PhobosVersion;
+import com.jkys.phobos.annotation.ServiceName;
+import com.jkys.phobos.annotation.ServiceVersion;
 
 import java.util.List;
 import java.util.Map;
@@ -11,11 +11,11 @@ import java.util.Map;
 /**
  * Created by zdj on 2016/7/1.
  */
-@PhobosGroup("group1")
-@PhobosVersion(version = "V2.5")
+@ServiceName("clitest.test-service")
+@ServiceVersion(version = "V2.5")
 public interface TestService {
 
-    void test();
+    String hello(String name);
 
     /*House getHouse(House list);*/
 

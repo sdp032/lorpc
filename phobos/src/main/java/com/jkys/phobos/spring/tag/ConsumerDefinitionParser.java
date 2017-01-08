@@ -1,5 +1,7 @@
 package com.jkys.phobos.spring.tag;
 
+import com.jkys.phobos.annotation.ServiceName;
+import com.jkys.phobos.annotation.ServiceVersion;
 import com.jkys.phobos.spring.client.beans.ClientBean;
 import com.jkys.phobos.spring.client.beans.PhobosFactoryBean;
 import org.springframework.beans.MutablePropertyValues;
@@ -22,6 +24,20 @@ public class ConsumerDefinitionParser implements BeanDefinitionParser {
             // FIXME
             throw new RuntimeException(e);
         }
+        if (!interfaceCls.isInterface()) {
+            throw new RuntimeException("invalid interface");
+        }
+        ServiceName name = interfaceCls.getAnnotation(ServiceName.class);
+        if (name == null || name.value().equals("")) {
+            // FIXME exception
+            throw new RuntimeException("invalid service name");
+        }
+        ServiceVersion version = interfaceCls.getAnnotation(ServiceVersion.class);
+        if (version == null || version.version().equals("")) {
+            // FIXME exception
+            throw new RuntimeException("invalid version");
+        }
+
         if (!parserContext.getRegistry().containsBeanDefinition(ClientBean.NAME)) {
             RootBeanDefinition clientBean = new RootBeanDefinition();
             clientBean.setBeanClass(ClientBean.class);
@@ -31,9 +47,15 @@ public class ConsumerDefinitionParser implements BeanDefinitionParser {
         RootBeanDefinition beanDefinition = new RootBeanDefinition();
         beanDefinition.setBeanClass(PhobosFactoryBean.class);
         MutablePropertyValues values = new MutablePropertyValues();
-        values.addPropertyValue("phobosInterface", interfaceCls);
+        values.addPropertyValue("serviceInterface", interfaceCls);
+        values.addPropertyValue("serviceName", name.value());
+        values.addPropertyValue("serviceVersion", version.version());
         beanDefinition.setPropertyValues(values);
-        parserContext.getRegistry().registerBeanDefinition(element.getAttribute("id"), beanDefinition);
+        String id = element.getAttribute("id");
+        if (id.equals("")) {
+            id = "_phbos_consume_" + name.value() + "_" + version.version();
+        }
+        parserContext.getRegistry().registerBeanDefinition(id, beanDefinition);
         return beanDefinition;
     }
 }

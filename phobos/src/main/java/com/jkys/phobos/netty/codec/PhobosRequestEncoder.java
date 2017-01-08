@@ -31,9 +31,8 @@ public class PhobosRequestEncoder extends MessageToByteEncoder <PhobosRequest>{
         if(request == null)
             throw new NullPointerException("Request is null");
 
-        //byte[] body = SerializaionUtil.objectToBytes(request,header.getSerializationType());
         byte[] body = null;
-        if(header.getType() == (byte) 0){
+        if(header.getType() == Header.Type.DEFAULT.getType()){
             body = Request.toBytes(request, header.getSerializationType());
         }
 

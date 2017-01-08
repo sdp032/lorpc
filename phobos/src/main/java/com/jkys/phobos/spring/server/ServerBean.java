@@ -20,6 +20,7 @@ public class ServerBean implements ApplicationListener<ContextRefreshedEvent> {
     public static final String NAME = "_phobosServerBean";
     private static NettyServer nettyServer = null;
     private static ConcurrentHashMap<String, Provider> providers = new ConcurrentHashMap<>();
+    private Thread serverThread = null;
 
     public static void register(Class<?> implClass) {
         Provider provider = new Provider(implClass);
@@ -29,7 +30,7 @@ public class ServerBean implements ApplicationListener<ContextRefreshedEvent> {
         }
     }
 
-    private synchronized static void trigger(ApplicationContext appCtx) {
+    private synchronized void trigger(ApplicationContext appCtx) {
         if (nettyServer != null) {
             return;
         }
@@ -52,11 +53,19 @@ public class ServerBean implements ApplicationListener<ContextRefreshedEvent> {
         }
 
         nettyServer = new NettyServer();
-        nettyServer.noBlockOpen();
+        serverThread = nettyServer.noBlockOpen();
     }
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         trigger(event.getApplicationContext());
+    }
+
+    public void joinServer() throws InterruptedException {
+        synchronized (this) {
+            if (serverThread != null) {
+                serverThread.join();
+            }
+        }
     }
 }

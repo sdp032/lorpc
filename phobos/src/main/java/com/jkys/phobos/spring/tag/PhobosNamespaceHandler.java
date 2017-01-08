@@ -9,9 +9,9 @@ public class PhobosNamespaceHandler extends NamespaceHandlerSupport {
 
     public void init() {
         registerBeanDefinitionParser("registry", new RegistryDefinitionParser());
-        registerBeanDefinitionParser("provide", new ProviderDefinitionParser());
         registerBeanDefinitionParser("server", new ServerDefinitionParser());
+        registerBeanDefinitionParser("provide", new ProviderDefinitionParser());
         registerBeanDefinitionParser("client", new ClientDefinitionParser());
-        registerBeanDefinitionParser("consumer", new ConsumerDefinitionParser());
+        registerBeanDefinitionParser("consume", new ConsumerDefinitionParser());
     }
 }

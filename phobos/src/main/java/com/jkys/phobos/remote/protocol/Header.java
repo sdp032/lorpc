@@ -67,21 +67,6 @@ public class Header {
         this.serializationType = serializationType;
     }
 
-    public enum SerializationType {
-
-        JSON((byte) 1), MAGPACK((byte) 2), PROTOBUFF((byte) 3);
-
-        public final byte serializationType;
-
-        private SerializationType(byte serializationType) {
-            this.serializationType = serializationType;
-        }
-
-        public byte getSerializationType() {
-            return serializationType;
-        }
-    }
-
     public enum Type {
         DEFAULT((byte) 0), WITHSTREAM((byte) 1), STREAM((byte) 2), CLOSESTREAM((byte) 3);
 

@@ -48,18 +48,18 @@
         <xsd:complexContent>
             <xsd:extension base="beans:identifiedType">
                 <xsd:attribute name="interface" type="xsd:string" use="required"/>
+                <xsd:attribute name="serialization" default="MSGPACK">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value="JSON"/>
+                            <xsd:enumeration value="MSGPACK"/>
+                            <xsd:enumeration value="PROTOBUFF"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:attribute>
+                <xsd:attribute name="requestTimeout" type="xsd:int"/>
+                <xsd:attribute name="address" type="xsd:string"/>
             </xsd:extension>
         </xsd:complexContent>
-        <xsd:attribute name="serialization" default="MSGPACK">
-            <xsd:simpleType>
-                <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="JSON"/>
-                    <xsd:enumeration value="MSGPACK"/>
-                    <xsd:enumeration value="PROTOBUFF"/>
-                </xsd:restriction>
-            </xsd:simpleType>
-        </xsd:attribute>
-        <xsd:attribute name="requestTimeout" type="xsd:int"/>
-        <xsd:attribute name="address" type="xsd:string"/>
     </xsd:complexType>
 </xsd:schema>

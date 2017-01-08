@@ -2,7 +2,6 @@ package com.jkys.phobos.job;
 
 import com.github.infrmods.xbus.client.TLSInitException;
 import com.github.infrmods.xbus.client.XBusClient;
-import com.github.infrmods.xbus.client.XbusConfig;
 import com.github.infrmods.xbus.exceptions.XBusException;
 import com.github.infrmods.xbus.item.ServiceDesc;
 import com.github.infrmods.xbus.item.ServiceEndpoint;
@@ -31,11 +30,7 @@ public class XbusTask extends Task {
 
     public XbusTask(long initialDelay, long period, TimeUnit timeUnit) throws TLSInitException {
         super(initialDelay, period, timeUnit);
-        PhobosConfig config = PhobosConfig.getInstance();
-        client = new XBusClient(new XbusConfig(
-                new String[]{config.getRegistry().getEndpoint()},
-                config.getRegistry().getKeystorePath(),
-                config.getRegistry().getKeystorePassword()));
+        client = PhobosConfig.getInstance().getRegistry().getXBus();
     }
 
     @Override

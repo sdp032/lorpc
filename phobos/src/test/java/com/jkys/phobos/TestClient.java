@@ -2,6 +2,8 @@ package com.jkys.phobos;
 
 import com.jkys.phobos.service.TestService;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -15,10 +17,10 @@ import java.util.Map;
  */
 public class TestClient {
     @Test
-    public void test() throws Exception{
+    public void testClient() throws Exception{
         ApplicationContext context = new ClassPathXmlApplicationContext("spring/client-application.xml");
 
-        TestService testService = (TestService) context.getBean("test");
+        TestService testService = context.getBean(TestService.class);
         //testService.test();
         String[] s = new String[]{"s", "i am string[]"};
         Map<String, Integer[]> map = new HashMap<>();
@@ -33,8 +35,9 @@ public class TestClient {
         List<Map<String, House[]>> r = null;
         try {
             r = testService.getHouse(new String[]{"1","2"}, 1, false, map, list);
-        }catch (Exception e){
-            e.getStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
         }
         System.out.println("****************"+r.get(1).get("1")[1].getLandlord().getName());
     }

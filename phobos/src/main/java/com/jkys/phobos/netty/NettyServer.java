@@ -10,7 +10,6 @@ import com.jkys.phobos.netty.codec.PhobosResponseEncoder;
 import com.jkys.phobos.netty.codec.PhotosRequestDecoder;
 import com.jkys.phobos.config.PhobosConfig;
 import com.jkys.phobos.server.ServerContext;
-import com.jkys.phobos.util.CommonUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -87,9 +86,9 @@ public class NettyServer {
         }
     }
 
-    public void noBlockOpen() {
+    public Thread noBlockOpen() {
         logger.info("netty服务器启动中。。。");
-        new Thread(new Runnable() {
+        Thread t = new Thread(new Runnable() {
             public void run() {
                 try {
                     open();
@@ -98,7 +97,8 @@ public class NettyServer {
                     System.exit(0);
                 }
             }
-        }).start();
+        });
+        t.start();
         try {
             listenOpen();
         } catch (InterruptedException e) {
@@ -106,13 +106,6 @@ public class NettyServer {
             System.exit(0);
         }
         logger.info("netty服务器启动完成。。。");
-    }
-
-    public Class<? extends AbstractServerChannelHandler> getHandlerClass() {
-        return handlerClass;
-    }
-
-    public void setHandlerClass(Class<? extends AbstractServerChannelHandler> handlerClass) {
-        this.handlerClass = handlerClass;
+        return t;
     }
 }

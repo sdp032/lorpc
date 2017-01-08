@@ -30,8 +30,6 @@ public class Request {
 
     private Sign sign = new Sign();
 
-    private String group;
-
     //private List<byte[]> object; /*请求参数列表*/
     private List<Object> object; /*请求参数列表*/
 
@@ -97,14 +95,6 @@ public class Request {
 
     public void setObject(List<Object> object) {
         this.object = object;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public void setGroup(String group) {
-        this.group = group;
     }
 
     @Message

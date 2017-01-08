@@ -8,13 +8,13 @@ public enum SerializationType {
     Msgpack(2),
     Protobuf(3);
 
-    private int type;
+    private byte type;
 
-    SerializationType(int typee) {
-        this.type = type;
+    SerializationType(int type) {
+        this.type = (byte) type;
     }
 
-    public int getType() {
+    public byte getType() {
         return type;
     }
 

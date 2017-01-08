@@ -1,8 +1,8 @@
 package com.jkys.phobos.server;
 
 import com.github.infrmods.xbus.item.ServiceDesc;
-import com.jkys.phobos.annotation.PhobosGroup;
-import com.jkys.phobos.annotation.PhobosVersion;
+import com.jkys.phobos.annotation.ServiceName;
+import com.jkys.phobos.annotation.ServiceVersion;
 import com.jkys.phobos.annotation.Rename;
 import com.jkys.phobos.codec.SerializeHandle;
 import com.jkys.phobos.constant.ErrorEnum;
@@ -48,15 +48,15 @@ public class Provider {
         }
         serviceInterface = interfaces[0];
 
-        PhobosGroup name = serviceInterface.getAnnotation(PhobosGroup.class);
-        if (name.value().equals("")) {
+        ServiceName name = serviceInterface.getAnnotation(ServiceName.class);
+        if (name == null || name.value().equals("")) {
             // FIXME exception
             throw new RuntimeException("invalid service name");
         }
         this.name = name.value();
 
-        PhobosVersion version = serviceInterface.getAnnotation(PhobosVersion.class);
-        if (version.version().equals("")) {
+        ServiceVersion version = serviceInterface.getAnnotation(ServiceVersion.class);
+        if (version == null || version.version().equals("")) {
             // FIXME exception
             throw new RuntimeException("invalid version");
         }
