@@ -2,8 +2,7 @@ package com.jkys.phobos.service;
 
 import com.jkys.phobos.House;
 import com.jkys.phobos.annotation.Param;
-import com.jkys.phobos.annotation.ServiceName;
-import com.jkys.phobos.annotation.ServiceVersion;
+import com.jkys.phobos.annotation.Service;
 
 import java.util.List;
 import java.util.Map;
@@ -11,8 +10,7 @@ import java.util.Map;
 /**
  * Created by zdj on 2016/7/1.
  */
-@ServiceName("clitest.test-service")
-@ServiceVersion(version = "V2.5")
+@Service("clitest.test-service:V2.5")
 public interface TestService {
 
     String hello(String name);

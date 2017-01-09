@@ -1,9 +1,9 @@
 package com.jkys.phobos.server;
 
 import com.github.infrmods.xbus.item.ServiceDesc;
-import com.jkys.phobos.annotation.ServiceName;
-import com.jkys.phobos.annotation.ServiceVersion;
+import com.jkys.phobos.annotation.Service;
 import com.jkys.phobos.annotation.Rename;
+import com.jkys.phobos.annotation.ServiceUtil;
 import com.jkys.phobos.codec.SerializeHandle;
 import com.jkys.phobos.constant.ErrorEnum;
 import com.jkys.phobos.exception.PhobosException;
@@ -48,19 +48,14 @@ public class Provider {
         }
         serviceInterface = interfaces[0];
 
-        ServiceName name = serviceInterface.getAnnotation(ServiceName.class);
-        if (name == null || name.value().equals("")) {
+        Service service = serviceInterface.getAnnotation(Service.class);
+        if (service == null) {
             // FIXME exception
-            throw new RuntimeException("invalid service name");
+            throw new RuntimeException("missing service");
         }
-        this.name = name.value();
-
-        ServiceVersion version = serviceInterface.getAnnotation(ServiceVersion.class);
-        if (version == null || version.version().equals("")) {
-            // FIXME exception
-            throw new RuntimeException("invalid version");
-        }
-        this.version = version.version();
+        String[] nameVersion = ServiceUtil.splitServiceKey(service);
+        name = nameVersion[0];
+        version = nameVersion[1];
 
         Yaml yaml = new Yaml(new PhobosRepresentr(new BeanRepresenter()));
         try {

@@ -7,6 +7,7 @@ import com.github.infrmods.xbus.exceptions.XBusException;
 import com.github.infrmods.xbus.item.Service;
 import com.github.infrmods.xbus.item.ServiceEndpoint;
 import com.jkys.phobos.config.PhobosConfig;
+import com.jkys.phobos.config.ServerConfig;
 import com.jkys.phobos.netty.NettyClient;
 import com.jkys.phobos.remote.protocol.PhobosRequest;
 import com.jkys.phobos.remote.protocol.PhobosResponse;
@@ -26,6 +27,7 @@ public class ClientBus {
     private Random r = new Random();
     private EventLoopGroup eventLoopGroup;
     private XBusClient xbus;
+    private ConcurrentHashMap<String, ServiceEndpoint[]> presetEndpoints = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, List<NettyClient>> serviceClients = new ConcurrentHashMap<>();
 
     ClientBus() {
@@ -36,6 +38,14 @@ public class ClientBus {
             // FIXME
             throw new RuntimeException(e);
         }
+    }
+
+    public void presetAddress(String name, String version, String address) {
+        if (!address.contains(":")) {
+            address = address + ":" + ServerConfig.DEFAULT_PORT;
+        }
+        ServiceEndpoint endpoint = new ServiceEndpoint(address, null);
+        presetEndpoints.put(name + ":" + version, new ServiceEndpoint[]{endpoint});
     }
 
     public PhobosResponse request(PhobosRequest request, long timeout, TimeUnit unit) throws InterruptedException {
@@ -57,24 +67,28 @@ public class ClientBus {
             return clients;
         }
 
-        Service service;
-        try {
-            service = xbus.getService(name, version);
-        } catch (NotFoundException ignored) {
-            return null;
-        } catch (XBusException e) {
-            // FIXME
-            throw new RuntimeException(e);
+        ServiceEndpoint[] endpoints = presetEndpoints.get(key);
+        if (endpoints == null) {
+            Service service;
+            try {
+                service = xbus.getService(name, version);
+            } catch (NotFoundException ignored) {
+                return null;
+            } catch (XBusException e) {
+                // FIXME
+                throw new RuntimeException(e);
+            }
+            endpoints = service.endpoints;
         }
 
-        if (service.endpoints != null) {
+        if (endpoints != null) {
             synchronized (this) {
                 clients = serviceClients.get(key);
                 if (clients != null) {
                     return clients;
                 }
                 clients = new ArrayList<>();
-                for (ServiceEndpoint endpoint : service.endpoints) {
+                for (ServiceEndpoint endpoint : endpoints) {
                     NettyClient client = new NettyClient(key,
                             endpoint.getHost(), endpoint.getPort(), eventLoopGroup);
                     client.connect();

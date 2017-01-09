@@ -94,7 +94,7 @@ public class Test {
 
     @org.junit.Test
     public void mapType() throws Exception {
-        System.out.println(System.getProperty("java.version"));
+        System.out.println(System.getProperty("java.value"));
         ClassPool classPool = ClassPool.getDefault();
         CtClass ctClass = classPool.makeClass(new FileInputStream(new File("C:\\Users\\zdj\\Desktop\\Test.class")));
 

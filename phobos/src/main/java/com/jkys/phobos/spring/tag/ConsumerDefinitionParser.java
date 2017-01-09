@@ -1,7 +1,8 @@
 package com.jkys.phobos.spring.tag;
 
-import com.jkys.phobos.annotation.ServiceName;
-import com.jkys.phobos.annotation.ServiceVersion;
+import com.jkys.phobos.annotation.Service;
+import com.jkys.phobos.annotation.ServiceUtil;
+import com.jkys.phobos.client.ClientContext;
 import com.jkys.phobos.spring.client.beans.ClientBean;
 import com.jkys.phobos.spring.client.beans.PhobosFactoryBean;
 import org.springframework.beans.MutablePropertyValues;
@@ -27,15 +28,15 @@ public class ConsumerDefinitionParser implements BeanDefinitionParser {
         if (!interfaceCls.isInterface()) {
             throw new RuntimeException("invalid interface");
         }
-        ServiceName name = interfaceCls.getAnnotation(ServiceName.class);
-        if (name == null || name.value().equals("")) {
-            // FIXME exception
-            throw new RuntimeException("invalid service name");
+        Service service = interfaceCls.getAnnotation(Service.class);
+        if (service == null) {
+            throw new RuntimeException("missing Service");
         }
-        ServiceVersion version = interfaceCls.getAnnotation(ServiceVersion.class);
-        if (version == null || version.version().equals("")) {
-            // FIXME exception
-            throw new RuntimeException("invalid version");
+        String[] nameVersion = ServiceUtil.splitServiceKey(service);
+
+        String address = element.getAttribute("address");
+        if (address != null && !address.equals("")) {
+            ClientContext.getInstance().presetAddress(nameVersion[0], nameVersion[1], address);
         }
 
         if (!parserContext.getRegistry().containsBeanDefinition(ClientBean.NAME)) {
@@ -48,12 +49,12 @@ public class ConsumerDefinitionParser implements BeanDefinitionParser {
         beanDefinition.setBeanClass(PhobosFactoryBean.class);
         MutablePropertyValues values = new MutablePropertyValues();
         values.addPropertyValue("serviceInterface", interfaceCls);
-        values.addPropertyValue("serviceName", name.value());
-        values.addPropertyValue("serviceVersion", version.version());
+        values.addPropertyValue("serviceName", nameVersion[0]);
+        values.addPropertyValue("serviceVersion", nameVersion[1]);
         beanDefinition.setPropertyValues(values);
         String id = element.getAttribute("id");
         if (id.equals("")) {
-            id = "_phbos_consume_" + name.value() + "_" + version.version();
+            id = "_phbos_consume_" + nameVersion[0] + "_" + nameVersion[1];
         }
         parserContext.getRegistry().registerBeanDefinition(id, beanDefinition);
         return beanDefinition;

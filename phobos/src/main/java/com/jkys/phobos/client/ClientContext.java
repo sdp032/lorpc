@@ -19,6 +19,10 @@ public class ClientContext {
         return clientContext;
     }
 
+    public void presetAddress(String name, String version, String address) {
+        clientBus.presetAddress(name, version, address);
+    }
+
     public PhobosResponse request(PhobosRequest request, long timeout, TimeUnit unit) throws InterruptedException {
         return clientBus.request(request, timeout, unit);
     }
