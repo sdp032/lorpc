@@ -6,7 +6,7 @@ import java.util.Map;
  * Created by lo on 1/7/17.
  */
 public class AppEnv {
-    public static final String DEFAULT_ENDPOINT = "https://xbus.91jkys.com:4433";
+    public static final String DEFAULT_ENDPOINT = "xbus.qa.91jkys.com:4433";
 
     private String name;
     private String endpoint;
