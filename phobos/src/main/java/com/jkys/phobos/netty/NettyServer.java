@@ -1,5 +1,6 @@
 package com.jkys.phobos.netty;
 
+import com.github.infrmods.xbus.item.ServiceDesc;
 import com.github.infrmods.xbus.item.ServiceEndpoint;
 import com.jkys.phobos.config.ServerConfig;
 import com.jkys.phobos.job.Scheduled;

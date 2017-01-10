@@ -7,8 +7,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by zdj on 2016/11/18.
@@ -19,7 +18,14 @@ public class BeanRepresenter implements Representer<Class> {
 
         StringBuffer sb = new StringBuffer();
         String name = aClass.getName();
-        Method[] methods = aClass.getDeclaredMethods();
+        Method[] _methods = aClass.getDeclaredMethods();
+        List<Method> methods = Arrays.asList(_methods);
+        Collections.sort(methods, new Comparator<Method>() {
+            @Override
+            public int compare(Method m1, Method m2) {
+                return m1.getName().compareTo(m1.getName());
+            }
+        });
 
         sb.append(name);
         sb.append(":\n");

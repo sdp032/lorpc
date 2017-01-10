@@ -140,10 +140,18 @@ public class Test {
     @org.junit.Test
     public void ser() throws Exception{
 
-        Integer a = 99;
-        char c = (char) (int)a;
+        MessagePack mp = MsgpackUtil.MESSAGE_PACK;
+
+        House<User> house = new House<>();
+        house.setT(new User());
+
+        byte[] b = mp.write(house);
+        Value v = mp.read(b);
+
+        House h = mp.convert(v, House.class);
 
         System.out.println();
+
     }
 
     @org.junit.Test
