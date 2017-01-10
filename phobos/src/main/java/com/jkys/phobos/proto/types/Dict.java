@@ -4,6 +4,8 @@ import com.jkys.phobos.proto.ProtoContext;
 import com.jkys.phobos.proto.ValueNotNull;
 
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 
 /**
@@ -13,11 +15,17 @@ public class Dict extends ProtoType {
     private ProtoType keyType;
     private ProtoType valueType;
 
-    Dict(ProtoContext ctx, Class<?> cls, AnnotatedElement ele) {
-        super(ctx, cls, ele);
-        TypeVariable<? extends Class<?>>[] vars = cls.getTypeParameters();
-        keyType = TypeResolver.resolve(ctx, vars[0].getClass(), null);
-        valueType = TypeResolver.resolve(ctx, vars[1].getClass(), null);
+    Dict(ProtoContext ctx, Type type, AnnotatedElement ele) {
+        super(ctx, type, ele);
+        if (!(type instanceof ParameterizedType)) {
+            // FIXME
+            throw new RuntimeException("unknown map types");
+        }
+        Type[] types = ((ParameterizedType) type).getActualTypeArguments();
+        keyType = TypeResolver.resolve(ctx, types[0], null);
+        // TODO key type nullable
+        keyType.setNullable(false);
+        valueType = TypeResolver.resolve(ctx, types[2], null);
         valueType.setNullable(ele.getAnnotation(ValueNotNull.class) == null);
     }
 

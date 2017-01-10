@@ -3,6 +3,7 @@ package com.jkys.phobos.proto.types;
 import com.jkys.phobos.proto.ProtoContext;
 
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,17 +14,20 @@ public class TypeResolver {
     private static Map<String, TypeBuilder> builders = new HashMap<>();
     private static TypeBuilder objBuilder = Obj::new;
 
-    public static ProtoType resolve(ProtoContext ctx, Class<?> cls, AnnotatedElement ele) {
-        String clsName = cls.getName();
+    public static ProtoType resolve(ProtoContext ctx, Type type, AnnotatedElement ele) {
+        String clsName = type.getTypeName();
+        if (clsName.contains("<")) {
+            clsName = clsName.substring(clsName.indexOf("<"));
+        }
 
         if (clsName.startsWith("[")) {
-            return new Ary(ctx, cls, ele);
+            return new Ary(ctx, type, ele);
         } else {
-            TypeBuilder builder = builders.get(cls.getName());
+            TypeBuilder builder = builders.get(clsName);
             if (builder != null) {
-                return builder.build(ctx, cls, ele);
+                return builder.build(ctx, type, ele);
             }
-            return objBuilder.build(ctx, cls, ele);
+            return objBuilder.build(ctx, type, ele);
         }
     }
 
@@ -31,16 +35,16 @@ public class TypeResolver {
         builders.put("java.lang.String", Str::new);
         builders.put("boolean", Bool::new);
         builders.put("java.lang.Boolean", Bool::new);
-        builders.put("int", (ctx, cls, ele) -> new Int(false, 32, ctx, cls,  ele));
-        builders.put("java.lang.Integer", (ctx, cls, ele) -> new Int(false, 32, ctx, cls,  ele));
-        builders.put("long", (ctx, cls, ele) -> new Int(false, 64, ctx, cls,  ele));
-        builders.put("java.lang.Long", (ctx, cls, ele) -> new Int(false, 64, ctx, cls, ele));
+        builders.put("int", (ctx, type, ele) -> new Int(false, 32, ctx, type,  ele));
+        builders.put("java.lang.Integer", (ctx, type, ele) -> new Int(false, 32, ctx, type,  ele));
+        builders.put("long", (ctx, type, ele) -> new Int(false, 64, ctx, type,  ele));
+        builders.put("java.lang.Long", (ctx, type, ele) -> new Int(false, 64, ctx, type, ele));
         builders.put("float", Float32::new);
         builders.put("java.lang.Float", Float32::new);
         builders.put("double", Float32::new);
         builders.put("java.lang.Double", Float64::new);
-        builders.put("byte", (ctx, cls, ele) -> new Int(false, 8, ctx, cls, ele));
-        builders.put("java.lang.Byte", (ctx, cls, ele) -> new Int(false, 8, ctx, cls, ele));
+        builders.put("byte", (ctx, type, ele) -> new Int(false, 8, ctx, type, ele));
+        builders.put("java.lang.Byte", (ctx, type, ele) -> new Int(false, 8, ctx, type, ele));
         builders.put("java.util.ArrayList", Ary::new);
         builders.put("java.util.LinkedList", Ary::new);
         builders.put("java.util.HashMap", Dict::new);
@@ -50,6 +54,6 @@ public class TypeResolver {
     }
 
     private interface TypeBuilder {
-        ProtoType build(ProtoContext ctx, Class<?> cls, AnnotatedElement ele);
+        ProtoType build(ProtoContext ctx, Type type, AnnotatedElement ele);
     }
 }

@@ -4,6 +4,7 @@ import com.jkys.phobos.proto.NotNull;
 import com.jkys.phobos.proto.ProtoContext;
 
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Type;
 import java.util.Set;
 
 /**
@@ -12,20 +13,21 @@ import java.util.Set;
 public abstract class ProtoType {
     private boolean nullable = false;
 
-    ProtoType(ProtoContext ctx, Class<?> cls, AnnotatedElement ele) {
-        this.nullable = isNullable(cls, ele);
+    ProtoType(ProtoContext ctx, Type type, AnnotatedElement ele) {
+        this.nullable = isNullable(type, ele);
     }
 
-    private static boolean isNullable(Class<?> cls, AnnotatedElement ele) {
-        if (cls.isPrimitive()) {
-            return false;
+    private static boolean isNullable(Type type, AnnotatedElement ele) {
+        if (type instanceof Class) {
+            if (((Class<?>) type).isPrimitive()) {
+                return false;
+            }
         }
         if (ele == null) {
             return true;
         }
         return ele.getAnnotation(NotNull.class) == null;
     }
-
 
     public abstract String name();
 

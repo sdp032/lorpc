@@ -6,6 +6,7 @@ import com.jkys.phobos.proto.ProtoContext;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,12 +15,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by lo on 1/10/17.
  */
 public class Obj extends ProtoType {
-    private static ConcurrentHashMap<Class<?>, List<ObjField>> fieldsMap = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<Type, List<ObjField>> fieldsMap = new ConcurrentHashMap<>();
     private String objName;
     private List<ObjField> fields = new ArrayList<>();
 
-    Obj(ProtoContext ctx, Class<?> cls, AnnotatedElement ele) {
-        super(ctx, cls, ele);
+    Obj(ProtoContext ctx, Type type, AnnotatedElement ele) {
+        super(ctx, type, ele);
+        // FIXME generic type
+        Class<?> cls = null;
+        try {
+            cls = Class.forName(type.getTypeName());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         objName = cls.getSimpleName();
         Rename rename = cls.getAnnotation(Rename.class);
         if (rename != null && !rename.value().equals("")) {
@@ -52,7 +60,7 @@ public class Obj extends ProtoType {
                 if (fieldRename != null && !fieldRename.value().equals("")) {
                     name = fieldRename.value();
                 }
-                fields.add(new ObjField(name, TypeResolver.resolve(ctx, field.getType(), field), isGetter));
+                fields.add(new ObjField(name, TypeResolver.resolve(ctx, field.getGenericType(), field), isGetter));
             }
             fieldsMap.put(cls, fields);
         }
