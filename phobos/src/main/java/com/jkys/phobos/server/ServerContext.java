@@ -1,6 +1,7 @@
 package com.jkys.phobos.server;
 
 import com.github.infrmods.xbus.item.ServiceDesc;
+import com.jkys.phobos.annotation.ServiceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class ServerContext {
     }
 
     public Provider getProvider(String serviceName, String serviceVersion) {
-        return providers.get(serviceName + ":" + serviceVersion);
+        return providers.get(ServiceUtil.serviceKey(serviceName, serviceVersion));
     }
 
     public ServiceDesc[] getServiceDescs() {

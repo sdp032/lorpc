@@ -6,6 +6,7 @@ import com.github.infrmods.xbus.exceptions.NotFoundException;
 import com.github.infrmods.xbus.exceptions.XBusException;
 import com.github.infrmods.xbus.item.Service;
 import com.github.infrmods.xbus.item.ServiceEndpoint;
+import com.jkys.phobos.annotation.ServiceUtil;
 import com.jkys.phobos.config.PhobosConfig;
 import com.jkys.phobos.config.ServerConfig;
 import com.jkys.phobos.netty.NettyClient;
@@ -45,7 +46,7 @@ public class ClientBus {
             address = address + ":" + ServerConfig.DEFAULT_PORT;
         }
         ServiceEndpoint endpoint = new ServiceEndpoint(address, null);
-        presetEndpoints.put(name + ":" + version, new ServiceEndpoint[]{endpoint});
+        presetEndpoints.put(ServiceUtil.serviceKey(name, version), new ServiceEndpoint[]{endpoint});
     }
 
     public PhobosResponse request(PhobosRequest request, long timeout, TimeUnit unit) throws InterruptedException {
@@ -53,15 +54,16 @@ public class ClientBus {
                 request.getRequest().getServiceVersion());
         if (clients == null || clients.size() == 0) {
             throw new RuntimeException("can't find endpoint of " +
-                    request.getRequest().getServiceName() + ":" +
-                    request.getRequest().getServiceVersion());
+                    ServiceUtil.serviceKey(
+                            request.getRequest().getServiceName(),
+                            request.getRequest().getServiceVersion()));
         }
         NettyClient client = clients.get(r.nextInt(clients.size()));
         return client.request(request, timeout, unit);
     }
 
     private List<NettyClient> getClients(String name, String version) {
-        String key = name + ":" + version;
+        String key = ServiceUtil.serviceKey(name, version);
         List<NettyClient> clients = serviceClients.get(key);
         if (clients != null) {
             return clients;

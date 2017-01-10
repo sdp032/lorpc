@@ -157,6 +157,6 @@ public class Provider {
     }
 
     public String key() {
-        return name + ":" + version;
+        return ServiceUtil.serviceKey(name, version);
     }
 }
