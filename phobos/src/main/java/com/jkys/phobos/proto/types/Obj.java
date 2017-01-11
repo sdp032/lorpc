@@ -28,6 +28,10 @@ public class Obj extends ProtoType {
         } else {
             rawType = (Class<?>) type;
         }
+        if (Modifier.isAbstract(rawType.getModifiers())) {
+            // FIXME
+            throw new RuntimeException("can't use abstract class");
+        }
         Rename rename = rawType.getAnnotation(Rename.class);
         if (rename != null && !rename.value().equals("")) {
             objName = rename.value();
