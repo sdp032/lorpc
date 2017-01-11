@@ -1,14 +1,11 @@
 package com.jkys.phobos.proto.types;
 
 import com.jkys.phobos.annotation.Rename;
+import com.jkys.phobos.proto.ParameterizedTypeImpl;
 import com.jkys.phobos.proto.ProtoContext;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.*;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -16,55 +13,151 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Obj extends ProtoType {
     private static ConcurrentHashMap<Type, List<ObjField>> fieldsMap = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<Type, Map<TypeVariable, Type>> cachedVariables = new ConcurrentHashMap<>();
+
     private String objName;
     private List<ObjField> fields = new ArrayList<>();
 
-    Obj(ProtoContext ctx, Type type, AnnotatedElement ele) {
+    public Obj(ProtoContext ctx, Type type, AnnotatedElement ele) {
         super(ctx, type, ele);
-        // FIXME generic type
-        Class<?> cls = null;
-        try {
-            cls = Class.forName(type.getTypeName());
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        objName = type.getTypeName();
+        Class<?> rawType;
+        if (type instanceof ParameterizedType) {
+            ParameterizedType ptype = (ParameterizedType) type;
+            rawType = (Class<?>) ptype.getRawType();
+        } else {
+            rawType = (Class<?>) type;
         }
-        objName = cls.getSimpleName();
-        Rename rename = cls.getAnnotation(Rename.class);
+        Rename rename = rawType.getAnnotation(Rename.class);
         if (rename != null && !rename.value().equals("")) {
             objName = rename.value();
         }
-        fields = makeFields(ctx, cls);
+        fields = makeFields(ctx, type);
     }
 
-    private static List<ObjField> makeFields(ProtoContext ctx, Class<?> cls) {
-        ctx.addObjectClass(cls);
-        List<ObjField> fields = fieldsMap.get(cls);
+    public List<ObjField> getFields() {
+        return fields;
+    }
+
+    private static List<ObjField> makeFields(ProtoContext ctx, Type type) {
+        List<ObjField> fields = fieldsMap.get(type);
         if (fields == null) {
+            ctx.addObjectClass(type);
+            Class<?> rawType;
+            if (type instanceof ParameterizedType) {
+                ParameterizedType ptype = (ParameterizedType) type;
+                rawType = (Class<?>) ptype.getRawType();
+            } else {
+                rawType = (Class<?>) type;
+            }
             fields = new ArrayList<>();
-            for (Field field : cls.getDeclaredFields()) {
-                if (Modifier.isStatic(field.getModifiers())) {
-                    continue;
-                }
+            for (Field field : getRawFields(rawType)) {
                 String name = field.getName();
-                boolean isGetter = false;
-                if (!Modifier.isPublic(field.getModifiers())) {
-                    try {
-                        String getterName = "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
-                        cls.getMethod(getterName);
-                    } catch (NoSuchMethodException e) {
-                        continue;
-                    }
-                    isGetter = true;
-                }
                 Rename fieldRename = field.getAnnotation(Rename.class);
                 if (fieldRename != null && !fieldRename.value().equals("")) {
                     name = fieldRename.value();
                 }
-                fields.add(new ObjField(name, TypeResolver.resolve(ctx, field.getGenericType(), field), isGetter));
+                String reprName = type.getTypeName() + "#" + field.getName();
+                Type fieldType = cleanFieldType(type, reprName, field.getGenericType());
+                boolean isGetter = !Modifier.isPublic(field.getModifiers());
+                fields.add(new ObjField(name, TypeResolver.resolve(ctx, fieldType, field), isGetter));
             }
-            fieldsMap.put(cls, fields);
+            fieldsMap.put(type, fields);
         }
         return fields;
+    }
+
+    private static List<Field> getRawFields(Class<?> cls) {
+        // TODO cache
+        List<Field> fields;
+        Class<?> superClass = cls.getSuperclass();
+        if (superClass == null) {
+            fields = new LinkedList<>();
+        } else {
+            fields = getRawFields(superClass);
+        }
+        for (Field field : cls.getDeclaredFields()) {
+            if (Modifier.isPublic(field.getModifiers())) {
+                fields.add(field);
+            } else {
+                String fieldName = field.getName();
+                String getterName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+                Method method;
+                try {
+                    method = cls.getMethod(getterName);
+                } catch (NoSuchMethodException e) {
+                    continue;
+                }
+                if (Modifier.isPublic(method.getModifiers()) &&
+                        method.getGenericReturnType().equals(field.getGenericType())) {
+                    fields.add(field);
+                }
+            }
+        }
+        return fields;
+    }
+
+    public static Type cleanFieldType(Type ownerType, String name, Type type) {
+        if (type instanceof Class) {
+            return type;
+        }
+        if (type instanceof TypeVariable) {
+            Type actualType = getTypeVariableActualType(ownerType, (TypeVariable) type);
+            if (actualType == null) {
+                throw new RuntimeException("can't detect TypeVariable: " + name);
+            }
+            return actualType;
+        }
+        if (type instanceof ParameterizedType) {
+            ParameterizedType paramedType = (ParameterizedType) type;
+            Type origArgs[] = paramedType.getActualTypeArguments();
+            boolean converted = false;
+            Type args[] = new Type[origArgs.length];
+            for (int i = 0; i < args.length; i++) {
+                args[i] = origArgs[i];
+                if (origArgs[i] instanceof Class) {
+                    continue;
+                }
+                args[i] = cleanFieldType(ownerType, name, origArgs[i]);
+                converted = true;
+            }
+            if (converted) {
+                return new ParameterizedTypeImpl(paramedType.getRawType(), args);
+            }
+            return paramedType;
+        }
+        throw new RuntimeException("unhandled field type: " + name);
+    }
+
+    private static Type getTypeVariableActualType(Type owner, TypeVariable var) {
+        Map<TypeVariable, Type> variables = cachedVariables.get(owner);
+        if (variables == null) {
+            variables = collectVariableTypes(null, owner);
+            cachedVariables.put(owner, variables);
+        }
+        Type type = variables.get(var);
+        while (type != null && type instanceof TypeVariable) {
+            type = variables.get(type);
+        }
+        return type;
+    }
+
+    private static Map<TypeVariable, Type> collectVariableTypes(Map<TypeVariable, Type> m, Type t) {
+        if (m == null) {
+            m = new HashMap<>();
+        }
+        if (t instanceof ParameterizedType) {
+            ParameterizedType ptype = (ParameterizedType) t;
+            Class cls = (Class) ptype.getRawType();
+            TypeVariable vars[] = cls.getTypeParameters();
+            for (int i = 0; i< vars.length; i++) {
+                m.put(vars[i], ptype.getActualTypeArguments()[i]);
+            }
+            m = collectVariableTypes(m, cls.getGenericSuperclass());
+        } else if (t instanceof Class) {
+            m = collectVariableTypes(m, ((Class) t).getGenericSuperclass());
+        }
+        return m;
     }
 
     @Override

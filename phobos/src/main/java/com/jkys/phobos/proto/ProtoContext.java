@@ -1,5 +1,6 @@
 package com.jkys.phobos.proto;
 
+import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -7,9 +8,9 @@ import java.util.Set;
  * Created by lo on 1/10/17.
  */
 public class ProtoContext {
-    private Set<Class<?>> objectClasses = new HashSet<>();
+    private Set<Type> objectClasses = new HashSet<>();
 
-    public void addObjectClass(Class<?> cls) {
-        objectClasses.add(cls);
+    public void addObjectClass(Type type) {
+        objectClasses.add(type);
     }
 }

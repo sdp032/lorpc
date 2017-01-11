@@ -25,7 +25,7 @@ public class Dict extends ProtoType {
         keyType = TypeResolver.resolve(ctx, types[0], null);
         // TODO key type nullable
         keyType.setNullable(false);
-        valueType = TypeResolver.resolve(ctx, types[2], null);
+        valueType = TypeResolver.resolve(ctx, types[1], null);
         valueType.setNullable(ele.getAnnotation(ValueNotNull.class) == null);
     }
 

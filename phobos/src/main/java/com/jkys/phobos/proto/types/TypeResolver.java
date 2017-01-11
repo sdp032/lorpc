@@ -3,6 +3,7 @@ package com.jkys.phobos.proto.types;
 import com.jkys.phobos.proto.ProtoContext;
 
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,10 +18,10 @@ public class TypeResolver {
     public static ProtoType resolve(ProtoContext ctx, Type type, AnnotatedElement ele) {
         String clsName = type.getTypeName();
         if (clsName.contains("<")) {
-            clsName = clsName.substring(clsName.indexOf("<"));
+            clsName = clsName.substring(0, clsName.indexOf("<"));
         }
 
-        if (clsName.startsWith("[")) {
+        if (clsName.startsWith("[") || (type instanceof GenericArrayType)) {
             return new Ary(ctx, type, ele);
         } else {
             TypeBuilder builder = builders.get(clsName);
@@ -45,8 +46,10 @@ public class TypeResolver {
         builders.put("java.lang.Double", Float64::new);
         builders.put("byte", (ctx, type, ele) -> new Int(false, 8, ctx, type, ele));
         builders.put("java.lang.Byte", (ctx, type, ele) -> new Int(false, 8, ctx, type, ele));
+        builders.put("java.util.List", Ary::new);
         builders.put("java.util.ArrayList", Ary::new);
         builders.put("java.util.LinkedList", Ary::new);
+        builders.put("java.util.Map", Dict::new);
         builders.put("java.util.HashMap", Dict::new);
         builders.put("java.util.LinkedHashMap", Dict::new);
         builders.put("java.util.TreeMap", Dict::new);
