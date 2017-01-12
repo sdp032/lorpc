@@ -38,8 +38,11 @@ public class TypeResolver {
         builders.put("java.lang.Boolean", Bool::new);
         builders.put("int", (ctx, type, ele) -> new Int(false, 32, ctx, type,  ele));
         builders.put("java.lang.Integer", (ctx, type, ele) -> new Int(false, 32, ctx, type,  ele));
+        builders.put("short", (ctx, type, ele) -> new Int(false, 16, ctx, type,  ele));
+        builders.put("java.lang.Short", (ctx, type, ele) -> new Int(false, 16, ctx, type,  ele));
         builders.put("long", (ctx, type, ele) -> new Int(false, 64, ctx, type,  ele));
         builders.put("java.lang.Long", (ctx, type, ele) -> new Int(false, 64, ctx, type, ele));
+        builders.put("java.math.BigInteger", BigInt::new);
         builders.put("float", Float32::new);
         builders.put("java.lang.Float", Float32::new);
         builders.put("double", Float32::new);
