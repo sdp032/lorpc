@@ -10,8 +10,8 @@ import com.jkys.phobos.annotation.ServiceUtil;
 import com.jkys.phobos.config.PhobosConfig;
 import com.jkys.phobos.config.ServerConfig;
 import com.jkys.phobos.netty.NettyClient;
-import com.jkys.phobos.remote.protocol.PhobosRequest;
-import com.jkys.phobos.remote.protocol.PhobosResponse;
+import com.jkys.phobos.protocol.PhobosRequest;
+import com.jkys.phobos.protocol.PhobosResponse;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 

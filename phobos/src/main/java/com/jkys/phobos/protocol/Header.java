@@ -1,4 +1,4 @@
-package com.jkys.phobos.remote.protocol;
+package com.jkys.phobos.protocol;
 
 import java.util.concurrent.atomic.AtomicLong;
 

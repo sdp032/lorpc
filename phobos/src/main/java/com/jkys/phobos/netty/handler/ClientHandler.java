@@ -2,7 +2,7 @@ package com.jkys.phobos.netty.handler;
 
 import com.jkys.phobos.client.ClientContext;
 import com.jkys.phobos.netty.NettyClient;
-import com.jkys.phobos.remote.protocol.PhobosResponse;
+import com.jkys.phobos.protocol.PhobosResponse;
 import com.jkys.phobos.util.Promise;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

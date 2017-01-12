@@ -1,7 +1,7 @@
 package com.jkys.phobos.client;
 
-import com.jkys.phobos.remote.protocol.PhobosRequest;
-import com.jkys.phobos.remote.protocol.PhobosResponse;
+import com.jkys.phobos.protocol.PhobosRequest;
+import com.jkys.phobos.protocol.PhobosResponse;
 import com.jkys.phobos.util.Promise;
 
 import java.util.concurrent.ConcurrentHashMap;

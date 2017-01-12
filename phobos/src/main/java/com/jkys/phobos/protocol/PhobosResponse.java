@@ -1,4 +1,4 @@
-package com.jkys.phobos.remote.protocol;
+package com.jkys.phobos.protocol;
 
 /**
  * Created by zdj on 2016/7/7.

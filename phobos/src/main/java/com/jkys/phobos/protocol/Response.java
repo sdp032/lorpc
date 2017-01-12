@@ -1,9 +1,7 @@
-package com.jkys.phobos.remote.protocol;
+package com.jkys.phobos.protocol;
 
 import com.jkys.phobos.util.ByteUitl;
 import com.jkys.phobos.util.CommonUtil;
-import com.jkys.phobos.util.SerializaionUtil;
-import io.netty.buffer.ByteBuf;
 import org.msgpack.annotation.Message;
 
 import java.util.Arrays;

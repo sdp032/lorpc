@@ -8,8 +8,8 @@ import com.jkys.phobos.codec.SerializeHandle;
 import com.jkys.phobos.constant.ErrorEnum;
 import com.jkys.phobos.exception.PhobosException;
 import com.jkys.phobos.proto.ServiceProto;
-import com.jkys.phobos.remote.protocol.Request;
-import com.jkys.phobos.remote.protocol.Response;
+import com.jkys.phobos.protocol.Request;
+import com.jkys.phobos.protocol.Response;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

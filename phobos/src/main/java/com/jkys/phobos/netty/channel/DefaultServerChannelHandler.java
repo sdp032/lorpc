@@ -2,8 +2,8 @@ package com.jkys.phobos.netty.channel;
 
 import com.jkys.phobos.netty.router.DefaultPhobosRouter;
 import com.jkys.phobos.netty.router.PhobosRouter;
-import com.jkys.phobos.remote.protocol.PhobosRequest;
-import com.jkys.phobos.remote.protocol.PhobosResponse;
+import com.jkys.phobos.protocol.PhobosRequest;
+import com.jkys.phobos.protocol.PhobosResponse;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

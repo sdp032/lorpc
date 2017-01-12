@@ -1,16 +1,11 @@
 package com.jkys.phobos.netty.codec;
 
-import com.jkys.phobos.codec.MsgpackUtil;
-import com.jkys.phobos.exception.PhobosException;
-import com.jkys.phobos.remote.protocol.*;
-import com.jkys.phobos.util.SerializaionUtil;
+import com.jkys.phobos.protocol.Header;
+import com.jkys.phobos.protocol.PhobosRequest;
+import com.jkys.phobos.protocol.Request;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
-import org.msgpack.MessagePack;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by zdj on 2016/7/13.

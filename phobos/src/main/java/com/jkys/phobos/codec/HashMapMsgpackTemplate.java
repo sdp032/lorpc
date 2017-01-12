@@ -1,12 +1,6 @@
 package com.jkys.phobos.codec;
 
-import com.jkys.phobos.remote.protocol.Header;
-import com.jkys.phobos.util.SerializaionUtil;
 import org.msgpack.annotation.Message;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by zdj on 16-12-8.

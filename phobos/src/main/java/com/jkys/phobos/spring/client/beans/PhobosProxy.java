@@ -6,10 +6,10 @@ import com.jkys.phobos.codec.SerializeHandle;
 import com.jkys.phobos.codec.SerializeHandleFactory;
 import com.jkys.phobos.config.PhobosConfig;
 import com.jkys.phobos.exception.PhobosException;
-import com.jkys.phobos.remote.protocol.Header;
-import com.jkys.phobos.remote.protocol.PhobosRequest;
-import com.jkys.phobos.remote.protocol.PhobosResponse;
-import com.jkys.phobos.remote.protocol.Request;
+import com.jkys.phobos.protocol.Header;
+import com.jkys.phobos.protocol.PhobosRequest;
+import com.jkys.phobos.protocol.PhobosResponse;
+import com.jkys.phobos.protocol.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
