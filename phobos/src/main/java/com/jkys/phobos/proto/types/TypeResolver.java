@@ -21,7 +21,7 @@ public class TypeResolver {
             clsName = clsName.substring(0, clsName.indexOf("<"));
         }
 
-        if (clsName.startsWith("[") || (type instanceof GenericArrayType)) {
+        if (clsName.endsWith("]") || (type instanceof GenericArrayType)) {
             return new Ary(ctx, type, ele);
         } else {
             TypeBuilder builder = builders.get(clsName);

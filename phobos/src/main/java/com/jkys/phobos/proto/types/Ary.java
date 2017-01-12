@@ -7,6 +7,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Map;
 
 /**
  * Created by lo on 1/10/17.
@@ -27,11 +28,23 @@ public class Ary extends ProtoType {
             // FIXME
             throw new RuntimeException("unknown array: " + type.getTypeName());
         }
-        elementType.setNullable(ele.getAnnotation(EleNotNull.class) == null);
+        if (ele != null) {
+            elementType.setNullable(ele.getAnnotation(EleNotNull.class) == null);
+        } else {
+            elementType.setNullable(true);
+        }
     }
 
     @Override
     public String name() {
-        return "[" + elementType.name() + "]";
+        return "list";
+    }
+
+
+    @Override
+    public Map<String, Object> dump() {
+        Map<String, Object> result = super.dump();
+        result.put("item", elementType.dump());
+        return result;
     }
 }

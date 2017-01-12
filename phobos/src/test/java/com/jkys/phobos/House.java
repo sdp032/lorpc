@@ -7,17 +7,17 @@ import org.msgpack.annotation.Message;
  * Created by zdj on 2016/7/18.
  */
 @Message
-public class House<T> {
+public class House {
 
-    T t;
+    User t;
 
     private User landlord;
 
-    public T getT() {
+    public User getT() {
         return t;
     }
 
-    public void setT(T t) {
+    public void setT(User t) {
         this.t = t;
     }
 

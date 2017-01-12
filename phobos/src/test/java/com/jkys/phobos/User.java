@@ -2,6 +2,8 @@ package com.jkys.phobos;
 
 import org.msgpack.annotation.Message;
 
+import java.util.List;
+
 /**
  * Created by zdj on 2016/7/18.
  */
@@ -12,7 +14,7 @@ public class User {
 
     private Integer age;
 
-    private House house;
+    public List<Integer> ns;
 
     public String getName() {
         return name;
@@ -28,13 +30,5 @@ public class User {
 
     public void setAge(Integer age) {
         this.age = age;
-    }
-
-    public House getHouse() {
-        return house;
-    }
-
-    public void setHouse(House house) {
-        this.house = house;
     }
 }

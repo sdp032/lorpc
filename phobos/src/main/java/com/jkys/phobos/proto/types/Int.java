@@ -12,9 +12,9 @@ public class Int extends ProtoType {
     private boolean unsigned;
     private int size;
 
-    public Int(boolean signed, int size, ProtoContext ctx, Type type, AnnotatedElement ele) {
+    public Int(boolean unsigned, int size, ProtoContext ctx, Type type, AnnotatedElement ele) {
         super(ctx, type, ele);
-        this.unsigned = signed;
+        this.unsigned = unsigned;
         this.size = size;
     }
 
@@ -37,8 +37,8 @@ public class Int extends ProtoType {
     @Override
     public String name() {
         if (unsigned) {
-            return "i" + size;
+            return "u" + size;
         }
-        return "u" + size;
+        return "i" + size;
     }
 }

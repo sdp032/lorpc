@@ -30,7 +30,7 @@ public class ConsumerDefinitionParser implements BeanDefinitionParser {
         }
         Service service = interfaceCls.getAnnotation(Service.class);
         if (service == null) {
-            throw new RuntimeException("missing Service");
+            throw new RuntimeException("missing ServiceProto");
         }
         String[] nameVersion = ServiceUtil.splitServiceKey(service);
 

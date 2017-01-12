@@ -7,6 +7,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.Map;
 
 /**
  * Created by lo on 1/10/17.
@@ -26,11 +27,23 @@ public class Dict extends ProtoType {
         // TODO key type nullable
         keyType.setNullable(false);
         valueType = TypeResolver.resolve(ctx, types[1], null);
-        valueType.setNullable(ele.getAnnotation(ValueNotNull.class) == null);
+        if (ele != null) {
+            valueType.setNullable(ele.getAnnotation(ValueNotNull.class) == null);
+        } else {
+            valueType.setNullable(true);
+        }
     }
 
     @Override
     public String name() {
-        return "map<" + keyType.name() + ", " + valueType.name() + ">";
+        return "map";
+    }
+
+    @Override
+    public Map<String, Object> dump() {
+        Map<String, Object> result = super.dump();
+        result.put("key", keyType.dump());
+        result.put("value", valueType.dump());
+        return result;
     }
 }

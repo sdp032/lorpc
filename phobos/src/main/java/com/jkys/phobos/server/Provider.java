@@ -7,11 +7,9 @@ import com.jkys.phobos.annotation.ServiceUtil;
 import com.jkys.phobos.codec.SerializeHandle;
 import com.jkys.phobos.constant.ErrorEnum;
 import com.jkys.phobos.exception.PhobosException;
+import com.jkys.phobos.proto.ServiceProto;
 import com.jkys.phobos.remote.protocol.Request;
 import com.jkys.phobos.remote.protocol.Response;
-import com.jkys.phobos.util.yaml.BeanRepresenter;
-import com.jkys.phobos.util.yaml.PhobosRepresentr;
-import com.jkys.phobos.util.yaml.Yaml;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -57,10 +55,9 @@ public class Provider {
         name = nameVersion[0];
         version = nameVersion[1];
 
-        Yaml yaml = new Yaml(new PhobosRepresentr(new BeanRepresenter()));
         try {
             serviceDesc = new ServiceDesc(this.name, this.version, "service-kit",
-                    yaml.dump(serviceInterface));
+                    new ServiceProto(serviceInterface).toYaml());
         } catch (Exception e) {
             // FIXME
             throw new RuntimeException(e);

@@ -20,13 +20,19 @@ public class Obj extends ProtoType {
 
     public Obj(ProtoContext ctx, Type type, AnnotatedElement ele) {
         super(ctx, type, ele);
+        ctx.enterObj(type);
         objName = type.getTypeName();
         Class<?> rawType;
         if (type instanceof ParameterizedType) {
             ParameterizedType ptype = (ParameterizedType) type;
             rawType = (Class<?>) ptype.getRawType();
-        } else {
+        } else if (type instanceof Class) {
             rawType = (Class<?>) type;
+            if (rawType.isInterface()) {
+                throw new RuntimeException("can't use interface in rpc proto");
+            }
+        } else {
+            throw  new RuntimeException("unhandled type: " + type.getTypeName());
         }
         if (Modifier.isAbstract(rawType.getModifiers())) {
             // FIXME
@@ -37,6 +43,7 @@ public class Obj extends ProtoType {
             objName = rename.value();
         }
         fields = makeFields(ctx, type);
+        ctx.popObj();
     }
 
     public List<ObjField> getFields() {
@@ -46,7 +53,7 @@ public class Obj extends ProtoType {
     private static List<ObjField> makeFields(ProtoContext ctx, Type type) {
         List<ObjField> fields = fieldsMap.get(type);
         if (fields == null) {
-            ctx.addObjectClass(type);
+            ctx.addObjectType(type);
             Class<?> rawType;
             if (type instanceof ParameterizedType) {
                 ParameterizedType ptype = (ParameterizedType) type;
@@ -167,6 +174,18 @@ public class Obj extends ProtoType {
     @Override
     public String name() {
         return objName;
+    }
+
+    public Map<String, Object> dumpObject() {
+        List<Map<String, Object>> fieldDescs = new ArrayList<>(fields.size());
+        for (ObjField field : fields) {
+            Map<String, Object> desc = field.fieldType.dump();
+            desc.put("name", field.fieldName);
+            fieldDescs.add(desc);
+        }
+        Map<String, Object> result = new HashMap<>();
+        result.put("fields", fieldDescs);
+        return result;
     }
 
     public static class ObjField {

@@ -138,23 +138,6 @@ public class Test {
     }
 
     @org.junit.Test
-    public void ser() throws Exception{
-
-        MessagePack mp = MsgpackUtil.MESSAGE_PACK;
-
-        House<User> house = new House<>();
-        house.setT(new User());
-
-        byte[] b = mp.write(house);
-        Value v = mp.read(b);
-
-        House h = mp.convert(v, House.class);
-
-        System.out.println();
-
-    }
-
-    @org.junit.Test
     public void testWait() throws Exception{
         Test test = new Test();
         List list1 = new ArrayList();
