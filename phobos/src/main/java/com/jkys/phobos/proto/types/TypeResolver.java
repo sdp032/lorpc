@@ -51,6 +51,9 @@ public class TypeResolver {
         builders.put("java.lang.Byte", (ctx, type, ele) -> new Int(false, 8, ctx, type, ele));
         builders.put("char", Char::new);
         builders.put("java.lang.Character", Char::new);
+        builders.put("java.util.Set", Set::new);
+        builders.put("java.util.HashSet", Set::new);
+        builders.put("java.util.LinkedHashSet", Set::new);
         builders.put("java.util.List", Ary::new);
         builders.put("java.util.ArrayList", Ary::new);
         builders.put("java.util.LinkedList", Ary::new);
