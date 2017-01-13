@@ -97,7 +97,11 @@ public class Obj extends ProtoType {
                 try {
                     method = cls.getMethod(getterName);
                 } catch (NoSuchMethodException e) {
-                    continue;
+                    try {
+                        method = cls.getMethod(fieldName);
+                    } catch (NoSuchMethodException e1) {
+                        continue;
+                    }
                 }
                 if (Modifier.isPublic(method.getModifiers()) &&
                         method.getGenericReturnType().equals(field.getGenericType())) {

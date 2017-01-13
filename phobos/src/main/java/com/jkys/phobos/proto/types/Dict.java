@@ -20,7 +20,7 @@ public class Dict extends ProtoType {
         super(ctx, type, ele);
         if (!(type instanceof ParameterizedType)) {
             // FIXME
-            throw new RuntimeException("unknown map types");
+            throw new RuntimeException("unknown map type: " + type.getTypeName());
         }
         Type[] types = ((ParameterizedType) type).getActualTypeArguments();
         keyType = TypeResolver.resolve(ctx, types[0], null);
