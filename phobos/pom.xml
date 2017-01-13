@@ -5,7 +5,7 @@
     <properties>
         <mars.version>1.0-SNAPSHOT</mars.version>
         <curiosity.version>1.0-SNAPSHOT</curiosity.version>
-        <phobos.version>1.0-SNAPSHOT</phobos.version>
+        <phobos.version>1.0</phobos.version>
         <spring.version>4.3.0.RELEASE</spring.version>
         <log4j.version>2.6.1</log4j.version>
     </properties>
@@ -13,7 +13,7 @@
 
     <artifactId>phobos</artifactId>
     <groupId>com.jkys.portal</groupId>
-    <version>${phobos.version}</version>
+    <version>${projectVersion}</version>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
@@ -132,18 +132,32 @@
         </dependency>
     </dependencies>
 
-    <distributionManagement>
-        <repository>
-            <id>releases</id>
-            <name>internal repository for releases</name>
-            <url>http://nexus.91jkys.com/content/repositories/releases</url>
-        </repository>
-        <snapshotRepository>
+    <profiles>
+        <profile>
             <id>snapshots</id>
-            <name>internal repository for snapshots</name>
-            <url>http://nexus.91jkys.com/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
+            <properties>
+                <projectVersion>${phobos.version}-SNAPSHOT</projectVersion>
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>snapshots</id>
+                    <url>http://nexus.91jkys.com/content/repositories/snapshots</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>releases</id>
+            <properties>
+                <projectVersion>${phobos.version}</projectVersion>
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>releases</id>
+                    <url>http://nexus.91jkys.com/content/repositories/releases</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
     <build>
         <plugins>
             <plugin>

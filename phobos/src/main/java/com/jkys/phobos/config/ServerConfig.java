@@ -1,6 +1,5 @@
 package com.jkys.phobos.config;
 
-import com.jkys.phobos.annotation.ServiceUtil;
 import com.jkys.phobos.util.CommonUtil;
 
 /**
@@ -9,6 +8,7 @@ import com.jkys.phobos.util.CommonUtil;
 public class ServerConfig {
     public static final String NAME = "_phobosServerConfig";
     public static final Integer DEFAULT_PORT = 3000;
+    public static final String PORT_ENV_NAME = "APP_SERVICE_PORT";
 
     private String bindHost;
     private Integer bindPort;
@@ -22,6 +22,10 @@ public class ServerConfig {
             throw new RuntimeException(e);
         }
         bindPort = DEFAULT_PORT;
+        String envPort = System.getenv().get(PORT_ENV_NAME);
+        if (envPort != null && !envPort.equals("")) {
+            bindPort = Integer.valueOf(envPort);
+        }
     }
 
     public ServerConfig(ServerConfig other) {

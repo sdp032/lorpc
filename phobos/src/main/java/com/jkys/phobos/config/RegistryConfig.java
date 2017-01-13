@@ -1,6 +1,5 @@
 package com.jkys.phobos.config;
 
-import com.github.infrmods.xbus.client.TLSInitException;
 import com.github.infrmods.xbus.client.XBusClient;
 import com.github.infrmods.xbus.client.XBusConfig;
 import com.jkys.phobos.util.AppEnv;
@@ -19,6 +18,8 @@ public class RegistryConfig {
     public static final String NAME = "_phobosRegistryConfig";
     public static final String AUTO_JKS = "app.jks";
     public static final String AUTO_JKS_PASSWORD = "123456";
+    public static final String KEYSTORE_ENV_NAME = "APP_KEYSTORE";
+    public static final String KEYSTORE_PWD_ENV_NAME = "APP_KEYSTORE_PASSWORD";
 
     private String endpoint;
     private String appName;
@@ -37,9 +38,19 @@ public class RegistryConfig {
             keystorePath = AUTO_JKS;
             keystorePassword = AUTO_JKS_PASSWORD;
         } else {
-            caCertPath = env.getCaCertPath();
-            certPath = env.getCertPath();
-            keyPath = env.getKeyPath();
+            String envKeyStore = System.getenv().get(KEYSTORE_ENV_NAME);
+            if (envKeyStore != null && !envKeyStore.equals("")) {
+                keystorePath = envKeyStore;
+                keystorePassword = AUTO_JKS_PASSWORD;
+                String envKeyStorePwd = System.getenv().get(KEYSTORE_PWD_ENV_NAME);
+                if (envKeyStorePwd != null && !envKeyStorePwd.equals("")) {
+                    keystorePassword = envKeyStorePwd;
+                }
+            } else {
+                caCertPath = env.getCaCertPath();
+                certPath = env.getCertPath();
+                keyPath = env.getKeyPath();
+            }
         }
     }
 
