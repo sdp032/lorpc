@@ -2,21 +2,15 @@ package com.jkys.phobos;
 
 import com.github.infrmods.xbus.client.XBusClient;
 import com.github.infrmods.xbus.client.XBusConfig;
-import com.jkys.phobos.codec.MsgpackUtil;
-import com.jkys.phobos.service.Ha;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 import javassist.bytecode.MethodInfo;
-import org.msgpack.MessagePack;
-import org.msgpack.type.MapValue;
-import org.msgpack.type.Value;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.lang.reflect.*;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.*;
@@ -25,51 +19,6 @@ import java.util.*;
  * Created by zdj on 2016/7/8.
  */
 public class Test {
-
-    @org.junit.Test
-    public void tset() throws Exception {
-
-        MessagePack mp = MsgpackUtil.MESSAGE_PACK;
-
-
-        Method method = Ha.class.getMethods()[0];
-        List<List<String>> lists = new LinkedList<>();
-        List<String> list1 = new ArrayList<>();
-        List<String> list2 = new ArrayList<>();
-        list1.add(null);
-        list1.add("1");
-        list2.add("2");
-        list2.add(null);
-        lists.add(list1);
-        lists.add(list2);
-
-        byte[] param1 = mp.write(lists);
-
-        Map<String, List<String>> map = new HashMap();
-        map.put("1", list1);
-
-        byte[] param2 = mp.write(map);
-        Value value = mp.read(param2);
-        if(value.isMapValue()){
-            MapValue mv = value.asMapValue();
-            Value [] vss = mv.getKeyValueArray();
-            System.out.println();
-        }
-
-
-        Class c = method.getParameterTypes()[0];
-        Type t = method.getGenericParameterTypes()[0];
-
-        System.out.println(String[].class.getName());
-
-        Class cc = Class.forName("java.util.List");
-
-        System.out.println(c.getTypeName());
-        System.out.println(t.getTypeName());
-        System.out.println(((ParameterizedType)t).getActualTypeArguments()[0].getTypeName());
-    }
-
-
     @org.junit.Test
     public void xbuxTest() throws Exception {
         XBusClient xBusClient = new XBusClient(new XBusConfig(new String[]{"xbus.qa.91jkys.com:4433"}, "D://clitest.ks", "123456"));

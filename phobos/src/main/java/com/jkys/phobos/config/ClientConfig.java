@@ -1,6 +1,6 @@
 package com.jkys.phobos.config;
 
-import com.jkys.phobos.codec.SerializationType;
+import com.jkys.phobos.serialization.SerializationType;
 
 /**
  * Created by lo on 1/5/17.
@@ -15,7 +15,7 @@ public class ClientConfig {
     private Integer requestTimeout;
 
     public ClientConfig() {
-        serializationType = SerializationType.Msgpack;
+        serializationType = SerializationType.Json;
         resolveTimeout = DEFAULT_RESOLVE_TIMEOUT;
         requestTimeout = DEFAULT_REQUEST_TIMEOUT;
     }

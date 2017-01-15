@@ -1,4 +1,4 @@
-package com.jkys.phobos.codec;
+package com.jkys.phobos.serialization;
 
 /**
  * Created by lo on 1/5/17.
@@ -18,7 +18,7 @@ public enum SerializationType {
         return type;
     }
 
-    public SerializationType get(String name) {
+    public static SerializationType get(String name) {
         if ("JSON".equals(name)) {
             return Json;
         }
@@ -27,6 +27,18 @@ public enum SerializationType {
         }
         if ("PROTOBUF".equals(name)) {
             return Protobuf;
+        }
+        return null;
+    }
+
+    public static SerializationType get(byte type) {
+        switch (type) {
+            case 1:
+                return Json;
+            case 2:
+                return Msgpack;
+            case 3:
+                return Protobuf;
         }
         return null;
     }

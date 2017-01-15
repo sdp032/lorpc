@@ -13,9 +13,11 @@ import java.util.Map;
  */
 public abstract class ProtoType {
     private boolean nullable = false;
+    private Type rawType;
 
     ProtoType(ProtoContext ctx, Type type, AnnotatedElement ele) {
         this.nullable = isNullable(type, ele);
+        this.rawType = type;
     }
 
     private static boolean isNullable(Type type, AnnotatedElement ele) {
@@ -51,5 +53,9 @@ public abstract class ProtoType {
 
     public void setNullable(boolean nullable) {
         this.nullable = nullable;
+    }
+
+    public Type getRawType() {
+        return rawType;
     }
 }

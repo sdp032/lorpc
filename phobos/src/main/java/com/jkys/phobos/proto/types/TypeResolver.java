@@ -61,7 +61,6 @@ public class TypeResolver {
         builders.put("java.util.HashMap", Dict::new);
         builders.put("java.util.LinkedHashMap", Dict::new);
         builders.put("java.util.TreeMap", Dict::new);
-        builders.put("java.lang.Object", Any::new);
     }
 
     private interface TypeBuilder {

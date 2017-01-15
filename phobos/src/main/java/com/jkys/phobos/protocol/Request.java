@@ -1,21 +1,16 @@
 package com.jkys.phobos.protocol;
 
-import com.jkys.phobos.codec.SerializeHandle;
-import com.jkys.phobos.codec.SerializeHandleFactory;
 import com.jkys.phobos.exception.PhobosException;
 import com.jkys.phobos.util.CommonUtil;
 import org.msgpack.annotation.Message;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by frio on 16/7/4.
  */
 @Message
 public class Request {
-
     private static final String CHARSET = "UTF-8";
 
     private byte[] traceId;
@@ -30,8 +25,7 @@ public class Request {
 
     private Sign sign = new Sign();
 
-    //private List<byte[]> object; /*请求参数列表*/
-    private List<Object> object; /*请求参数列表*/
+    private byte[] data;
 
     public byte[] getTraceId() {
         return traceId;
@@ -81,20 +75,12 @@ public class Request {
         this.sign = sign;
     }
 
-   /* public List<byte[]> getObject() {
-        return object;
+    public byte[] getData() {
+        return data;
     }
 
-    public void setObject(List<byte[]> object) {
-        this.object = object;
-    }*/
-
-    public List<Object> getObject() {
-        return object;
-    }
-
-    public void setObject(List<Object> object) {
-        this.object = object;
+    public void setData(byte[] data) {
+        this.data = data;
     }
 
     @Message
@@ -120,15 +106,13 @@ public class Request {
         }
     }
 
-    static public byte[] toBytes(Request request, byte type) throws Exception{
-
+    public byte[] toBytes() throws Exception{
+        Request request = this;
         byte[] traceId = request.traceId;
 
         if(request.getTraceId() == null || request.getTraceId().length != 16){
             throw new PhobosException(null, "traceId wrongful");
         }
-
-        SerializeHandle handle = SerializeHandleFactory.create(type);
 
         byte[] serviceName = request.getServiceName() == null ? new byte[0] : request.getServiceName().getBytes(Request.CHARSET);
         byte[] serviceNameLen = new byte[]{(byte)serviceName.length};
@@ -142,8 +126,7 @@ public class Request {
         byte[] signMethodLen = new byte[]{(byte)signMethod.length};
         byte[] signDigests = request.getSign().getDigests() == null ? new byte[0] : request.getSign().getDigests().getBytes(Request.CHARSET);
         byte[] signDigestsLen = new byte[]{(byte)signDigests.length};
-        /*byte[] params = MsgpackUtil.MESSAGE_PACK.write(request.getObject());*/
-        byte[] params = handle.objectToBytes(request.getObject());
+        byte[] params = request.getData();
 
         byte[] body = CommonUtil.concatBytes(traceId, serviceNameLen, serviceName, serviceVersionLen, serviceVersion,
                 methodNameLen, methodName, clientAppNameLen, clientAppName, signMethodLen, signMethod, signDigestsLen, signDigests, params);
@@ -196,10 +179,7 @@ public class Request {
         }
 
         byte[] params = Arrays.copyOfRange(bytes, index, bytes.length);
-
-        List<Object> list = new ArrayList<>();
-        list.add(params);
-        request.setObject(list);
+        request.setData(params);
         return request;
     }
 }

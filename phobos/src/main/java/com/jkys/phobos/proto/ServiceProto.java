@@ -1,6 +1,8 @@
 package com.jkys.phobos.proto;
 
 import com.jkys.phobos.annotation.Rename;
+import com.jkys.phobos.annotation.Service;
+import com.jkys.phobos.annotation.ServiceUtil;
 import com.jkys.phobos.proto.types.Obj;
 import com.jkys.phobos.proto.types.ProtoType;
 import com.jkys.phobos.proto.types.TypeResolver;
@@ -11,13 +13,16 @@ import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by lo on 1/10/17.
 // */
 public class ServiceProto {
+    private String serviceName;
+    private String serviceVersion;
     private Class<?> interfaceClass;
-    private Map<String, Function> functions = new HashMap<>();
+    private Map<String, Function> functions = new ConcurrentHashMap<>();
     private Map<String, Obj> types = new HashMap<>();
 
     public ServiceProto(Class<?> cls) {
@@ -25,21 +30,22 @@ public class ServiceProto {
             throw new RuntimeException("service class must be a interface");
         }
         this.interfaceClass = cls;
+        Service serviceAnno = cls.getAnnotation(Service.class);
+        if (serviceAnno == null || serviceAnno.value().equals("")) {
+            throw new RuntimeException("missing Service annotation: " + cls.getTypeName());
+        }
+        String[] nameVersion = ServiceUtil.splitServiceKey(serviceAnno.value());
+        serviceName = nameVersion[0];
+        serviceVersion= nameVersion[1];
+
         ProtoContext ctx = new ProtoContext();
         for (Method method : cls.getMethods()) {
-            ProtoType returnType = TypeResolver.resolve(ctx, method.getGenericReturnType(), method);
-            Parameter[] params = method.getParameters();
-            Type[] paramTypes = method.getGenericParameterTypes();
-            ProtoType[] protoTypes = new ProtoType[paramTypes.length];
-            for (int i = 0; i < paramTypes.length; i++) {
-                protoTypes[i] = TypeResolver.resolve(ctx, paramTypes[i], params[i]);
-            }
             String name = method.getName();
             Rename rename = method.getAnnotation(Rename.class);
             if (rename != null && !rename.value().equals("")) {
                 name = rename.value();
             }
-            Function function = new Function(name, returnType, protoTypes);
+            Function function = new Function(ctx, method);
             functions.put(name, function);
         }
         for (Type type : ctx.getTypes()) {
@@ -61,6 +67,22 @@ public class ServiceProto {
         result.put("types", typeDescs);
         result.put("service", functionDescs);
         return result;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public String getServiceVersion() {
+        return serviceVersion;
+    }
+
+    public Class<?> getInterfaceClass() {
+        return interfaceClass;
+    }
+
+    public Map<String, Function> getFunctions() {
+        return functions;
     }
 
     public String toYaml() {

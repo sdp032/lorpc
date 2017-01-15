@@ -1,7 +1,12 @@
 package com.jkys.phobos.proto;
 
+import com.jkys.phobos.annotation.Rename;
 import com.jkys.phobos.proto.types.ProtoType;
+import com.jkys.phobos.proto.types.TypeResolver;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,24 +16,44 @@ import java.util.Map;
  * Created by lo on 1/10/17.
  */
 public class Function {
-    private String name;
-    private ProtoType returnType;
-    private ProtoType[] params;
+    private static Object[] objectArray = new Object[0];
 
-    public Function(String name, ProtoType returnType, ProtoType[] params) {
-        this.name = name;
-        this.returnType = returnType;
-        this.params = params;
+    private String name;
+    private Method method;
+    private Type returnType;
+    private Type paramsType;
+    private Type[] paramTypes;
+    private ProtoType returnProtoType;
+    private ProtoType[] paramProtoTypes;
+
+    public Function(ProtoContext ctx, Method method) {
+        this.method = method;
+        name = method.getName();
+        Rename rename = method.getAnnotation(Rename.class);
+        if (rename != null && !rename.value().equals("")) {
+            name = rename.value();
+        }
+
+        returnType = method.getGenericReturnType();
+        returnProtoType = TypeResolver.resolve(ctx, returnType, method);
+
+        Parameter[] params = method.getParameters();
+        paramTypes = method.getGenericParameterTypes();
+        paramProtoTypes = new ProtoType[paramTypes.length];
+        for (int i = 0; i < paramProtoTypes.length; i++) {
+            paramProtoTypes[i] = TypeResolver.resolve(ctx, paramTypes[i], params[i]);
+        }
+        paramsType = new ParamsType(paramTypes);
     }
 
     public Map<String, Object> dump() {
-        List<Map<String, Object>> paramDescs = new ArrayList<>(params.length);
-        for (ProtoType type : params) {
+        List<Map<String, Object>> paramDescs = new ArrayList<>(paramProtoTypes.length);
+        for (ProtoType type : paramProtoTypes) {
             paramDescs.add(type.dump());
         }
         Map<String, Object> result = new HashMap<>();
         result.put("params", paramDescs);
-        result.put("return", returnType.dump());
+        result.put("return", returnProtoType.dump());
         return result;
     }
 
@@ -36,23 +61,27 @@ public class Function {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public ProtoType getReturnProtoType() {
+        return returnProtoType;
     }
 
-    public ProtoType getReturnType() {
+    public ProtoType[] getParamProtoTypes() {
+        return paramProtoTypes;
+    }
+
+    public Type getReturnType() {
         return returnType;
     }
 
-    public void setReturnType(ProtoType returnType) {
-        this.returnType = returnType;
+    public Type[] getParamTypes() {
+        return paramTypes;
     }
 
-    public ProtoType[] getParams() {
-        return params;
+    public Type getParamsType() {
+        return paramsType;
     }
 
-    public void setParams(ProtoType[] params) {
-        this.params = params;
+    public Method getMethod() {
+        return method;
     }
 }

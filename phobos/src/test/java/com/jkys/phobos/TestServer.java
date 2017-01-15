@@ -13,7 +13,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class TestServer {
 
     @Test
-    public void test() throws InterruptedException {
+    public void testServer() throws InterruptedException {
         ApplicationContext context = new ClassPathXmlApplicationContext("spring/server-application.xml");
         ServerBean serverBean = (ServerBean) context.getBean(ServerBean.NAME);
         serverBean.joinServer();

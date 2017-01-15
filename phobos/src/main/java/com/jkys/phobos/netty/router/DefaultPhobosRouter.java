@@ -1,7 +1,6 @@
 package com.jkys.phobos.netty.router;
 
-import com.jkys.phobos.codec.SerializeHandle;
-import com.jkys.phobos.codec.SerializeHandleFactory;
+import com.jkys.phobos.serialization.SerializationType;
 import com.jkys.phobos.constant.ErrorEnum;
 import com.jkys.phobos.protocol.PhobosRequest;
 import com.jkys.phobos.protocol.PhobosResponse;
@@ -19,7 +18,6 @@ public class DefaultPhobosRouter implements PhobosRouter {
     private ServerContext context = ServerContext.getInstance();
 
     public PhobosResponse route(PhobosRequest request) throws Exception {
-        SerializeHandle handle = SerializeHandleFactory.create(request.getHeader().getSerializationType());
         String serviceName = request.getRequest().getServiceName();
         String serviceVersion = request.getRequest().getServiceVersion();
         Provider provider = context.getProvider(serviceName, serviceVersion);
@@ -29,6 +27,7 @@ public class DefaultPhobosRouter implements PhobosRouter {
             phobosResponse.getResponse().setErrCode(ErrorEnum.UNKNOWN_SERVICE.name());
             return phobosResponse;
         }
-        return new PhobosResponse(request.getHeader(), provider.invoke(handle, request.getRequest()));
+        SerializationType serializationType = SerializationType.get(request.getHeader().getSerializationType());
+        return new PhobosResponse(request.getHeader(), provider.invoke(serializationType, request.getRequest()));
     }
 }

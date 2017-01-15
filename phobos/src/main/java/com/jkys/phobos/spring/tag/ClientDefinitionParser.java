@@ -1,6 +1,6 @@
 package com.jkys.phobos.spring.tag;
 
-import com.jkys.phobos.codec.SerializationType;
+import com.jkys.phobos.serialization.SerializationType;
 import com.jkys.phobos.config.ClientConfig;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
