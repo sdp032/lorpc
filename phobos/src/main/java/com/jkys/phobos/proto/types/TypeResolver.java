@@ -28,6 +28,9 @@ public class TypeResolver {
             if (builder != null) {
                 return builder.build(ctx, type, ele);
             }
+            if (type.equals(Object.class)) {
+                throw new RuntimeException("can't use Object");
+            }
             return objBuilder.build(ctx, type, ele);
         }
     }
