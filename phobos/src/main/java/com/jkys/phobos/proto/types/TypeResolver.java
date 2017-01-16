@@ -29,7 +29,7 @@ public class TypeResolver {
                 return builder.build(ctx, type, ele);
             }
             if (type.equals(Object.class)) {
-                throw new RuntimeException("can't use Object");
+                throw new RuntimeException("can't use Object: " + ctx.elements());
             }
             return objBuilder.build(ctx, type, ele);
         }

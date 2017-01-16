@@ -42,7 +42,9 @@ public class Obj extends ProtoType {
         if (rename != null && !rename.value().equals("")) {
             objName = rename.value();
         }
+        ctx.pushElement("(" + type.getTypeName() + ")");
         fields = makeFields(ctx, type);
+        ctx.popElement();
         ctx.popObj();
     }
 
@@ -63,6 +65,7 @@ public class Obj extends ProtoType {
             }
             fields = new ArrayList<>();
             for (Field field : getRawFields(rawType)) {
+                ctx.pushElement(field.getName());
                 String name = field.getName();
                 Rename fieldRename = field.getAnnotation(Rename.class);
                 if (fieldRename != null && !fieldRename.value().equals("")) {
@@ -72,6 +75,7 @@ public class Obj extends ProtoType {
                 Type fieldType = cleanFieldType(type, reprName, field.getGenericType());
                 boolean isGetter = !Modifier.isPublic(field.getModifiers());
                 fields.add(new ObjField(name, TypeResolver.resolve(ctx, fieldType, field), isGetter));
+                ctx.popElement();
             }
             fieldsMap.put(type, fields);
         }

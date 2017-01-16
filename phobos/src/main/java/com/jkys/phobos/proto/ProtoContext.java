@@ -12,6 +12,11 @@ import java.util.Set;
 public class ProtoContext {
     private Set<Type> types = new HashSet<>();
     private List<Type> objStack = new ArrayList<>();
+    private List<Object> elementStack = new ArrayList<>();
+
+    public ProtoContext(Object element) {
+        elementStack.add(element);
+    }
 
     public void addObjectType(Type type) {
         types.add(type);
@@ -19,6 +24,22 @@ public class ProtoContext {
 
     public Set<Type> getTypes() {
         return types;
+    }
+
+    public void pushElement(Object object) {
+        elementStack.add(object);
+    }
+
+    public void popElement() {
+        elementStack.remove(elementStack.size() - 1);
+    }
+
+    public String elements() {
+        String[] eles = new String[elementStack.size()];
+        for (int i = 0; i < eles.length; i++) {
+            eles[i] = elementStack.get(i).toString();
+        }
+        return String.join(".", eles);
     }
 
     public void enterObj(Type type) {

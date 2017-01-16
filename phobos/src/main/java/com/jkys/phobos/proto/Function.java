@@ -35,13 +35,17 @@ public class Function {
         }
 
         returnType = method.getGenericReturnType();
+        ctx.pushElement("<return>");
         returnProtoType = TypeResolver.resolve(ctx, returnType, method);
+        ctx.popElement();
 
         Parameter[] params = method.getParameters();
         paramTypes = method.getGenericParameterTypes();
         paramProtoTypes = new ProtoType[paramTypes.length];
         for (int i = 0; i < paramProtoTypes.length; i++) {
+            ctx.pushElement("<arg: " + i + ">");
             paramProtoTypes[i] = TypeResolver.resolve(ctx, paramTypes[i], params[i]);
+            ctx.popElement();
         }
         paramsType = new ParamsType(paramTypes);
     }

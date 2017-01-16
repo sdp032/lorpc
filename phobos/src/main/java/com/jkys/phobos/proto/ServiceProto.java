@@ -38,8 +38,9 @@ public class ServiceProto {
         serviceName = nameVersion[0];
         serviceVersion= nameVersion[1];
 
-        ProtoContext ctx = new ProtoContext();
+        ProtoContext ctx = new ProtoContext(cls);
         for (Method method : cls.getMethods()) {
+            ctx.pushElement(method.getName());
             String name = method.getName();
             Rename rename = method.getAnnotation(Rename.class);
             if (rename != null && !rename.value().equals("")) {
@@ -47,6 +48,7 @@ public class ServiceProto {
             }
             Function function = new Function(ctx, method);
             functions.put(name, function);
+            ctx.popElement();
         }
         for (Type type : ctx.getTypes()) {
             Obj obj = new Obj(ctx, type, null);
