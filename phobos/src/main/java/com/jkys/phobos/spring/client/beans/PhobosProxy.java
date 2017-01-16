@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 public class PhobosProxy implements InvocationHandler {
     private static Logger logger = LoggerFactory.getLogger(PhobosProxy.class);
     private static SerializerFactory serializerFactory = new SerializerFactory();
+    private static Object[] EMPTY_ARGS = new Object[0];
 
     private ConcurrentHashMap<Method, Function> functions = new ConcurrentHashMap<>();
     private String serviceName;
@@ -51,7 +52,11 @@ public class PhobosProxy implements InvocationHandler {
         request.getRequest().setMethodName(function.getName());
         request.getRequest().setServiceVersion(serviceVersion);
         request.getRequest().setTraceId(new byte[16]); //TODO 规则待定
-        request.getRequest().setData(serializerFactory.get(serializationType, function.getParamsType()).encode(args));
+        if(args == null) {
+            request.getRequest().setData(serializerFactory.get(serializationType, function.getParamsType()).encode(EMPTY_ARGS));
+        } else {
+            request.getRequest().setData(serializerFactory.get(serializationType, function.getParamsType()).encode(args));
+        }
 
         long timeout = phobosConfig.getClient().getRequestTimeout();
         PhobosResponse response = ClientContext.getInstance().request(request, timeout, TimeUnit.SECONDS);

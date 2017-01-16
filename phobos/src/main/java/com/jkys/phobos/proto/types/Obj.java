@@ -18,10 +18,25 @@ public class Obj extends ProtoType {
     private String objName;
     private List<ObjField> fields = new ArrayList<>();
 
-    public Obj(ProtoContext ctx, Type type, AnnotatedElement ele) {
+    private Obj(ProtoContext ctx, Class<?> rawType, Type type, AnnotatedElement ele) {
         super(ctx, type, ele);
         ctx.enterObj(type);
+        if (Modifier.isAbstract(rawType.getModifiers())) {
+            // FIXME
+            throw new RuntimeException("can't use abstract class: " + ctx.elements());
+        }
         objName = type.getTypeName();
+        Rename rename = rawType.getAnnotation(Rename.class);
+        if (rename != null && !rename.value().equals("")) {
+            objName = rename.value();
+        }
+        ctx.pushElement("(" + type.getTypeName() + ")");
+        fields = makeFields(ctx, type);
+        ctx.popElement();
+        ctx.popObj();
+    }
+
+    public static ProtoType get(ProtoContext ctx, Type type, AnnotatedElement ele) {
         Class<?> rawType;
         if (type instanceof ParameterizedType) {
             ParameterizedType ptype = (ParameterizedType) type;
@@ -34,18 +49,10 @@ public class Obj extends ProtoType {
         } else {
             throw  new RuntimeException("unhandled type: " + ctx.elements());
         }
-        if (Modifier.isAbstract(rawType.getModifiers())) {
-            // FIXME
-            throw new RuntimeException("can't use abstract class: " + ctx.elements());
+        if (rawType.isEnum()) {
+            return new Enum(ctx, rawType, type, ele);
         }
-        Rename rename = rawType.getAnnotation(Rename.class);
-        if (rename != null && !rename.value().equals("")) {
-            objName = rename.value();
-        }
-        ctx.pushElement("(" + type.getTypeName() + ")");
-        fields = makeFields(ctx, type);
-        ctx.popElement();
-        ctx.popObj();
+        return new Obj(ctx, rawType, type, ele);
     }
 
     public List<ObjField> getFields() {
@@ -149,11 +156,7 @@ public class Obj extends ProtoType {
     }
 
     private static Type getTypeVariableActualType(Type owner, TypeVariable var) {
-        Map<TypeVariable, Type> variables = cachedVariables.get(owner);
-        if (variables == null) {
-            variables = collectVariableTypes(null, owner);
-            cachedVariables.put(owner, variables);
-        }
+        Map<TypeVariable, Type> variables = cachedVariables.computeIfAbsent(owner, k -> collectVariableTypes(null, owner));
         Type type = variables.get(var);
         while (type != null && type instanceof TypeVariable) {
             type = variables.get(type);
@@ -184,6 +187,7 @@ public class Obj extends ProtoType {
         return objName;
     }
 
+    @Override
     public Map<String, Object> dumpObject() {
         List<Map<String, Object>> fieldDescs = new ArrayList<>(fields.size());
         for (ObjField field : fields) {

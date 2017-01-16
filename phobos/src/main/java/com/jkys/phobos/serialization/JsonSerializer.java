@@ -13,12 +13,13 @@ import java.io.IOException;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 
 /**
  * Created by lo on 1/15/17.
  */
 public class JsonSerializer implements Serializer {
-    private Gson gson = new GsonBuilder().registerTypeAdapterFactory(new ParamsTypeAdapterFactory()).create();
+    private static Gson gson = new GsonBuilder().registerTypeAdapterFactory(new ParamsTypeAdapterFactory()).create();
     private Type targetType;
 
     public JsonSerializer(Type targetType) {

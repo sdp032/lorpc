@@ -1,7 +1,7 @@
-package com.jkys.phobos;
+package com.jkys.phobos.test;
 
 import com.jkys.phobos.proto.ServiceProto;
-import com.jkys.phobos.service.TestService;
+import com.jkys.phobos.test.service.TestService;
 import com.jkys.phobos.spring.server.ServerBean;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;

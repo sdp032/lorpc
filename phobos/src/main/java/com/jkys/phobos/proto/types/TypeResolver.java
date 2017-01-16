@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class TypeResolver {
     private static Map<String, TypeBuilder> builders = new HashMap<>();
-    private static TypeBuilder objBuilder = Obj::new;
+    private static TypeBuilder objBuilder = Obj::get;
 
     public static ProtoType resolve(ProtoContext ctx, Type type, AnnotatedElement ele) {
         String clsName = type.getTypeName();

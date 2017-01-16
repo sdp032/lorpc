@@ -23,7 +23,7 @@ public class ServiceProto {
     private String serviceVersion;
     private Class<?> interfaceClass;
     private Map<String, Function> functions = new ConcurrentHashMap<>();
-    private Map<String, Obj> types = new HashMap<>();
+    private Map<String, ProtoType> types = new HashMap<>();
 
     public ServiceProto(Class<?> cls) {
         if (!cls.isInterface()) {
@@ -51,14 +51,14 @@ public class ServiceProto {
             ctx.popElement();
         }
         for (Type type : ctx.getTypes()) {
-            Obj obj = new Obj(ctx, type, null);
+            ProtoType obj = Obj.get(ctx, type, null);
             types.put(obj.name(), obj);
         }
     }
 
     public Map<String, Object> dump() {
         Map<String, Object> typeDescs = new HashMap<>();
-        for (Obj type : types.values()) {
+        for (ProtoType type : types.values()) {
             typeDescs.put(type.name(), type.dumpObject());
         }
         Map<String, Object> functionDescs = new HashMap<>();

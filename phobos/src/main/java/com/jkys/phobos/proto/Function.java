@@ -35,9 +35,13 @@ public class Function {
         }
 
         returnType = method.getGenericReturnType();
-        ctx.pushElement("<return>");
-        returnProtoType = TypeResolver.resolve(ctx, returnType, method);
-        ctx.popElement();
+        if (returnType.equals(Void.TYPE)) {
+            returnProtoType = null;
+        } else {
+            ctx.pushElement("<return>");
+            returnProtoType = TypeResolver.resolve(ctx, returnType, method);
+            ctx.popElement();
+        }
 
         Parameter[] params = method.getParameters();
         paramTypes = method.getGenericParameterTypes();
@@ -57,7 +61,9 @@ public class Function {
         }
         Map<String, Object> result = new HashMap<>();
         result.put("params", paramDescs);
-        result.put("return", returnProtoType.dump());
+        if (returnProtoType != null) {
+            result.put("return", returnProtoType.dump());
+        }
         return result;
     }
 

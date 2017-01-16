@@ -2,6 +2,7 @@ package com.jkys.phobos.proto.types;
 
 import com.jkys.phobos.annotation.NotNull;
 import com.jkys.phobos.proto.ProtoContext;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
@@ -45,6 +46,10 @@ public abstract class ProtoType {
             result.put("nullable", true);
         }
         return result;
+    }
+
+    public Map<String, Object> dumpObject() {
+        throw new NotImplementedException();
     }
 
     public boolean isNullable() {
