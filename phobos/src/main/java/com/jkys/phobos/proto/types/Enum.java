@@ -16,6 +16,7 @@ import java.util.Map;
  * Created by lo on 1/16/17.
  */
 public class Enum extends ProtoType {
+    private String enumName;
     private List<String> items;
 
     Enum(ProtoContext ctx, Class<?> rawType, Type type, AnnotatedElement ele) {
@@ -23,6 +24,13 @@ public class Enum extends ProtoType {
         if (!rawType.isEnum()) {
             throw new RuntimeException("invalid enum: " + ctx.elements());
         }
+        ctx.addObjectType(type);
+        enumName = type.getTypeName();
+        Rename typeRename = rawType.getAnnotation(Rename.class);
+        if (typeRename != null && !typeRename.equals("")) {
+            enumName = typeRename.value();
+        }
+
         items = new ArrayList<>();
         for (Field field : rawType.getFields()) {
             String name = field.getName();
@@ -43,6 +51,6 @@ public class Enum extends ProtoType {
 
     @Override
     public String name() {
-        return "enum";
+        return enumName;
     }
 }

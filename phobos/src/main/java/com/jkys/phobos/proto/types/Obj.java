@@ -20,6 +20,7 @@ public class Obj extends ProtoType {
 
     private Obj(ProtoContext ctx, Class<?> rawType, Type type, AnnotatedElement ele) {
         super(ctx, type, ele);
+        ctx.addObjectType(type);
         ctx.enterObj(type);
         if (Modifier.isAbstract(rawType.getModifiers())) {
             // FIXME
@@ -62,7 +63,6 @@ public class Obj extends ProtoType {
     private static List<ObjField> makeFields(ProtoContext ctx, Type type) {
         List<ObjField> fields = fieldsMap.get(type);
         if (fields == null) {
-            ctx.addObjectType(type);
             Class<?> rawType;
             if (type instanceof ParameterizedType) {
                 ParameterizedType ptype = (ParameterizedType) type;

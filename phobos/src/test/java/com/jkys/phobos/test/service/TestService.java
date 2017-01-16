@@ -10,4 +10,5 @@ public interface TestService {
     void empty();
     String hello(String name);
     Result<Person> getPerson(String name);
+    Result<Person> random();
 }

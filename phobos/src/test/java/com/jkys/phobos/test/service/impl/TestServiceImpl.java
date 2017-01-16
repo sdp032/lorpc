@@ -4,18 +4,17 @@ import com.jkys.phobos.test.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by lo on 1/16/17.
  */
 public class TestServiceImpl implements TestService {
+    private static Random r = new Random();
     private static Logger logger = LoggerFactory.getLogger(TestServiceImpl.class);
     private static Map<String, Person> persons = new HashMap<>();
     static {
+        r.setSeed(System.currentTimeMillis());
         Person person = new Person();
         person.setName("service user");
         person.setAge(18);
@@ -44,5 +43,10 @@ public class TestServiceImpl implements TestService {
             return Result.error("no such person");
         }
         return new Result<>(person);
+    }
+
+    @Override
+    public Result<Person> random() {
+        return new Result<>(persons.get(r.nextInt(persons.size())));
     }
 }

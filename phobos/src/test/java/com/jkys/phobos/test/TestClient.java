@@ -20,5 +20,6 @@ public class TestClient {
         System.out.println(testService.hello("service client"));
         Result<Person> result = testService.getPerson("service user");
         System.out.println(result.getResult());
+        System.out.println(testService.random());
     }
 }
