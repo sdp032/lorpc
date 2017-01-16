@@ -18,7 +18,9 @@ public class Set extends ProtoType {
         super(ctx, type, ele);
         if (type instanceof ParameterizedType) {
             Type eleType = ((ParameterizedType) type).getActualTypeArguments()[0];
+            ctx.pushElement("<item>");
             elementType = TypeResolver.resolve(ctx, eleType, null);
+            ctx.popElement();
         } else {
             // FIXME
             throw new RuntimeException("unknown set: " + type.getTypeName());

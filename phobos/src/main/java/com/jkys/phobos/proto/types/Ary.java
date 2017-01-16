@@ -17,6 +17,7 @@ public class Ary extends ProtoType {
 
     Ary(ProtoContext ctx, Type type , AnnotatedElement ele) {
         super(ctx, type, ele);
+        ctx.pushElement("<item>");
         if (type instanceof Class) {
             elementType = TypeResolver.resolve(ctx, ((Class) type).getComponentType(), null);
         } else if (type instanceof GenericArrayType) {
@@ -26,8 +27,9 @@ public class Ary extends ProtoType {
             elementType = TypeResolver.resolve(ctx, eleType, null);
         } else {
             // FIXME
-            throw new RuntimeException("unknown array: " + type.getTypeName());
+            throw new RuntimeException("unknown array: " + ctx.elements());
         }
+        ctx.popElement();
         if (ele != null) {
             elementType.setNullable(ele.getAnnotation(EleNotNull.class) == null);
         } else {

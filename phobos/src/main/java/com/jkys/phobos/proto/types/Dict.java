@@ -20,13 +20,17 @@ public class Dict extends ProtoType {
         super(ctx, type, ele);
         if (!(type instanceof ParameterizedType)) {
             // FIXME
-            throw new RuntimeException("unknown map type: " + type.getTypeName());
+            throw new RuntimeException("unknown map type: " + ctx.elements());
         }
         Type[] types = ((ParameterizedType) type).getActualTypeArguments();
+        ctx.pushElement("<key>");
         keyType = TypeResolver.resolve(ctx, types[0], null);
+        ctx.popElement();
         // TODO key type nullable
         keyType.setNullable(false);
+        ctx.pushElement("<value>");
         valueType = TypeResolver.resolve(ctx, types[1], null);
+        ctx.popElement();
         if (ele != null) {
             valueType.setNullable(ele.getAnnotation(ValueNotNull.class) == null);
         } else {

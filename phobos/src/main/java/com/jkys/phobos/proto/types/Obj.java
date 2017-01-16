@@ -29,14 +29,14 @@ public class Obj extends ProtoType {
         } else if (type instanceof Class) {
             rawType = (Class<?>) type;
             if (rawType.isInterface()) {
-                throw new RuntimeException("can't use interface in rpc proto");
+                throw new RuntimeException("can't use interface in rpc proto: " + ctx.elements());
             }
         } else {
-            throw  new RuntimeException("unhandled type: " + type.getTypeName());
+            throw  new RuntimeException("unhandled type: " + ctx.elements());
         }
         if (Modifier.isAbstract(rawType.getModifiers())) {
             // FIXME
-            throw new RuntimeException("can't use abstract class");
+            throw new RuntimeException("can't use abstract class: " + ctx.elements());
         }
         Rename rename = rawType.getAnnotation(Rename.class);
         if (rename != null && !rename.value().equals("")) {
