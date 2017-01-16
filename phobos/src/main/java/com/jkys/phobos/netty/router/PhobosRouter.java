@@ -1,7 +1,7 @@
 package com.jkys.phobos.netty.router;
 
-import com.jkys.phobos.remote.protocol.PhobosRequest;
-import com.jkys.phobos.remote.protocol.PhobosResponse;
+import com.jkys.phobos.protocol.PhobosRequest;
+import com.jkys.phobos.protocol.PhobosResponse;
 
 /**
  * Created by zdj on 2016/7/11.

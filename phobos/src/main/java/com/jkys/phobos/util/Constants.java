@@ -9,7 +9,7 @@ public class Constants {
      */
     static byte SERIALIZATION_META_PACK = 0x01;
     /**
-     * protocol version (request header use)
+     * protocol value (request header use)
      */
     static short PROTOCAL_VERSION = (short) 0x0001;
 

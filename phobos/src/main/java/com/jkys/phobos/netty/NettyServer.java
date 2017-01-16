@@ -1,14 +1,16 @@
 package com.jkys.phobos.netty;
 
+import com.github.infrmods.xbus.item.ServiceDesc;
 import com.github.infrmods.xbus.item.ServiceEndpoint;
+import com.jkys.phobos.config.ServerConfig;
 import com.jkys.phobos.job.Scheduled;
 import com.jkys.phobos.job.XbusTask;
 import com.jkys.phobos.netty.channel.AbstractServerChannelHandler;
 import com.jkys.phobos.netty.channel.DefaultServerChannelHandler;
 import com.jkys.phobos.netty.codec.PhobosResponseEncoder;
 import com.jkys.phobos.netty.codec.PhotosRequestDecoder;
-import com.jkys.phobos.server.PhobosContext;
-import com.jkys.phobos.util.CommonUtil;
+import com.jkys.phobos.config.PhobosConfig;
+import com.jkys.phobos.server.ServerContext;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -17,7 +19,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,18 +31,14 @@ public class NettyServer {
 
     private static Logger logger = LoggerFactory.getLogger(NettyServer.class);
 
-    private final Integer port;
-
-    private PhobosContext context = PhobosContext.getInstance();
+    private ServerContext context = ServerContext.getInstance();
 
     private Class<? extends AbstractServerChannelHandler> handlerClass;
 
-    public NettyServer(Integer port) {
-        this.port = port;
+    public NettyServer() {
     }
 
     public void open() throws Exception {
-
         if (handlerClass == null) {
             handlerClass = DefaultServerChannelHandler.class;
         }
@@ -65,16 +62,16 @@ public class NettyServer {
                             socketChannel.pipeline().addLast(handlerClass.getConstructor().newInstance());
                         }
                     });
-            ChannelFuture future = bootstrap.bind(port).sync();
+            ServerConfig config = PhobosConfig.getInstance().getServer();
+            ChannelFuture future = bootstrap.bind(config.getBindHost(), config.getBindPort()).sync();
             synchronized (this) {
                 this.notify();
             }
             //启动完成后启动定时器
-            //获取本机IP地址
-            String ip = CommonUtil.getIpAddresses();
             new Scheduled().addTask(
-                    new XbusTask(1, 60, TimeUnit.SECONDS, context.getXbusAddrs(), context.getKeystorePath(), context.getKeystorePassword())
-                            .plug(context.getServiceDescs(), new ServiceEndpoint(ip + ":" + context.getPort(), null), 120)
+                    new XbusTask(1, 60, TimeUnit.SECONDS)
+                            .plug(context.getServiceDescs(),
+                                    new ServiceEndpoint(config.getAddress(), null), 120)
             ).run();
 
             future.channel().closeFuture().sync();
@@ -84,15 +81,15 @@ public class NettyServer {
         }
     }
 
-    public void listenOpen() throws InterruptedException {
+    private void listenOpen() throws InterruptedException {
         synchronized (this) {
             this.wait();
         }
     }
 
-    public void noBlockOpen() {
+    public Thread noBlockOpen() {
         logger.info("netty服务器启动中。。。");
-        new Thread(new Runnable() {
+        Thread t = new Thread(new Runnable() {
             public void run() {
                 try {
                     open();
@@ -101,7 +98,8 @@ public class NettyServer {
                     System.exit(0);
                 }
             }
-        }).start();
+        });
+        t.start();
         try {
             listenOpen();
         } catch (InterruptedException e) {
@@ -109,13 +107,6 @@ public class NettyServer {
             System.exit(0);
         }
         logger.info("netty服务器启动完成。。。");
-    }
-
-    public Class<? extends AbstractServerChannelHandler> getHandlerClass() {
-        return handlerClass;
-    }
-
-    public void setHandlerClass(Class<? extends AbstractServerChannelHandler> handlerClass) {
-        this.handlerClass = handlerClass;
+        return t;
     }
 }

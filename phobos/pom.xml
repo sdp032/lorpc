@@ -5,7 +5,7 @@
     <properties>
         <mars.version>1.0-SNAPSHOT</mars.version>
         <curiosity.version>1.0-SNAPSHOT</curiosity.version>
-        <phobos.version>1.0-SNAPSHOT</phobos.version>
+        <phobos.version>1.0</phobos.version>
         <spring.version>4.3.0.RELEASE</spring.version>
         <log4j.version>2.6.1</log4j.version>
     </properties>
@@ -13,55 +13,64 @@
 
     <artifactId>phobos</artifactId>
     <groupId>com.jkys.portal</groupId>
-    <version>${phobos.version}</version>
+    <version>${projectVersion}</version>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>${spring.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
             <version>${spring.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.21</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
             <version>${log4j.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>${log4j.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>${log4j.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -91,7 +100,13 @@
         <dependency>
             <groupId>com.github.infrmods.xbus</groupId>
             <artifactId>xbus-client</artifactId>
-            <version>0.1</version>
+            <version>0.1.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -99,20 +114,50 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.5</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.cryptacular</groupId>
+            <artifactId>cryptacular</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.google.code.gson</groupId>-->
+            <!--<artifactId>gson</artifactId>-->
+            <!--<version>2.8.0</version>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.17</version>
+        </dependency>
     </dependencies>
 
-    <distributionManagement>
-        <repository>
-            <id>releases</id>
-            <name>internal repository for releases</name>
-            <url>http://nexus.91jkys.com/content/repositories/releases</url>
-        </repository>
-        <snapshotRepository>
+    <profiles>
+        <profile>
             <id>snapshots</id>
-            <name>internal repository for snapshots</name>
-            <url>http://nexus.91jkys.com/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
+            <properties>
+                <projectVersion>${phobos.version}-SNAPSHOT</projectVersion>
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>snapshots</id>
+                    <url>http://nexus.91jkys.com/content/repositories/snapshots</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>releases</id>
+            <properties>
+                <projectVersion>${phobos.version}</projectVersion>
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>releases</id>
+                    <url>http://nexus.91jkys.com/content/repositories/releases</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
     <build>
         <plugins>
             <plugin>

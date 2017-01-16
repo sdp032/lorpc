@@ -1,7 +1,5 @@
 package com.jkys.phobos.spring.client.beans;
 
-import com.jkys.phobos.spring.client.Handler.PhobosHandler;
-import com.jkys.phobos.spring.client.Handler.impl.DefaultPhobosHandler;
 import org.springframework.beans.factory.FactoryBean;
 
 import java.lang.reflect.Proxy;
@@ -11,47 +9,45 @@ import java.lang.reflect.Proxy;
  */
 public class PhobosFactoryBean<T> implements FactoryBean<T> {
 
-    private Class<T> phobosInterface;
-
-    private String serviceAppName;
-
-    private PhobosHandler phobosHandler;
+    private Class<T> serviceInterface;
+    private String serviceName;
+    private String serviceVersion;
 
     public T getObject() throws Exception {
-        PhobosProxy phobosProxy = new PhobosProxy(phobosHandler == null ? new DefaultPhobosHandler(serviceAppName) : phobosHandler);
-        T t = (T) Proxy.newProxyInstance(phobosInterface.getClassLoader(), new Class[]{phobosInterface}, phobosProxy);
+        PhobosProxy phobosProxy = new PhobosProxy(serviceInterface, serviceName, serviceVersion);
+        T t = (T) Proxy.newProxyInstance(serviceInterface.getClassLoader(), new Class[]{serviceInterface}, phobosProxy);
         return t;
     }
 
     public Class<?> getObjectType() {
-        return phobosInterface;
+        return serviceInterface;
     }
 
     public boolean isSingleton() {
         return false;
     }
 
-    public Class<T> getPhobosInterface() {
-        return phobosInterface;
+    public Class<T> getServiceInterface() {
+        return serviceInterface;
     }
 
-    public void setPhobosInterface(Class<T> phobosInterface) {
-        this.phobosInterface = phobosInterface;
+    public void setServiceInterface(Class<T> serviceInterface) {
+        this.serviceInterface = serviceInterface;
     }
 
-    public PhobosHandler getPhobosHandler() {
-        return phobosHandler;
+    public String getServiceName() {
+        return serviceName;
     }
 
-    public void setPhobosHandler(PhobosHandler phobosHandler) {
-        this.phobosHandler = phobosHandler;
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 
-    public String getServiceAppName() {
-        return serviceAppName;
+    public String getServiceVersion() {
+        return serviceVersion;
     }
 
-    public void setServiceAppName(String serviceAppName) {
-        this.serviceAppName = serviceAppName;
+    public void setServiceVersion(String serviceVersion) {
+        this.serviceVersion = serviceVersion;
     }
 }

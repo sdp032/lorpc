@@ -8,16 +8,34 @@
 
     <xsd:element name="registry" type="registryType"/>
     <xsd:complexType name="registryType">
-        <xsd:attribute name="xbusAddr" type="xsd:string"/>
-        <xsd:attribute name="servicePort" type="xsd:int" use="required"/>
-        <xsd:attribute name="blocking" type="xsd:boolean" default="false"/>
-        <xsd:attribute name="serverAppName" type="xsd:string"/>
-        <xsd:attribute name="keystorePath" type="xsd:string" use="required"/>
-        <xsd:attribute name="keystorePassword" type="xsd:string" use="required"/>
+        <xsd:attribute name="endpoint" type="xsd:string"/>
+        <xsd:attribute name="keystorePath" type="xsd:string"/>
+        <xsd:attribute name="keystorePassword" type="xsd:string"/>
     </xsd:complexType>
 
-    <xsd:element name="service" type="serviceType"/>
-    <xsd:complexType name="serviceType">
+    <xsd:element name="server" type="serverType"/>
+    <xsd:complexType name="serverType">
+        <xsd:attribute name="bindHost" type="xsd:string"/>
+        <xsd:attribute name="bindPort" type="xsd:int"/>
+    </xsd:complexType>
+
+    <xsd:element name="client" type="clientType"/>
+    <xsd:complexType name="clientType">
+        <xsd:attribute name="serialization" default="MSGPACK">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="JSON"/>
+                    <xsd:enumeration value="MSGPACK"/>
+                    <xsd:enumeration value="PROTOBUFF"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="resolveTimeout" type="xsd:int" default="30"/>
+        <xsd:attribute name="requestTimeout" type="xsd:int" default="60"/>
+    </xsd:complexType>
+
+    <xsd:element name="provide" type="providerType"/>
+    <xsd:complexType name="providerType">
         <xsd:complexContent>
             <xsd:extension base="beans:identifiedType">
                 <xsd:attribute name="class" type="xsd:string" use="required"/>
@@ -25,23 +43,23 @@
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:element name="client" type="clientType"/>
-    <xsd:complexType name="clientType">
-        <xsd:attribute name="xbusAddr" type="xsd:string"/>
-        <xsd:attribute name="addr" type="xsd:string"/>
-        <xsd:attribute name="clientAppName" type="xsd:string" use="required"/>
-        <xsd:attribute name="keystorePath" type="xsd:string" use="required"/>
-        <xsd:attribute name="keystorePassword" type="xsd:string" use="required"/>
-        <xsd:attribute name="serialization" default="MAGPACK">
-            <xsd:simpleType>
-                <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="JSON"/>
-                    <xsd:enumeration value="MAGPACK"/>
-                    <xsd:enumeration value="PROTOBUFF"/>
-                </xsd:restriction>
-            </xsd:simpleType>
-        </xsd:attribute>
-        <xsd:attribute name="startTimeOut" type="xsd:int" default="60"/>
-        <xsd:attribute name="requestTimeOut" type="xsd:int" default="60"/>
+    <xsd:element name="consume" type="consumerType"/>
+    <xsd:complexType name="consumerType">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:attribute name="interface" type="xsd:string" use="required"/>
+                <xsd:attribute name="serialization" default="MSGPACK">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value="JSON"/>
+                            <xsd:enumeration value="MSGPACK"/>
+                            <xsd:enumeration value="PROTOBUFF"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:attribute>
+                <xsd:attribute name="requestTimeout" type="xsd:int"/>
+                <xsd:attribute name="address" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
     </xsd:complexType>
 </xsd:schema>

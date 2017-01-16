@@ -7,15 +7,5 @@
        http://jkys.com/mars/phobos
        http://jkys.com/mars/phobos.xsd">
 
-    <phobos:client
-            clientAppName="phobosClient01"
-            xbusAddr="xbus.qa.91jkys.com:4433"
-            requestTimeOut="600000"
-            keystorePath="/home/zdj/Downloads/clitest.ks"
-            keystorePassword="123456"/>
-
-    <bean id="test" class="com.jkys.phobos.spring.client.beans.PhobosFactoryBean">
-        <property name="phobosInterface" value="com.jkys.phobos.service.TestService"/>
-        <property name="serviceAppName" value="clitest"/>
-    </bean>
+    <phobos:consume interface="com.jkys.phobos.test.service.TestService" />
 </beans>
