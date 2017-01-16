@@ -18,19 +18,6 @@ public enum SerializationType {
         return type;
     }
 
-    public static SerializationType get(String name) {
-        if ("JSON".equals(name)) {
-            return Json;
-        }
-        if ("MSGPACK".equals(name)) {
-            return Msgpack;
-        }
-        if ("PROTOBUF".equals(name)) {
-            return Protobuf;
-        }
-        return null;
-    }
-
     public static SerializationType get(byte type) {
         switch (type) {
             case 1:
