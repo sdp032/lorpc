@@ -7,6 +7,7 @@ import com.github.infrmods.xbus.exceptions.XBusException;
 import com.github.infrmods.xbus.item.Service;
 import com.github.infrmods.xbus.item.ServiceEndpoint;
 import com.jkys.phobos.annotation.ServiceUtil;
+import com.jkys.phobos.config.ClientConfig;
 import com.jkys.phobos.config.PhobosConfig;
 import com.jkys.phobos.config.ServerConfig;
 import com.jkys.phobos.exception.EnvException;
@@ -30,7 +31,6 @@ public class ClientBus {
     private Random r = new Random();
     private EventLoopGroup eventLoopGroup;
     private XBusClient xbus;
-    private ConcurrentHashMap<String, ServiceEndpoint[]> presetEndpoints = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, List<NettyClient>> serviceClients = new ConcurrentHashMap<>();
 
     ClientBus() {
@@ -40,15 +40,6 @@ public class ClientBus {
         } catch (TLSInitException e) {
             throw new EnvException("get registry fail", e);
         }
-    }
-
-    public void presetAddress(String name, String version, String address) {
-        // TODO
-        if (!address.contains(":")) {
-            address = address + ":" + ServerConfig.DEFAULT_PORT;
-        }
-        ServiceEndpoint endpoint = new ServiceEndpoint(address, null);
-        presetEndpoints.put(ServiceUtil.serviceKey(name, version), new ServiceEndpoint[]{endpoint});
     }
 
     public PhobosResponse request(PhobosRequest request, long timeout, TimeUnit unit) throws InterruptedException {
@@ -64,6 +55,15 @@ public class ClientBus {
         return client.request(request, timeout, unit);
     }
 
+    private ServiceEndpoint[] getPresetEndpoints(String name, String version) {
+        String address = PhobosConfig.getInstance().getClient().getPresetAddress(name, version);
+        if (address != null) {
+            ServiceEndpoint endpoint = new ServiceEndpoint(address, null);
+            return new ServiceEndpoint[]{endpoint};
+        }
+        return null;
+    }
+
     private List<NettyClient> getClients(String name, String version) {
         String key = ServiceUtil.serviceKey(name, version);
         List<NettyClient> clients = serviceClients.get(key);
@@ -71,7 +71,7 @@ public class ClientBus {
             return clients;
         }
 
-        ServiceEndpoint[] endpoints = presetEndpoints.get(key);
+        ServiceEndpoint[] endpoints = getPresetEndpoints(name, version);
         if (endpoints == null) {
             Service service;
             try {

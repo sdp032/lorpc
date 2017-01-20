@@ -3,7 +3,7 @@ package com.jkys.phobos.config;
 import com.jkys.phobos.annotation.ServiceUtil;
 import com.jkys.phobos.serialization.SerializationType;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by lo on 1/5/17.
@@ -17,7 +17,7 @@ public class ClientConfig {
     private SerializationType serializationType;
     private Integer resolveTimeout;
     private Integer requestTimeout;
-    private HashMap<String, String> presetAddresses = new HashMap<>();
+    private ConcurrentHashMap<String, String> presetAddresses = new ConcurrentHashMap<>();
 
     private ClientConfig() {
         serializationType = SerializationType.Json;
@@ -34,6 +34,10 @@ public class ClientConfig {
             address = address + ":" + ServerConfig.DEFAULT_PORT;
         }
         presetAddresses.put(ServiceUtil.serviceKey(name, version), address);
+    }
+
+    public String getPresetAddress(String name, String version) {
+        return presetAddresses.get(ServiceUtil.serviceKey(name, version));
     }
 
     public SerializationType getSerializationType() {
