@@ -1,7 +1,6 @@
 package com.jkys.phobos.spring.tag;
 
 import com.jkys.phobos.config.ServerConfig;
-import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -15,7 +14,7 @@ import org.w3c.dom.Element;
 public class ServerDefinitionParser implements BeanDefinitionParser {
     @Override
     public BeanDefinition parse(Element element, ParserContext parserContext) {
-        ServerConfig config = new ServerConfig();
+        ServerConfig config = ServerConfig.getInstance();
         if (element.hasAttribute("bindHost")) {
             config.setBindHost(element.getAttribute("bindHost"));
         }
@@ -26,9 +25,7 @@ public class ServerDefinitionParser implements BeanDefinitionParser {
 
         RootBeanDefinition beanDefinition = new RootBeanDefinition();
         beanDefinition.setBeanClass(ServerConfig.class);
-        ConstructorArgumentValues values = new ConstructorArgumentValues();
-        values.addIndexedArgumentValue(0, config);
-        beanDefinition.setConstructorArgumentValues(values);
+        beanDefinition.setFactoryMethodName("getInstance");
         parserContext.getRegistry().registerBeanDefinition(ServerConfig.NAME, beanDefinition);
         return beanDefinition;
     }

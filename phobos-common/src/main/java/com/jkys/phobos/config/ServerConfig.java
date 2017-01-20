@@ -1,0 +1,63 @@
+package com.jkys.phobos.config;
+
+import com.jkys.phobos.exception.EnvException;
+import com.jkys.phobos.util.CommonUtil;
+
+/**
+ * Created by lo on 1/5/17.
+ */
+public class ServerConfig {
+    public static final String NAME = "_phobosServerConfig";
+    public static final Integer DEFAULT_PORT = 3000;
+    private static final String PORT_ENV_NAME = "APP_SERVICE_PORT";
+    private static final ServerConfig instance = new ServerConfig();
+
+    private String bindHost;
+    private Integer bindPort;
+    private boolean blocking = false;
+
+    private ServerConfig() {
+        try {
+            bindHost = CommonUtil.getIpAddresses();
+        } catch (Exception e) {
+            throw new EnvException("get ip address fail", e);
+        }
+        bindPort = DEFAULT_PORT;
+        String envPort = System.getenv().get(PORT_ENV_NAME);
+        if (envPort != null && !envPort.equals("")) {
+            bindPort = Integer.valueOf(envPort);
+        }
+    }
+
+    public static ServerConfig getInstance() {
+        return instance;
+    }
+
+    public String getAddress() {
+        return bindHost + ":" + bindPort;
+    }
+
+    public String getBindHost() {
+        return bindHost;
+    }
+
+    public void setBindHost(String bindHost) {
+        this.bindHost = bindHost;
+    }
+
+    public Integer getBindPort() {
+        return bindPort;
+    }
+
+    public void setBindPort(Integer bindPort) {
+        this.bindPort = bindPort;
+    }
+
+    public boolean isBlocking() {
+        return blocking;
+    }
+
+    public void setBlocking(boolean blocking) {
+        this.blocking = blocking;
+    }
+}

@@ -1,5 +1,6 @@
 package com.jkys.phobos.spring.tag;
 
+import com.jkys.phobos.internal.Helper;
 import com.jkys.phobos.spring.server.ServerBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -30,7 +31,7 @@ public class ProviderDefinitionParser implements BeanDefinitionParser {
             serverBeanDef.setBeanClass(ServerBean.class);
             parserContext.getRegistry().registerBeanDefinition(ServerBean.NAME, serverBeanDef);
         }
-        ServerBean.register(implClass);
+        Helper.registryProvider(implClass);
 
         RootBeanDefinition beanDefinition = new RootBeanDefinition();
         beanDefinition.setBeanClass(implClass);

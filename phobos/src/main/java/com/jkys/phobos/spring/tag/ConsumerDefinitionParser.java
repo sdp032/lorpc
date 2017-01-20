@@ -2,9 +2,9 @@ package com.jkys.phobos.spring.tag;
 
 import com.jkys.phobos.annotation.Service;
 import com.jkys.phobos.annotation.ServiceUtil;
-import com.jkys.phobos.client.ClientContext;
-import com.jkys.phobos.spring.client.beans.ClientBean;
-import com.jkys.phobos.spring.client.beans.PhobosFactoryBean;
+import com.jkys.phobos.config.ClientConfig;
+import com.jkys.phobos.spring.client.ClientBean;
+import com.jkys.phobos.spring.client.PhobosFactoryBean;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -36,7 +36,7 @@ public class ConsumerDefinitionParser implements BeanDefinitionParser {
 
         String address = element.getAttribute("address");
         if (address != null && !address.equals("")) {
-            ClientContext.getInstance().presetAddress(nameVersion[0], nameVersion[1], address);
+            ClientConfig.getInstance().presetAddress(nameVersion[0], nameVersion[1], address);
         }
 
         if (!parserContext.getRegistry().containsBeanDefinition(ClientBean.NAME)) {
@@ -54,7 +54,7 @@ public class ConsumerDefinitionParser implements BeanDefinitionParser {
         beanDefinition.setPropertyValues(values);
         String id = element.getAttribute("id");
         if (id.equals("")) {
-            id = "_phbos_consume_" + nameVersion[0] + "_" + nameVersion[1];
+            id = "_phobos_consume_" + nameVersion[0] + "_" + nameVersion[1];
         }
         parserContext.getRegistry().registerBeanDefinition(id, beanDefinition);
         return beanDefinition;

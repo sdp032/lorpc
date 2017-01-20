@@ -9,5 +9,5 @@
 
     <phobos:server bindHost="localhost" />
 
-    <phobos:provide id="testService" class="com.jkys.phobos.test.service.impl.TestServiceImpl"/>
+    <phobos:provide id="testService" class="test.service.impl.TestServiceImpl"/>
 </beans>

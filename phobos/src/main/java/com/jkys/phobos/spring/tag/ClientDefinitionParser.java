@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
 public class ClientDefinitionParser implements BeanDefinitionParser{
     @Override
     public BeanDefinition parse(Element element, ParserContext parserContext) {
-        ClientConfig config = new ClientConfig();
+        ClientConfig config = ClientConfig.getInstance();
         if (element.hasAttribute("serialization")) {
             config.setSerializationType(SerializationType.valueOf(element.getAttribute("serialization")));
             if (config.getSerializationType() == null) {
@@ -34,9 +34,7 @@ public class ClientDefinitionParser implements BeanDefinitionParser{
 
         RootBeanDefinition beanDefinition = new RootBeanDefinition();
         beanDefinition.setBeanClass(ClientConfig.class);
-        ConstructorArgumentValues values = new ConstructorArgumentValues();
-        values.addIndexedArgumentValue(0, config);
-        beanDefinition.setConstructorArgumentValues(values);
+        beanDefinition.setFactoryMethodName("getInstance");
         parserContext.getRegistry().registerBeanDefinition(ClientConfig.NAME, beanDefinition);
         return beanDefinition;
     }

@@ -4,32 +4,47 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.jkys.portal</groupId>
+    <groupId>com.jkys.servicekit</groupId>
     <artifactId>mars</artifactId>
-    <version>${mars.version}</version>
+    <version>1.0</version>
     <packaging>pom</packaging>
-    <modules>
-        <module>phobos</module>
-    </modules>
     <properties>
-        <mars.version>1.0-SNAPSHOT</mars.version>
-        <curiosity.version>1.0-SNAPSHOT</curiosity.version>
-        <phobos.version>1.0-SNAPSHOT</phobos.version>
+        <phobos.version>1.0</phobos.version>
+        <projectVersion>1.0</projectVersion>
         <spring.version>4.3.0.RELEASE</spring.version>
         <log4j.version>2.6.1</log4j.version>
     </properties>
-    <distributionManagement>
-        <repository>
-            <id>releases</id>
-            <name>internal repository for releases</name>
-            <url>http://nexus.91jkys.com/content/repositories/releases</url>
-        </repository>
-        <snapshotRepository>
+    <modules>
+        <module>phobos-common</module>
+        <module>phobos-internal</module>
+        <module>phobos</module>
+    </modules>
+    <profiles>
+        <profile>
             <id>snapshots</id>
-            <name>internal repository for snapshots</name>
-            <url>http://nexus.91jkys.com/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
+            <properties>
+                <projectVersion>${phobos.version}-SNAPSHOT</projectVersion>
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>snapshots</id>
+                    <url>http://nexus.91jkys.com/content/repositories/snapshots</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>releases</id>
+            <properties>
+                <projectVersion>${phobos.version}</projectVersion>
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>releases</id>
+                    <url>http://nexus.91jkys.com/content/repositories/releases</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
     <build>
         <plugins>
             <plugin>
@@ -51,7 +66,7 @@
                             </goals>
                        </execution>
                     </executions>
-                </plugin>
+            </plugin>
         </plugins>
     </build>
 </project>
