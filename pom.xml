@@ -6,7 +6,7 @@
 
     <groupId>com.jkys.servicekit</groupId>
     <artifactId>mars</artifactId>
-    <version>1.0</version>
+    <version>${projectVersion}</version>
     <packaging>pom</packaging>
     <properties>
         <phobos.version>1.0</phobos.version>
