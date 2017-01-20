@@ -28,12 +28,12 @@ public class InternalClassLoader extends ClassLoader {
         Class<?> c = findLoadedClass(name);
         if (c == null) {
             c = findClass(name);
+            if (resolve) {
+                resolveClass(c);
+            }
         }
         if (c == null) {
             throw new ClassNotFoundException();
-        }
-        if (resolve) {
-            resolveClass(c);
         }
         return c;
     }
