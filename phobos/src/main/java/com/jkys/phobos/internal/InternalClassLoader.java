@@ -22,12 +22,13 @@ public class InternalClassLoader extends ClassLoader {
 
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        if (!name.equals(IMPL_NAME)) {
-            return super.loadClass(name, resolve);
-        }
         Class<?> c = findLoadedClass(name);
         if (c == null) {
-            c = findClass(name);
+            try {
+                c = findClass(name);
+            } catch (ClassNotFoundException e) {
+                return super.loadClass(name, resolve);
+            }
             if (resolve) {
                 resolveClass(c);
             }
@@ -41,10 +42,10 @@ public class InternalClassLoader extends ClassLoader {
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         String path = name.replace('.', '/') + ".class";
-        InputStream classStream = getClass().getClassLoader().getResourceAsStream(path);
-        if (classStream == null) {
-            classStream = getClass().getClassLoader().getResourceAsStream(RES_PREFIX + path);
+        if (!name.equals(IMPL_NAME)) {
+            path = RES_PREFIX + path;
         }
+        InputStream classStream = getClass().getClassLoader().getResourceAsStream(path);
         if (classStream != null) {
             byte[] classData;
             try {
