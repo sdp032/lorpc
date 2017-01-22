@@ -30,6 +30,9 @@ public class CommonUtil {
             if (a.isLoopbackAddress()) {
                 return 1;
             }
+            if (b.isLoopbackAddress()) {
+                return -1;
+            }
             if (a.getHostAddress().startsWith("172")) {
                 return 1;
             }
