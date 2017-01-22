@@ -27,7 +27,6 @@ public class DefaultServerChannelHandler extends AbstractServerChannelHandler {
 
         PhobosResponse phobosResponse = router.route(phobosRequest);
 
-        logger.info("request: {}, response: {}", phobosRequest, phobosResponse);
         ctx.writeAndFlush(phobosResponse);
 
     }

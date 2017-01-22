@@ -12,7 +12,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class TestClient {
     @Test
-    public void testClient() throws Exception{
+    public void testClient() {
         ApplicationContext context = new ClassPathXmlApplicationContext("spring/client-application.xml");
 
         TestService testService = context.getBean(TestService.class);
@@ -21,5 +21,30 @@ public class TestClient {
         Result<Person> result = testService.getPerson("service user");
         System.out.println(result.getResult());
         System.out.println(testService.random());
+    }
+
+    @Test
+    public void clientBench() {
+        ApplicationContext context = new ClassPathXmlApplicationContext("spring/client-application.xml");
+
+        TestService testService = context.getBean(TestService.class);
+        int N = 100000;
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < N; i++) {
+            testService.empty();
+        }
+        System.out.println("void call qps: " + ((double)N * 1000 / (System.currentTimeMillis() - start)));
+
+        start = System.currentTimeMillis();
+        for (int i = 0; i < N; i++) {
+            testService.hello("service user");
+        }
+        System.out.println("hello call qps: " + ((double)N * 1000 / (System.currentTimeMillis() - start)));
+
+        start = System.currentTimeMillis();
+        for (int i = 0; i < N; i++) {
+            testService.getPerson("service user");
+        }
+        System.out.println("getPerson call qps: " + ((double)N * 1000 / (System.currentTimeMillis() - start)));
     }
 }
