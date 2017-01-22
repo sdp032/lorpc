@@ -10,6 +10,7 @@ public class ServerConfig {
     public static final String NAME = "_phobosServerConfig";
     public static final Integer DEFAULT_PORT = 3000;
     private static final String PORT_ENV_NAME = "APP_SERVICE_PORT";
+    private static final String PORT_PROPERTY_NAME = "app.service_port";
     private static final ServerConfig instance = new ServerConfig();
 
     private String bindHost;
@@ -24,6 +25,9 @@ public class ServerConfig {
         }
         bindPort = DEFAULT_PORT;
         String envPort = System.getenv().get(PORT_ENV_NAME);
+        if (envPort == null) {
+            envPort = System.getProperty(PORT_PROPERTY_NAME);
+        }
         if (envPort != null && !envPort.equals("")) {
             bindPort = Integer.valueOf(envPort);
         }

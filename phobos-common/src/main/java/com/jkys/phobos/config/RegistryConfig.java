@@ -12,7 +12,9 @@ public class RegistryConfig {
     private static final String AUTO_JKS = "app.jks";
     private static final String AUTO_JKS_PASSWORD = "123456";
     private static final String KEYSTORE_ENV_NAME = "APP_KEYSTORE";
+    private static final String KEYSTORE_PROPERTY_NAME = "app.keystore";
     private static final String KEYSTORE_PWD_ENV_NAME = "APP_KEYSTORE_PASSWORD";
+    private static final String KEYSTORE_PWD_PROPERTY_NAME = "app.keystore.password";
     private static final RegistryConfig instance = new RegistryConfig();
 
     private String endpoint;
@@ -35,8 +37,8 @@ public class RegistryConfig {
             String envKeyStore = System.getenv().get(KEYSTORE_ENV_NAME);
             String envKeyStorePassword = System.getenv(KEYSTORE_PWD_ENV_NAME);
             if (envKeyStore == null) {
-                envKeyStore = System.getProperty("app.keystore");
-                envKeyStorePassword = System.getProperty("app.keystore.password");
+                envKeyStore = System.getProperty(KEYSTORE_PROPERTY_NAME);
+                envKeyStorePassword = System.getProperty(KEYSTORE_PWD_PROPERTY_NAME);
             }
             if (envKeyStore != null && !envKeyStore.equals("")) {
                 keystorePath = envKeyStore;
