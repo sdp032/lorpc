@@ -33,13 +33,17 @@ public class RegistryConfig {
             keystorePassword = AUTO_JKS_PASSWORD;
         } else {
             String envKeyStore = System.getenv().get(KEYSTORE_ENV_NAME);
+            String envKeyStorePassword = System.getenv(KEYSTORE_PWD_ENV_NAME);
+            if (envKeyStore == null) {
+                envKeyStore = System.getProperty("app.keystore");
+                envKeyStorePassword = System.getProperty("app.keystore.password");
+            }
             if (envKeyStore != null && !envKeyStore.equals("")) {
                 keystorePath = envKeyStore;
-                keystorePassword = AUTO_JKS_PASSWORD;
-                String envKeyStorePwd = System.getenv().get(KEYSTORE_PWD_ENV_NAME);
-                if (envKeyStorePwd != null && !envKeyStorePwd.equals("")) {
-                    keystorePassword = envKeyStorePwd;
+                if (envKeyStorePassword == null || envKeyStorePassword.equals("")) {
+                    envKeyStorePassword = AUTO_JKS_PASSWORD;
                 }
+                keystorePassword = envKeyStorePassword;
             } else {
                 caCertPath = env.getCaCertPath();
                 certPath = env.getCertPath();

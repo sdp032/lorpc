@@ -37,7 +37,11 @@ public class ClientConfig {
     }
 
     public String getPresetAddress(String name, String version) {
-        return presetAddresses.get(ServiceUtil.serviceKey(name, version));
+        String result = presetAddresses.get(ServiceUtil.serviceKey(name, version));
+        if (result == null) {
+            result = System.getProperty(name + "." + version + ".address");
+        }
+        return result;
     }
 
     public SerializationType getSerializationType() {

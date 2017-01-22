@@ -19,15 +19,30 @@ public class AppEnv {
         Map<String, String> env = System.getenv();
         appEnv.name = env.get("APP_NAME");
         if (appEnv.name == null) {
+            appEnv.name = System.getProperty("app.name");
+        }
+        if (appEnv.name == null) {
             appEnv.name = "unknown";
         }
         appEnv.endpoint = env.get("APP_ENDPOINT");
         if (appEnv.endpoint == null) {
+            appEnv.endpoint = System.getProperty("app.endpoint");
+        }
+        if (appEnv.endpoint == null) {
             appEnv.endpoint = DEFAULT_ENDPOINT;
         }
         appEnv.caCertPath = env.get("APP_CACERT");
+        if (appEnv.caCertPath == null) {
+            appEnv.caCertPath = System.getProperty("app.cacert");
+        }
         appEnv.certPath = env.get("APP_CERT");
+        if (appEnv.certPath == null) {
+            appEnv.certPath = System.getProperty("app.cert");
+        }
         appEnv.keyPath = env.get("APP_KEY");
+        if (appEnv.keyPath == null) {
+            appEnv.keyPath = System.getProperty("app.key");
+        }
         return appEnv;
     }
 
