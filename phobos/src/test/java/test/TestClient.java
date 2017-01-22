@@ -7,6 +7,9 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by zdj on 2016/7/6.
  */
@@ -46,5 +49,29 @@ public class TestClient {
             testService.getPerson("service user");
         }
         System.out.println("getPerson call qps: " + ((double)N * 1000 / (System.currentTimeMillis() - start)));
+    }
+
+    @Test
+    public void multiBench() throws InterruptedException {
+        ApplicationContext context = new ClassPathXmlApplicationContext("spring/client-application.xml");
+
+        TestService testService = context.getBean(TestService.class);
+        List<Thread> threads = new ArrayList<>();
+        int threadN = 4;
+        int N = 200000;
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < threadN; i++) {
+            Thread thread = new Thread(() -> {
+                for (int j = 0; j < N; j++) {
+                    testService.getPerson("service user");
+                }
+            });
+            thread.start();
+            threads.add(thread);
+        }
+        for (Thread thread : threads) {
+            thread.join();
+        }
+        System.out.println("qps: " + (double)(threadN * N) / ((double)(System.currentTimeMillis() - start) / 1000));
     }
 }
