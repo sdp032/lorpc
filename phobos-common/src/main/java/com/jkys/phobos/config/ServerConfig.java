@@ -11,6 +11,8 @@ public class ServerConfig {
     public static final Integer DEFAULT_PORT = 3000;
     private static final String PORT_ENV_NAME = "APP_SERVICE_PORT";
     private static final String PORT_PROPERTY_NAME = "app.service_port";
+    private static final String HOST_ENV_NAME = "APP_SERVICE_HOST";
+    private static final String HOST_PROPERTY_NAME = "app.service_host";
     private static final ServerConfig instance = new ServerConfig();
 
     private String bindHost;
@@ -18,10 +20,16 @@ public class ServerConfig {
     private boolean blocking = false;
 
     private ServerConfig() {
-        try {
-            bindHost = CommonUtil.getIpAddresses();
-        } catch (Exception e) {
-            throw new EnvException("get ip address fail", e);
+        bindHost = System.getenv(HOST_ENV_NAME);
+        if (bindHost == null) {
+            bindHost = System.getProperty(HOST_PROPERTY_NAME);
+        }
+        if (bindHost == null) {
+            try {
+                bindHost = CommonUtil.getIpAddresses();
+            } catch (Exception e) {
+                throw new EnvException("get ip address fail", e);
+            }
         }
         bindPort = DEFAULT_PORT;
         String envPort = System.getenv().get(PORT_ENV_NAME);

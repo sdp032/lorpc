@@ -1,10 +1,8 @@
 package com.jkys.phobos.util;
 
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.util.Arrays;
-import java.util.Enumeration;
+import java.util.*;
 
 /**
  * Created by zdj on 16-12-8.
@@ -12,20 +10,35 @@ import java.util.Enumeration;
 public class CommonUtil {
 
     public static String getIpAddresses() throws Exception{
+        List<InetAddress> ips = new ArrayList<>();
         Enumeration allNetInterfaces = NetworkInterface.getNetworkInterfaces();
-        InetAddress ip = null;
         while (allNetInterfaces.hasMoreElements()){
             NetworkInterface netInterface = (NetworkInterface) allNetInterfaces.nextElement();
             Enumeration addresses = netInterface.getInetAddresses();
             while (addresses.hasMoreElements()){
-                ip = (InetAddress) addresses.nextElement();
-                if (ip != null && ip instanceof Inet4Address){
-                    return ip.getHostAddress();
+                InetAddress ip = (InetAddress) addresses.nextElement();
+                if (ip != null && !ip.isLinkLocalAddress()){
+                    ips.add(ip);
                 }
             }
         }
+        if (ips.size() == 0) {
+            throw new RuntimeException("Not found qualified IP");
+        }
 
-        throw new RuntimeException("Not found qualified IP");
+        ips.sort((InetAddress a, InetAddress b) -> {
+            if (a.isLoopbackAddress()) {
+                return 1;
+            }
+            if (a.getHostAddress().startsWith("172")) {
+                return 1;
+            }
+            if (b.getHostAddress().startsWith("172")) {
+                return -1;
+            }
+            return a.getHostAddress().compareTo(b.getHostAddress());
+        });
+        return ips.get(0).getHostAddress();
     }
 
     public static <T> T[] concatAll(T[] first, T[]... rest) {
