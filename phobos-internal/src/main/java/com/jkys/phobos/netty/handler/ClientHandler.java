@@ -42,6 +42,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<PhobosResponse> {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         logger.warn("channel closed: {}", client);
+        client.markDisconnected();
         ctx.channel().eventLoop().schedule(() -> {
             logger.info("reconnecting to {}", client);
             client.connect();

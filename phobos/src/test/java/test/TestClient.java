@@ -27,6 +27,18 @@ public class TestClient {
     }
 
     @Test
+    public void longTest() throws InterruptedException {
+        ApplicationContext context = new ClassPathXmlApplicationContext("spring/client-application.xml");
+
+        TestService testService = context.getBean(TestService.class);
+        for (int i = 0; i < 100; i++) {
+            testService.empty();
+            System.out.println("empty");
+            Thread.sleep(3000);
+        }
+    }
+
+    @Test
     public void clientBench() {
         ApplicationContext context = new ClassPathXmlApplicationContext("spring/client-application.xml");
 
@@ -57,8 +69,8 @@ public class TestClient {
 
         TestService testService = context.getBean(TestService.class);
         List<Thread> threads = new ArrayList<>();
-        int threadN = 4;
-        int N = 200000;
+        int threadN = 8;
+        int N = 100000;
         long start = System.currentTimeMillis();
         for (int i = 0; i < threadN; i++) {
             Thread thread = new Thread(() -> {

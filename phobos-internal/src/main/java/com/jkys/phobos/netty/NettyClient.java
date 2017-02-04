@@ -121,6 +121,12 @@ public class NettyClient implements ChannelFutureListener {
         }
     }
 
+    public void markDisconnected() {
+        synchronized (this) {
+            connected = false;
+        }
+    }
+
     public String toString() {
         return key + "(" + host + ":" + port + ")";
     }
