@@ -26,7 +26,7 @@ public class NettyClient implements ChannelFutureListener {
     private final Logger logger = LoggerFactory.getLogger(NettyClient.class);
     public static final long RECONNECT_INTERVAL = 5;
 
-    private AtomicLong nextSequence = new AtomicLong(0);
+    private static AtomicLong nextSequence = new AtomicLong(0);
     private String key;
     private String host;
     private int port;
