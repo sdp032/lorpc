@@ -1,5 +1,6 @@
 package com.jkys.phobos.netty.codec;
 
+import com.jkys.phobos.protocol.BodyType;
 import com.jkys.phobos.protocol.Header;
 import com.jkys.phobos.protocol.PhobosRequest;
 import com.jkys.phobos.protocol.Request;
@@ -16,8 +17,7 @@ import java.util.List;
  *
  * 解决TCP粘包拆包及反序列化
  */
-public class PhotosRequestDecoder extends ByteToMessageDecoder {
-
+public class PhobosRequestDecoder extends ByteToMessageDecoder {
     private static Logger logger = LoggerFactory.getLogger(PhobosResponseDecoder.class);
 
     private final static int HEAD_SIZE = 24;
@@ -51,7 +51,13 @@ public class PhotosRequestDecoder extends ByteToMessageDecoder {
         Header header = new Header();
         header.setProtocolVersion(protocolVersion);
         header.setSerializationType(serializationType);
-        header.setType(type);
+        BodyType bodyType = BodyType.getBodyType(type);
+        if (bodyType == null) {
+            logger.debug("invalid type: " + type);
+            ctx.close();
+            return;
+        }
+        header.setType(bodyType);
         header.setSize(size);
         header.setSequenceId(sequenceId);
         header.setTimestamp(timestamp);

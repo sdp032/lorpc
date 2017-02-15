@@ -4,7 +4,7 @@ import com.github.infrmods.xbus.item.ServiceEndpoint;
 import com.jkys.phobos.config.ServerConfig;
 import com.jkys.phobos.job.Scheduled;
 import com.jkys.phobos.netty.channel.DefaultServerChannelHandler;
-import com.jkys.phobos.netty.codec.PhotosRequestDecoder;
+import com.jkys.phobos.netty.codec.PhobosRequestDecoder;
 import com.jkys.phobos.server.ServerContext;
 import com.jkys.phobos.job.XbusTask;
 import com.jkys.phobos.netty.channel.AbstractServerChannelHandler;
@@ -53,7 +53,7 @@ public class NettyServer {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             //PhobosRequest解码器
-                            socketChannel.pipeline().addLast(new PhotosRequestDecoder());
+                            socketChannel.pipeline().addLast(new PhobosRequestDecoder());
                             //PhobosResponse编码器
                             socketChannel.pipeline().addLast(new PhobosResponseEncoder());
                             //socketChannel.pipeline().addLast(new ReadTimeoutHandler(60));

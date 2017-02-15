@@ -36,7 +36,10 @@ public class PhobosResponseEncoder extends MessageToByteEncoder<PhobosResponse> 
         //header 长度固定24
         out.writeShort(header.getProtocolVersion());    //2
         out.writeByte(header.getSerializationType());   //1
-        out.writeByte(header.getType());                //1
+        if (header.getType() == null) {
+            throw new RuntimeException("got null type");
+        }
+        out.writeByte(header.getType().getType());                //1
         out.writeInt(header.getSize());                 //4
         out.writeLong(header.getSequenceId());          //8
         out.writeLong(header.getTimestamp());           //8

@@ -1,11 +1,14 @@
 package com.jkys.phobos.netty.codec;
 
+import com.jkys.phobos.protocol.BodyType;
 import com.jkys.phobos.protocol.Header;
 import com.jkys.phobos.protocol.Response;
 import com.jkys.phobos.protocol.PhobosResponse;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -13,11 +16,11 @@ import java.util.List;
  * Created by zdj on 2016/7/14.
  */
 public class PhobosResponseDecoder extends ByteToMessageDecoder {
+    private static Logger logger = LoggerFactory.getLogger(PhobosResponseDecoder.class);
 
     private final static int HEAD_SIZE = 24;
 
-    protected void decode(ChannelHandlerContext cxt, ByteBuf in, List<Object> out) throws Exception {
-
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         if(in.readableBytes() < HEAD_SIZE){ //缓冲区没有完整的header信息 返回 继续接受TCP数据
             return;
         }
@@ -43,7 +46,14 @@ public class PhobosResponseDecoder extends ByteToMessageDecoder {
         Header header = new Header();
         header.setProtocolVersion(protocolVersion);
         header.setSerializationType(serializationType);
-        header.setType(type);
+        BodyType bodyType = BodyType.getBodyType(type);
+        if (bodyType == null) {
+            // TODO log
+            logger.debug("invalid type: " + type);
+            ctx.close();
+            return;
+        }
+        header.setType(bodyType);
         header.setSize(size);
         header.setSequenceId(sequenceId);
         header.setTimestamp(timestamp);

@@ -1,6 +1,6 @@
 package com.jkys.phobos.netty.handler;
 
-import com.jkys.phobos.netty.NettyClient;
+import com.jkys.phobos.netty.ClientConnection;
 import com.jkys.phobos.util.Promise;
 import com.jkys.phobos.client.ClientContext;
 import com.jkys.phobos.protocol.PhobosResponse;
@@ -16,9 +16,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class ClientHandler extends SimpleChannelInboundHandler<PhobosResponse> {
     private Logger logger = LoggerFactory.getLogger(ClientHandler.class);
-    private NettyClient client;
+    private ClientConnection client;
 
-    public ClientHandler(NettyClient client) {
+    public ClientHandler(ClientConnection client) {
         this.client = client;
     }
 
@@ -46,7 +46,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<PhobosResponse> {
         ctx.channel().eventLoop().schedule(() -> {
             logger.info("reconnecting to {}", client);
             client.connect();
-        }, NettyClient.RECONNECT_INTERVAL, TimeUnit.SECONDS);
+        }, ClientConnection.RECONNECT_INTERVAL, TimeUnit.SECONDS);
         super.channelInactive(ctx);
     }
 }

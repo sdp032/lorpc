@@ -6,18 +6,12 @@ import java.util.concurrent.atomic.AtomicLong;
  * Created by frio on 16/7/4.
  */
 public class Header {
-
-    private static final AtomicLong INVOKE_ID = new AtomicLong(1);
     private short protocolVersion = 1;
     private byte serializationType;
-    private byte type;
+    private BodyType type = BodyType.Default;
     private int size;
     private long sequenceId;
     private long timestamp;
-
-    public Header() {
-        sequenceId = INVOKE_ID.getAndIncrement();
-    }
 
     public short getProtocolVersion() {
         return protocolVersion;
@@ -51,11 +45,11 @@ public class Header {
         this.size = size;
     }
 
-    public byte getType() {
+    public BodyType getType() {
         return type;
     }
 
-    public void setType(byte type) {
+    public void setType(BodyType type) {
         this.type = type;
     }
 
@@ -65,19 +59,5 @@ public class Header {
 
     public void setSerializationType(byte serializationType) {
         this.serializationType = serializationType;
-    }
-
-    public enum Type {
-        DEFAULT((byte) 0), WITHSTREAM((byte) 1), STREAM((byte) 2), CLOSESTREAM((byte) 3);
-
-        public final byte type;
-
-        private Type(byte type) {
-            this.type = type;
-        }
-
-        public byte getType() {
-            return type;
-        }
     }
 }

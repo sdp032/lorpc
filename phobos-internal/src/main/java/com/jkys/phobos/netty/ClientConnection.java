@@ -1,14 +1,15 @@
 package com.jkys.phobos.netty;
 
+import com.jkys.phobos.annotation.ServiceUtil;
 import com.jkys.phobos.client.ClientContext;
+import com.jkys.phobos.client.ConnectionState;
+import com.jkys.phobos.client.StateTracker;
 import com.jkys.phobos.config.PhobosConfig;
-//import com.jkys.phobos.netty.channel.HeartBeatPingChannelHandler;
 import com.jkys.phobos.netty.codec.PhobosRequestEncoder;
 import com.jkys.phobos.netty.codec.PhobosResponseDecoder;
 import com.jkys.phobos.netty.handler.ClientHandler;
 import com.jkys.phobos.protocol.PhobosRequest;
 import com.jkys.phobos.protocol.PhobosResponse;
-import com.jkys.phobos.util.Promise;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.socket.SocketChannel;
@@ -17,33 +18,37 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by frio on 16/7/4.
  */
-public class NettyClient implements ChannelFutureListener {
-    private final Logger logger = LoggerFactory.getLogger(NettyClient.class);
+public class ClientConnection implements ChannelFutureListener {
+    private final Logger logger = LoggerFactory.getLogger(ClientConnection.class);
     public static final long RECONNECT_INTERVAL = 5;
 
-    private static AtomicLong nextSequence = new AtomicLong(0);
-    private String key;
+    private String name;
+    private String version;
     private String host;
     private int port;
     private volatile ChannelFuture future;
     private EventLoopGroup group;
-    private volatile boolean connected = false;
+    private StateTracker stateTracker;
 
-    public NettyClient(String key, String host, int port, EventLoopGroup group) {
-        this.key = key;
+    public ClientConnection(String name, String version, String host, int port, EventLoopGroup group) {
+        this.name = name;
+        this.version = version;
         this.host = host;
         this.port = port;
         this.group = group;
     }
 
+    public void init(StateTracker stateTracker) {
+        this.stateTracker = stateTracker;
+    }
+
     public void connect() {
         synchronized (this) {
-            if (connected) {
+            if (this.stateTracker.isConnected()) {
                 return;
             }
         }
@@ -57,38 +62,20 @@ public class NettyClient implements ChannelFutureListener {
                      public void initChannel(SocketChannel socketChannel) throws Exception {
                         socketChannel.pipeline().addLast(new PhobosRequestEncoder());
                         socketChannel.pipeline().addLast(new PhobosResponseDecoder());
-                        socketChannel.pipeline().addLast(new ClientHandler(NettyClient.this));
+                        socketChannel.pipeline().addLast(new ClientHandler(ClientConnection.this));
                 }
             });
         future = bootstrap.connect(host, port).addListener(this);
     }
 
-    private void ensureConnected() throws InterruptedException {
-        if (!connected) {
-            synchronized (this) {
-                if (!connected) {
-                    Integer timeout = PhobosConfig.getInstance().getClient().getResolveTimeout();
-                    this.wait(timeout * 1000);
-                    if (!connected) {
-                        // FIXME
-                        throw new RuntimeException("timeout");
-                    }
-                }
-            }
-        }
-    }
-
     public PhobosResponse request(PhobosRequest request, long timeout, TimeUnit unit) throws InterruptedException {
-        ensureConnected();
-
-        long sequenceId = nextSequence.addAndGet(1);
-        request.getHeader().setSequenceId(sequenceId);
-        Promise<PhobosResponse> promise = ClientContext.getInstance().newPromise(sequenceId);
+        ClientContext.RequestPromise<PhobosResponse> promise = ClientContext.getInstance().newPromise();
+        request.getHeader().setSequenceId(promise.getSequenceId());
         try {
             future.channel().writeAndFlush(request).await(PhobosConfig.getInstance().getClient().getRequestTimeout() * 1000);
         } catch (InterruptedException e) {
-            ClientContext.getInstance().cancelPromise(sequenceId);
             // FIXME
+            promise.cancel(false);
             throw new RuntimeException(e);
         }
 
@@ -98,15 +85,16 @@ public class NettyClient implements ChannelFutureListener {
             // FIXME
             throw new RuntimeException(e);
         } finally {
-            ClientContext.getInstance().cancelPromise(sequenceId);
+            promise.cancel(false);
         }
     }
 
     @Override
     public void operationComplete(ChannelFuture future) throws Exception {
         synchronized (this) {
-            connected = future.isSuccess();
+            boolean connected = future.isSuccess();
             if (connected) {
+                this.stateTracker.changeState(ConnectionState.Ready);
                 logger.info("connected to {}", this);
                 this.notifyAll();
             } else {
@@ -123,11 +111,11 @@ public class NettyClient implements ChannelFutureListener {
 
     public void markDisconnected() {
         synchronized (this) {
-            connected = false;
+            this.stateTracker.changeState(ConnectionState.Disconnected);
         }
     }
 
     public String toString() {
-        return key + "(" + host + ":" + port + ")";
+        return ServiceUtil.serviceKey(name, version) + "(" + host + ":" + port + ")";
     }
 }
