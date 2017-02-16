@@ -1,31 +1,36 @@
-package com.jkys.phobos.netty.codec;
+package com.jkys.phobos.codec;
 
 import com.jkys.phobos.protocol.Header;
-import com.jkys.phobos.protocol.PhobosRequest;
-import com.jkys.phobos.protocol.Request;
+import com.jkys.phobos.protocol.Response;
+import com.jkys.phobos.protocol.PhobosResponse;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
 /**
- * Created by zdj on 2016/7/13.
+ * Created by zdj on 2016/7/14.
  */
-public class PhobosRequestEncoder extends MessageToByteEncoder <PhobosRequest>{
+public class PhobosResponseEncoder extends MessageToByteEncoder<PhobosResponse> {
 
-    @Override
-    protected void encode(ChannelHandlerContext ctx, PhobosRequest msg, ByteBuf out) throws Exception {
-        if(msg == null)
-            throw new NullPointerException("PhobosRequest is null");
+    protected void encode(ChannelHandlerContext cxt, PhobosResponse msg, ByteBuf out) throws Exception {
+
+        if(msg == null){
+            throw new NullPointerException("PhobosResponse is null");
+        }
 
         Header header = msg.getHeader();
-        Request request = msg.getRequest();
+        Response response = msg.getResponse();
 
-        if(header == null)
+        if(header == null){
             throw new NullPointerException("Header is null");
-        if(request == null)
-            throw new NullPointerException("Request is null");
+        }
+        if(response == null){
+            throw new NullPointerException("Response is null");
+        }
 
-        byte[] body = request.toBytes();
+        //byte[] body = SerializaionUtil.objectToBytes(response,header.getSerializationType());
+        byte[] body = Response.toBytes(response, header.getSerializationType());
+
         header.setSize(body.length);
 
         //header 长度固定24
@@ -39,8 +44,8 @@ public class PhobosRequestEncoder extends MessageToByteEncoder <PhobosRequest>{
         out.writeLong(header.getSequenceId());          //8
         out.writeLong(header.getTimestamp());           //8
 
-        //request
+        //request 长度由header为size
         out.writeBytes(body);
-    }
 
+    }
 }

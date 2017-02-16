@@ -5,7 +5,6 @@ import com.github.infrmods.xbus.exceptions.XBusException;
 import com.github.infrmods.xbus.item.Service;
 import com.github.infrmods.xbus.item.ServiceEndpoint;
 import com.jkys.phobos.exception.ConnectTimeoutException;
-import com.jkys.phobos.netty.ClientConnection;
 import com.jkys.phobos.protocol.PhobosRequest;
 import com.jkys.phobos.protocol.PhobosResponse;
 import io.netty.channel.EventLoopGroup;

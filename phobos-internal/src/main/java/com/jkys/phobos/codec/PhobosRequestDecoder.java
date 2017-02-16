@@ -1,4 +1,4 @@
-package com.jkys.phobos.netty.codec;
+package com.jkys.phobos.codec;
 
 import com.jkys.phobos.protocol.BodyType;
 import com.jkys.phobos.protocol.Header;

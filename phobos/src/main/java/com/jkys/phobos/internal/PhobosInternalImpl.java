@@ -1,7 +1,7 @@
 package com.jkys.phobos.internal;
 
 import com.jkys.phobos.client.PhobosProxy;
-import com.jkys.phobos.netty.NettyServer;
+import com.jkys.phobos.server.NettyServer;
 import com.jkys.phobos.server.Provider;
 import com.jkys.phobos.server.ServerContext;
 import org.springframework.context.ApplicationContext;

@@ -1,13 +1,9 @@
-package com.jkys.phobos.netty;
+package com.jkys.phobos.client;
 
 import com.jkys.phobos.annotation.ServiceUtil;
-import com.jkys.phobos.client.ClientContext;
-import com.jkys.phobos.client.ConnectionState;
-import com.jkys.phobos.client.StateTracker;
 import com.jkys.phobos.config.PhobosConfig;
-import com.jkys.phobos.netty.codec.PhobosRequestEncoder;
-import com.jkys.phobos.netty.codec.PhobosResponseDecoder;
-import com.jkys.phobos.netty.handler.ClientHandler;
+import com.jkys.phobos.codec.PhobosRequestEncoder;
+import com.jkys.phobos.codec.PhobosResponseDecoder;
 import com.jkys.phobos.protocol.PhobosRequest;
 import com.jkys.phobos.protocol.PhobosResponse;
 import io.netty.bootstrap.Bootstrap;

@@ -1,20 +1,14 @@
-package com.jkys.phobos.netty;
+package com.jkys.phobos.server;
 
 import com.github.infrmods.xbus.item.ServiceEndpoint;
 import com.jkys.phobos.config.ServerConfig;
 import com.jkys.phobos.job.Scheduled;
-import com.jkys.phobos.netty.channel.DefaultServerChannelHandler;
-import com.jkys.phobos.netty.codec.PhobosRequestDecoder;
-import com.jkys.phobos.server.ServerContext;
+import com.jkys.phobos.codec.PhobosRequestDecoder;
 import com.jkys.phobos.job.XbusTask;
-import com.jkys.phobos.netty.channel.AbstractServerChannelHandler;
-import com.jkys.phobos.netty.codec.PhobosResponseEncoder;
+import com.jkys.phobos.codec.PhobosResponseEncoder;
 import com.jkys.phobos.config.PhobosConfig;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -32,7 +26,7 @@ public class NettyServer {
 
     private ServerContext context = ServerContext.getInstance();
 
-    private Class<? extends AbstractServerChannelHandler> handlerClass;
+    private Class<? extends ChannelHandlerAdapter> handlerClass;
 
     public NettyServer() {
     }
