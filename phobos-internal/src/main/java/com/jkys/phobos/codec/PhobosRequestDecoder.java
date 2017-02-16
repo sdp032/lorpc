@@ -62,19 +62,15 @@ public class PhobosRequestDecoder extends ByteToMessageDecoder {
         header.setSequenceId(sequenceId);
         header.setTimestamp(timestamp);
 
-
         Request request = null;
-        if(type == (byte) 0){ //默认request/response请求
-            request = Request.toRequest(bytes);
+        switch (bodyType) {
+            case Default:
+                request = Request.toRequest(bytes);
+                break;
+            default:
+                logger.warn("unsupported type: " + bodyType);
+                return;
         }
-        //TODO 其他类型请求
-
-
-        /*byte[] body = new byte[size];
-        in.readBytes(body);*/
-
-        //Request request = SerializaionUtil.bytesToObject(body,Request.class,header.getSerializationType());
-
-        out.add(new PhobosRequest(header,request));
+        out.add(new PhobosRequest(header, request));
     }
 }

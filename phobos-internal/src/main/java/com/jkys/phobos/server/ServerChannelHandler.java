@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by zdj on 2016/7/5.
  */
-public class DefaultServerChannelHandler extends ChannelHandlerAdapter {
-    private static Logger logger = LoggerFactory.getLogger(DefaultServerChannelHandler.class);
+public class ServerChannelHandler extends ChannelHandlerAdapter {
+    private static Logger logger = LoggerFactory.getLogger(ServerChannelHandler.class);
     private ServerContext context = ServerContext.getInstance();
 
     @Override
@@ -43,6 +43,7 @@ public class DefaultServerChannelHandler extends ChannelHandlerAdapter {
             return phobosResponse;
         }
         SerializationType serializationType = SerializationType.get(request.getHeader().getSerializationType());
+        // TODO execute thread pool
         return new PhobosResponse(request.getHeader(), provider.invoke(serializationType, request.getRequest()));
     }
 }

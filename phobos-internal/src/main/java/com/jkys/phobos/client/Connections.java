@@ -133,7 +133,7 @@ class Connections {
             for (String addr : toRemove) {
                 ConnState connState = connections.remove(addr);
                 connState.changeState(ConnectionState.Unusable);
-                // TODO close connection
+                connState.conn.close();
             }
             for (ServiceEndpoint endpoint : toAdd) {
                 ClientConnection conn = new ClientConnection(serviceName, serviceVersion ,

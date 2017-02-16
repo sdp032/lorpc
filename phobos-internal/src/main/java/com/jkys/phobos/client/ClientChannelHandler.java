@@ -12,11 +12,11 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by lo on 1/7/17.
  */
-public class ClientHandler extends SimpleChannelInboundHandler<PhobosResponse> {
-    private Logger logger = LoggerFactory.getLogger(ClientHandler.class);
+public class ClientChannelHandler extends SimpleChannelInboundHandler<PhobosResponse> {
+    private Logger logger = LoggerFactory.getLogger(ClientChannelHandler.class);
     private ClientConnection client;
 
-    public ClientHandler(ClientConnection client) {
+    ClientChannelHandler(ClientConnection client) {
         this.client = client;
     }
 
@@ -39,7 +39,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<PhobosResponse> {
                 }
                 break;
             case Shutdown:
-                client.markUnusable();
+                client.markTemporaryShutdown();
                 break;
         }
     }

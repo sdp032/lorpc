@@ -6,6 +6,7 @@ import com.jkys.phobos.codec.PhobosRequestEncoder;
 import com.jkys.phobos.codec.PhobosResponseDecoder;
 import com.jkys.phobos.protocol.PhobosRequest;
 import com.jkys.phobos.protocol.PhobosResponse;
+import com.jkys.phobos.util.Promise;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.socket.SocketChannel;
@@ -28,6 +29,7 @@ public class ClientConnection implements ChannelFutureListener {
     private EventLoopGroup group;
     private StateTracker stateTracker;
     private AtomicLong reference = new AtomicLong(1);
+    private ConcurrentHashMap<Long, Promise> relatedPromises = new ConcurrentHashMap<>();
 
     private String name;
     private String version;
@@ -50,6 +52,7 @@ public class ClientConnection implements ChannelFutureListener {
         if (toClose || this.stateTracker.isConnected()) {
             return;
         }
+        clearOldPromises();
 
         Integer timeout = PhobosConfig.getInstance().getClient().getResolveTimeout();
         Bootstrap bootstrap = new Bootstrap();
@@ -60,7 +63,7 @@ public class ClientConnection implements ChannelFutureListener {
                      public void initChannel(SocketChannel socketChannel) throws Exception {
                         socketChannel.pipeline().addLast(new PhobosRequestEncoder());
                         socketChannel.pipeline().addLast(new PhobosResponseDecoder());
-                        socketChannel.pipeline().addLast(new ClientHandler(ClientConnection.this));
+                        socketChannel.pipeline().addLast(new ClientChannelHandler(ClientConnection.this));
                 }
             });
         future = bootstrap.connect(host, port).addListener(this);
@@ -74,11 +77,13 @@ public class ClientConnection implements ChannelFutureListener {
     public PhobosResponse request(PhobosRequest request, long timeout, TimeUnit unit) throws InterruptedException {
         ClientContext.RequestPromise<PhobosResponse> promise = ClientContext.getInstance().newPromise();
         request.getHeader().setSequenceId(promise.getSequenceId());
+        relatedPromises.put(promise.getSequenceId(), promise);
         try {
             future.channel().writeAndFlush(request).await(PhobosConfig.getInstance().getClient().getRequestTimeout() * 1000);
         } catch (InterruptedException e) {
             // FIXME
             promise.cancel(false);
+            relatedPromises.remove(promise.getSequenceId());
             throw new RuntimeException(e);
         }
 
@@ -89,6 +94,7 @@ public class ClientConnection implements ChannelFutureListener {
             // FIXME
             throw new RuntimeException(e);
         } finally {
+            relatedPromises.remove(promise.getSequenceId());
             deref();
             promise.cancel(false);
         }
@@ -111,11 +117,22 @@ public class ClientConnection implements ChannelFutureListener {
         }
     }
 
-    void markDisconnected() {
-        stateTracker.changeState(ConnectionState.Disconnected);
+    private void clearOldPromises() {
+        synchronized (this) {
+            for (Promise promise : relatedPromises.values()) {
+                // TODO exception
+                promise.setFailure(new RuntimeException("connection broken"));
+            }
+            relatedPromises.clear();
+        }
     }
 
-    void markUnusable() {
+    void markDisconnected() {
+        stateTracker.changeState(ConnectionState.Disconnected);
+        clearOldPromises();
+    }
+
+    void markTemporaryShutdown() {
         stateTracker.changeState(ConnectionState.Unusable);
         deref();
     }
@@ -127,8 +144,9 @@ public class ClientConnection implements ChannelFutureListener {
     private void deref() {
         long after = reference.decrementAndGet();
         if (after <= 0) {
-            toClose = true;
-            // TODO check close
+            if (!toClose) {
+                incref();
+            }
             future.channel().close();
         }
     }

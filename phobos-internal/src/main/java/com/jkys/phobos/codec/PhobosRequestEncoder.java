@@ -26,7 +26,11 @@ public class PhobosRequestEncoder extends MessageToByteEncoder <PhobosRequest>{
             throw new NullPointerException("Request is null");
 
         byte[] body = request.toBytes();
-        header.setSize(body.length);
+        if (body != null) {
+            header.setSize(body.length);
+        } else {
+            header.setSize(0);
+        }
 
         //header 长度固定24
         out.writeShort(header.getProtocolVersion());    //2
@@ -34,13 +38,14 @@ public class PhobosRequestEncoder extends MessageToByteEncoder <PhobosRequest>{
         if (header.getType() == null) {
             throw new RuntimeException("got null type");
         }
-        out.writeByte(header.getType().getType());                //1
+        out.writeByte(header.getType().getType());      //1
         out.writeInt(header.getSize());                 //4
         out.writeLong(header.getSequenceId());          //8
         out.writeLong(header.getTimestamp());           //8
 
-        //request
-        out.writeBytes(body);
+        if (body != null) {
+            out.writeBytes(body);
+        }
     }
 
 }

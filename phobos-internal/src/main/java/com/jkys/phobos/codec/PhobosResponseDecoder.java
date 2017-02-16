@@ -57,17 +57,16 @@ public class PhobosResponseDecoder extends ByteToMessageDecoder {
         header.setSequenceId(sequenceId);
         header.setTimestamp(timestamp);
 
+        Response response = null;
         switch (bodyType) {
             case Default:
-                Response response = Response.toResponse(bytes);
-                out.add(new PhobosResponse(header, response));
+                response = Response.toResponse(bytes);
                 break;
             case Shutdown:
-                out.add(new PhobosResponse(header, null));
                 break;
             default:
                 logger.warn("unsupported type: " + bodyType);
-                ctx.close();
         }
+        out.add(new PhobosResponse(header, response));
     }
 }

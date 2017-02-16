@@ -21,21 +21,13 @@ import java.util.concurrent.TimeUnit;
  * Created by frio on 16/7/4.
  */
 public class NettyServer {
-
     private static Logger logger = LoggerFactory.getLogger(NettyServer.class);
-
     private ServerContext context = ServerContext.getInstance();
-
-    private Class<? extends ChannelHandlerAdapter> handlerClass;
 
     public NettyServer() {
     }
 
-    public void open() throws Exception {
-        if (handlerClass == null) {
-            handlerClass = DefaultServerChannelHandler.class;
-        }
-
+    void open() throws Exception {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
@@ -52,7 +44,7 @@ public class NettyServer {
                             socketChannel.pipeline().addLast(new PhobosResponseEncoder());
                             //socketChannel.pipeline().addLast(new ReadTimeoutHandler(60));
                             //业务处理器
-                            socketChannel.pipeline().addLast(handlerClass.getConstructor().newInstance());
+                            socketChannel.pipeline().addLast(new ServerChannelHandler());
                         }
                     });
             ServerConfig config = PhobosConfig.getInstance().getServer();
@@ -82,14 +74,12 @@ public class NettyServer {
 
     public Thread noBlockOpen() {
         logger.info("netty服务器启动中。。。");
-        Thread t = new Thread(new Runnable() {
-            public void run() {
-                try {
-                    open();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.exit(0);
-                }
+        Thread t = new Thread(() -> {
+            try {
+                open();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.exit(0);
             }
         });
         t.start();
