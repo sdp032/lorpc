@@ -1,7 +1,7 @@
 package com.jkys.phobos.internal;
 
 import com.jkys.phobos.client.PhobosProxy;
-import com.jkys.phobos.server.NettyServer;
+import com.jkys.phobos.server.PhobosServer;
 import com.jkys.phobos.server.Provider;
 import com.jkys.phobos.server.ServerContext;
 import org.springframework.context.ApplicationContext;
@@ -14,8 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PhobosInternalImpl implements PhobosInternal {
     private static ConcurrentHashMap<String, Provider> providers = new ConcurrentHashMap<>();
-    private static NettyServer nettyServer = null;
-    private Thread serverThread = null;
+    private static PhobosServer phobosServer = null;
 
     public InvocationHandler newClientProxy(Class<?> interfaceClass, String name, String version) {
         return new PhobosProxy(interfaceClass, name, version);
@@ -30,7 +29,7 @@ public class PhobosInternalImpl implements PhobosInternal {
     }
 
     public synchronized void triggerServer(ApplicationContext appCtx) {
-        if (nettyServer != null) {
+        if (phobosServer != null) {
             return;
         }
 
@@ -41,11 +40,19 @@ public class PhobosInternalImpl implements PhobosInternal {
             serverContext.register(provider);
         }
 
-        nettyServer = new NettyServer();
-        serverThread = nettyServer.noBlockOpen();
+        phobosServer = new PhobosServer();
+        phobosServer.start();
     }
 
     public void joinServer() throws InterruptedException {
-        serverThread.join();
+        if (phobosServer != null) {
+            phobosServer.join();
+        }
+    }
+
+    public void stopServer() {
+        if (phobosServer != null) {
+            phobosServer.stop();
+        }
     }
 }

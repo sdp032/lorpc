@@ -40,4 +40,8 @@ public class Helper {
     public static void joinServer() throws InterruptedException {
         phobosInternal.joinServer();
     }
+
+    public static void stopServer() {
+        phobosInternal.stopServer();
+    }
 }
