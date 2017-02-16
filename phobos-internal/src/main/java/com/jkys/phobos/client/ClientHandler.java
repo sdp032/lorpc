@@ -29,11 +29,18 @@ public class ClientHandler extends SimpleChannelInboundHandler<PhobosResponse> {
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, PhobosResponse response) throws Exception {
-        Promise<PhobosResponse> promise = ClientContext.getInstance().getPromise(response.getHeader().getSequenceId());
-        if (promise != null) {
-            promise.setSuccess(response);
-        } else {
-            logger.warn("unhandled response: {}", response.getHeader().getSequenceId());
+        switch (response.getHeader().getType()) {
+            case Default:
+                Promise<PhobosResponse> promise = ClientContext.getInstance().getPromise(response.getHeader().getSequenceId());
+                if (promise != null) {
+                    promise.setSuccess(response);
+                } else {
+                    logger.warn("unhandled response: {}", response.getHeader().getSequenceId());
+                }
+                break;
+            case Shutdown:
+                client.markUnusable();
+                break;
         }
     }
 

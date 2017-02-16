@@ -14,23 +14,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by frio on 16/7/4.
  */
 public class ClientConnection implements ChannelFutureListener {
     private final Logger logger = LoggerFactory.getLogger(ClientConnection.class);
-    public static final long RECONNECT_INTERVAL = 5;
+    static final long RECONNECT_INTERVAL = 5;
+
+    private volatile boolean toClose = false;
+    private volatile ChannelFuture future;
+    private EventLoopGroup group;
+    private StateTracker stateTracker;
+    private AtomicLong reference = new AtomicLong(1);
 
     private String name;
     private String version;
     private String host;
     private int port;
-    private volatile ChannelFuture future;
-    private EventLoopGroup group;
-    private StateTracker stateTracker;
 
-    public ClientConnection(String name, String version, String host, int port, EventLoopGroup group) {
+    ClientConnection(String name, String version, String host, int port, EventLoopGroup group) {
         this.name = name;
         this.version = version;
         this.host = host;
@@ -38,15 +42,13 @@ public class ClientConnection implements ChannelFutureListener {
         this.group = group;
     }
 
-    public void init(StateTracker stateTracker) {
+    void init(StateTracker stateTracker) {
         this.stateTracker = stateTracker;
     }
 
-    public void connect() {
-        synchronized (this) {
-            if (this.stateTracker.isConnected()) {
-                return;
-            }
+    void connect() {
+        if (toClose || this.stateTracker.isConnected()) {
+            return;
         }
 
         Integer timeout = PhobosConfig.getInstance().getClient().getResolveTimeout();
@@ -64,6 +66,11 @@ public class ClientConnection implements ChannelFutureListener {
         future = bootstrap.connect(host, port).addListener(this);
     }
 
+    void close() {
+        toClose = true;
+        deref();
+    }
+
     public PhobosResponse request(PhobosRequest request, long timeout, TimeUnit unit) throws InterruptedException {
         ClientContext.RequestPromise<PhobosResponse> promise = ClientContext.getInstance().newPromise();
         request.getHeader().setSequenceId(promise.getSequenceId());
@@ -75,39 +82,54 @@ public class ClientConnection implements ChannelFutureListener {
             throw new RuntimeException(e);
         }
 
+        incref();
         try {
             return promise.get(timeout, unit);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             // FIXME
             throw new RuntimeException(e);
         } finally {
+            deref();
             promise.cancel(false);
         }
     }
 
     @Override
     public void operationComplete(ChannelFuture future) throws Exception {
-        synchronized (this) {
-            boolean connected = future.isSuccess();
-            if (connected) {
-                this.stateTracker.changeState(ConnectionState.Ready);
-                logger.info("connected to {}", this);
-                this.notifyAll();
-            } else {
-                logger.warn("connect fail to {}", this);
+        boolean connected = future.isSuccess();
+        if (connected) {
+            logger.info("connected to {}", this);
+            this.stateTracker.changeState(ConnectionState.Ready);
+        } else {
+            logger.warn("connect fail to {}", this);
+            if (!toClose) {
+                future.channel().eventLoop().schedule(() -> {
+                    logger.info("reconnecting to {}", this);
+                    connect();
+                }, RECONNECT_INTERVAL, TimeUnit.SECONDS);
             }
-        }
-        if (!future.isSuccess()) {
-            future.channel().eventLoop().schedule(() -> {
-                logger.info("reconnecting to {}", this);
-                connect();
-            }, RECONNECT_INTERVAL, TimeUnit.SECONDS);
         }
     }
 
-    public void markDisconnected() {
-        synchronized (this) {
-            this.stateTracker.changeState(ConnectionState.Disconnected);
+    void markDisconnected() {
+        stateTracker.changeState(ConnectionState.Disconnected);
+    }
+
+    void markUnusable() {
+        stateTracker.changeState(ConnectionState.Unusable);
+        deref();
+    }
+
+    private void incref() {
+        reference.incrementAndGet();
+    }
+
+    private void deref() {
+        long after = reference.decrementAndGet();
+        if (after <= 0) {
+            toClose = true;
+            // TODO check close
+            future.channel().close();
         }
     }
 

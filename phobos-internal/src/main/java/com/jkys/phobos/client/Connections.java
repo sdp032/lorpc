@@ -8,6 +8,8 @@ import com.jkys.phobos.exception.ConnectTimeoutException;
 import com.jkys.phobos.protocol.PhobosRequest;
 import com.jkys.phobos.protocol.PhobosResponse;
 import io.netty.channel.EventLoopGroup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +21,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * Created by lo on 2/8/17.
  */
 class Connections {
+    private final Logger logger = LoggerFactory.getLogger(Connections.class);
+
     private Random r = new Random();
     private XBusClient xBusClient;
     private String serviceName;
@@ -119,7 +123,7 @@ class Connections {
     private void onEndpointsChange(ServiceEndpoint[] endpoints) {
         connsLock.writeLock().lock();
         try {
-            Set<String> toRemove = connections.keySet();
+            Set<String> toRemove = new HashSet<>(connections.keySet());
             List<ServiceEndpoint> toAdd = new ArrayList<>();
             for (ServiceEndpoint endpoint : endpoints) {
                 if (!toRemove.remove(endpoint.address)) {
@@ -134,13 +138,15 @@ class Connections {
             for (ServiceEndpoint endpoint : toAdd) {
                 ClientConnection conn = new ClientConnection(serviceName, serviceVersion ,
                         endpoint.getHost(), endpoint.getPort(), eventLoopGroup);
-                ConnState connState = new ConnState(conn);
+                ConnState connState = new ConnState(endpoint.address, conn);
                 conn.init(connState);
                 conn.connect();
                 connections.put(endpoint.address, connState);
             }
             this.endpoints = endpoints;
-            makeReadyConnections();
+            if (toAdd.size() > 0 || toRemove.size() > 0) {
+                makeReadyConnections();
+            }
         } finally {
             connsLock.writeLock().unlock();
         }
@@ -160,10 +166,12 @@ class Connections {
     }
 
     class ConnState implements StateTracker {
-        ConnectionState state = ConnectionState.Disconnected;
+        volatile ConnectionState state = ConnectionState.Disconnected;
+        String key;
         ClientConnection conn;
 
-        ConnState(ClientConnection conn) {
+        ConnState(String key, ClientConnection conn) {
+            this.key = key;
             this.conn = conn;
         }
 
@@ -171,8 +179,12 @@ class Connections {
         public void changeState(ConnectionState state) {
             Connections.this.connsLock.writeLock().lock();
             try {
-                this.state = state;
-                Connections.this.makeReadyConnections();
+                if (Connections.this.connections.containsKey(key)) {
+                    this.state = state;
+                    Connections.this.makeReadyConnections();
+                } else {
+                    conn.close();
+                }
             } finally {
                 Connections.this.connsLock.writeLock().unlock();
             }

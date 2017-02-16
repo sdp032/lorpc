@@ -48,7 +48,6 @@ public class PhobosResponseDecoder extends ByteToMessageDecoder {
         header.setSerializationType(serializationType);
         BodyType bodyType = BodyType.getBodyType(type);
         if (bodyType == null) {
-            // TODO log
             logger.debug("invalid type: " + type);
             ctx.close();
             return;
@@ -58,8 +57,17 @@ public class PhobosResponseDecoder extends ByteToMessageDecoder {
         header.setSequenceId(sequenceId);
         header.setTimestamp(timestamp);
 
-        Response response = Response.toResponse(bytes);
-
-        out.add(new PhobosResponse(header,response));
+        switch (bodyType) {
+            case Default:
+                Response response = Response.toResponse(bytes);
+                out.add(new PhobosResponse(header, response));
+                break;
+            case Shutdown:
+                out.add(new PhobosResponse(header, null));
+                break;
+            default:
+                logger.warn("unsupported type: " + bodyType);
+                ctx.close();
+        }
     }
 }
