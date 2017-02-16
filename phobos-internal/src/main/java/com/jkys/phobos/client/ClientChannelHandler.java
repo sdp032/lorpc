@@ -28,7 +28,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<PhobosResp
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, PhobosResponse response) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, PhobosResponse response) throws Exception {
         switch (response.getHeader().getType()) {
             case Default:
                 Promise<PhobosResponse> promise = ClientContext.getInstance().getPromise(response.getHeader().getSequenceId());

@@ -7,13 +7,14 @@ import com.jkys.phobos.protocol.PhobosResponse;
 import com.jkys.phobos.serialization.SerializationType;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Created by zdj on 2016/7/5.
  */
-public class ServerChannelHandler extends ChannelHandlerAdapter {
+public class ServerChannelHandler extends ChannelInboundHandlerAdapter {
     private static Logger logger = LoggerFactory.getLogger(ServerChannelHandler.class);
     private ServerContext context = ServerContext.getInstance();
 
