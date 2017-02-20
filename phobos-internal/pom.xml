@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.jkys.servicekit</groupId>
         <artifactId>mars</artifactId>
-        <version>1.0</version>
+        <version>${projectVersion}</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>

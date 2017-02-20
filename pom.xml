@@ -10,7 +10,6 @@
     <packaging>pom</packaging>
     <properties>
         <phobos.version>1.0</phobos.version>
-        <projectVersion>1.0</projectVersion>
         <spring.version>4.3.0.RELEASE</spring.version>
         <log4j.version>2.6.1</log4j.version>
     </properties>
