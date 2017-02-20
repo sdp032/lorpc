@@ -86,4 +86,13 @@ public class TestClient {
         }
         System.out.println("qps: " + (double)(threadN * N) / ((double)(System.currentTimeMillis() - start) / 1000));
     }
+
+    @Test
+    public void xxTest() throws InterruptedException {
+        ApplicationContext context = new ClassPathXmlApplicationContext("spring/client-application.xml");
+
+        TestService testService = context.getBean(TestService.class);
+        testService.empty();
+        Thread.sleep(100 * 1000);
+    }
 }

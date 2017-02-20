@@ -47,16 +47,25 @@ class Connections {
 
     public PhobosResponse request(PhobosRequest request, long timeout, TimeUnit unit) throws InterruptedException {
         // TODO use resolve timeout
-        ClientConnection connection = peekConnection(timeout, unit);
-        return connection.request(request, timeout, unit);
+        while (true) {
+            ConnState connState = peekConnection(timeout, unit);
+            if (!connState.conn.incref()) {
+                continue;
+            }
+            try {
+                return connState.conn.request(request, timeout, unit);
+            } finally {
+                connState.conn.deref();
+            }
+        }
     }
 
-    private ClientConnection peekConnection(long timeout, TimeUnit unit) {
+    private ConnState peekConnection(long timeout, TimeUnit unit) {
         while (true) {
             connsLock.readLock().lock();
             try {
                 if (readyConnections.size() > 0) {
-                    return readyConnections.get(r.nextInt(readyConnections.size())).conn;
+                    return readyConnections.get(r.nextInt(readyConnections.size()));
                 }
             } finally {
                 connsLock.readLock().unlock();
@@ -103,7 +112,9 @@ class Connections {
                 while (true) {
                     try {
                         Service service = xBusClient.watchService(serviceName, serviceVersion);
-                        onEndpointsChange(service.endpoints);
+                        if (service != null) {
+                            onEndpointsChange(service.endpoints);
+                        }
                     } catch (XBusException e) {
                         e.printStackTrace();
                         // FIXME const

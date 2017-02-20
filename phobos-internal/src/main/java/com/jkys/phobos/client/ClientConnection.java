@@ -87,7 +87,6 @@ public class ClientConnection implements ChannelFutureListener {
             throw new RuntimeException(e);
         }
 
-        incref();
         try {
             return promise.get(timeout, unit);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
@@ -95,7 +94,6 @@ public class ClientConnection implements ChannelFutureListener {
             throw new RuntimeException(e);
         } finally {
             relatedPromises.remove(promise.getSequenceId());
-            deref();
             promise.cancel(false);
         }
     }
@@ -137,11 +135,11 @@ public class ClientConnection implements ChannelFutureListener {
         deref();
     }
 
-    private void incref() {
-        reference.incrementAndGet();
+    boolean incref() {
+        return reference.incrementAndGet() > 1;
     }
 
-    private void deref() {
+    void deref() {
         long after = reference.decrementAndGet();
         if (after <= 0) {
             if (!toClose) {

@@ -18,7 +18,13 @@ public class ServerChannelHandler extends ChannelInboundHandlerAdapter {
     private static Logger logger = LoggerFactory.getLogger(ServerChannelHandler.class);
     private ServerContext context = ServerContext.getInstance();
     private ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-    private boolean isShuttingDown = false;
+    private volatile boolean isShuttingDown = false;
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+        super.exceptionCaught(ctx, cause);
+    }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -36,7 +42,6 @@ public class ServerChannelHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        channels.remove(ctx.channel());
         super.channelInactive(ctx);
         synchronized (this) {
             if (isShuttingDown) {
@@ -45,7 +50,7 @@ public class ServerChannelHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    void shutdown() {
+    void stop() {
         isShuttingDown = true;
         Header header = new Header();
         header.setType(BodyType.Shutdown);
@@ -53,7 +58,7 @@ public class ServerChannelHandler extends ChannelInboundHandlerAdapter {
         channels.writeAndFlush(response);
     }
 
-    void waitShutdown() throws InterruptedException {
+    void waitStop() throws InterruptedException {
         synchronized (this) {
             while (channels.size() > 0) {
                 // TODO timeout

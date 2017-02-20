@@ -65,7 +65,7 @@ public class PhobosServer {
         synchronized (this) {
             if (channelFuture != null && channelFuture.channel().isRegistered()) {
                 channelFuture.channel().close();
-                serverChannelHandler.shutdown();
+                serverChannelHandler.stop();
             }
         }
     }
@@ -139,10 +139,10 @@ public class PhobosServer {
             doPlug[0] = false;
             try {
                 bossGroup.shutdownGracefully();
-                serverChannelHandler.waitShutdown();
+                serverChannelHandler.waitStop();
                 workerGroup.shutdownGracefully();
-                logger.info("phobos server shutdown finished");
-                System.out.println("phobos server shutdown finished at " + DATE_FORMAT.format(Calendar.getInstance().getTime()));
+                logger.info("phobos server stop finished");
+                System.out.println("phobos server stop finished at " + DATE_FORMAT.format(Calendar.getInstance().getTime()));
             } finally {
                 shutdownBarrier.countDown();
             }

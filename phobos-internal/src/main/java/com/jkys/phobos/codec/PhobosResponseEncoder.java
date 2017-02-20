@@ -24,12 +24,10 @@ public class PhobosResponseEncoder extends MessageToByteEncoder<PhobosResponse> 
         if(header == null){
             throw new NullPointerException("Header is null");
         }
-        if(response == null){
-            throw new NullPointerException("Response is null");
-        }
 
-        byte[] body = Response.toBytes(response, header.getSerializationType());
-        if (body != null) {
+        byte [] body = null;
+        if (response != null) {
+            body = Response.toBytes(response, header.getSerializationType());
             header.setSize(body.length);
         } else {
             header.setSize(0);
