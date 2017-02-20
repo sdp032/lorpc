@@ -14,7 +14,7 @@
         <dependency>
             <groupId>com.jkys.servicekit</groupId>
             <artifactId>phobos-common</artifactId>
-            <version>${projectVersion}</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.jkys.servicekit</groupId>
