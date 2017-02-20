@@ -20,7 +20,7 @@ public class ServerBean implements ApplicationListener<ContextRefreshedEvent> {
         Helper.joinServer();
     }
 
-    public void stopServer() {
-        Helper.stopServer();
+    public void stopServer(Long forceStopTimeoutInSeconds) {
+        Helper.stopServer(forceStopTimeoutInSeconds);
     }
 }

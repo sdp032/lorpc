@@ -12,5 +12,5 @@ public interface PhobosInternal {
     void registryProvider(Class<?> implClass);
     void triggerServer(ApplicationContext appCtx);
     void joinServer() throws InterruptedException;
-    void stopServer();
+    void stopServer(Long forceStopTimeoutInSeconds);
 }

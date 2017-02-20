@@ -50,9 +50,9 @@ public class PhobosInternalImpl implements PhobosInternal {
         }
     }
 
-    public void stopServer() {
+    public void stopServer(Long forceStopTimeoutInSeconds) {
         if (phobosServer != null) {
-            phobosServer.stop();
+            phobosServer.stop(forceStopTimeoutInSeconds);
         }
     }
 }

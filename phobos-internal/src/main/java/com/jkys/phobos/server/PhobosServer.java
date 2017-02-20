@@ -20,6 +20,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by frio on 16/7/4.
@@ -30,6 +31,7 @@ public class PhobosServer {
     private static DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static Logger logger = LoggerFactory.getLogger(PhobosServer.class);
     private ServerContext context = ServerContext.getInstance();
+    private long forceStopTimeoutInSecond = 10;
 
     private XBusClient xBusClient;
     private volatile ChannelFuture channelFuture = null;
@@ -39,7 +41,7 @@ public class PhobosServer {
     public PhobosServer() {
         xBusClient = RegistryUtil.getXBus(PhobosConfig.getInstance().getRegistry());
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            stop();
+            stop(null);
             try {
                 join();
             } catch (InterruptedException e) {
@@ -61,7 +63,10 @@ public class PhobosServer {
         }
     }
 
-    public void stop() {
+    public void stop(Long forceStopTimeoutInSecond) {
+        if (forceStopTimeoutInSecond != null) {
+            this.forceStopTimeoutInSecond = forceStopTimeoutInSecond;
+        }
         synchronized (this) {
             if (channelFuture != null && channelFuture.channel().isRegistered()) {
                 channelFuture.channel().close();
@@ -139,7 +144,7 @@ public class PhobosServer {
             doPlug[0] = false;
             try {
                 bossGroup.shutdownGracefully();
-                serverChannelHandler.waitStop();
+                serverChannelHandler.waitStop(forceStopTimeoutInSecond, TimeUnit.SECONDS);
                 workerGroup.shutdownGracefully();
                 logger.info("phobos server stop finished");
                 System.out.println("phobos server stop finished at " + DATE_FORMAT.format(Calendar.getInstance().getTime()));

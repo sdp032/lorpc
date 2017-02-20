@@ -41,7 +41,7 @@ public class TestServer {
                 return;
             }
             System.out.println("to stop server");
-            serverBean.stopServer();
+            serverBean.stopServer(null);
         }).start();
         serverBean.joinServer();
     }

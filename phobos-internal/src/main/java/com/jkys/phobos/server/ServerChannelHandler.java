@@ -12,6 +12,8 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by zdj on 2016/7/5.
  */
@@ -60,11 +62,16 @@ public class ServerChannelHandler extends ChannelInboundHandlerAdapter {
         channels.writeAndFlush(response);
     }
 
-    void waitStop() throws InterruptedException {
+    void waitStop(long timeout, TimeUnit unit) throws InterruptedException {
         synchronized (this) {
             while (channels.size() > 0) {
-                // TODO timeout
-                this.wait();
+                if (timeout <= 0) {
+                    throw new RuntimeException("shutdown timeout");
+                }
+                long start = System.currentTimeMillis();
+                this.wait(TimeUnit.MILLISECONDS.convert(timeout, unit));
+                timeout -= unit.convert(System.currentTimeMillis() - start,
+                        TimeUnit.MILLISECONDS);
             }
         }
     }

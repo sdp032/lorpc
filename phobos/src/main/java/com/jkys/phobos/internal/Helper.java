@@ -41,7 +41,7 @@ public class Helper {
         phobosInternal.joinServer();
     }
 
-    public static void stopServer() {
-        phobosInternal.stopServer();
+    public static void stopServer(Long forceStopTimeoutInSeconds) {
+        phobosInternal.stopServer(forceStopTimeoutInSeconds);
     }
 }
