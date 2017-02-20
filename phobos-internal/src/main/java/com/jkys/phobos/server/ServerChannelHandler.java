@@ -3,6 +3,7 @@ package com.jkys.phobos.server;
 import com.jkys.phobos.exception.ErrorCode;
 import com.jkys.phobos.protocol.*;
 import com.jkys.phobos.serialization.SerializationType;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.group.ChannelGroup;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by zdj on 2016/7/5.
  */
+@ChannelHandler.Sharable
 public class ServerChannelHandler extends ChannelInboundHandlerAdapter {
     private static Logger logger = LoggerFactory.getLogger(ServerChannelHandler.class);
     private ServerContext context = ServerContext.getInstance();

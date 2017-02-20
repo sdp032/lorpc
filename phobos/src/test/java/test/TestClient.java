@@ -68,6 +68,8 @@ public class TestClient {
         ApplicationContext context = new ClassPathXmlApplicationContext("spring/client-application.xml");
 
         TestService testService = context.getBean(TestService.class);
+        testService.empty();
+
         List<Thread> threads = new ArrayList<>();
         int threadN = 8;
         int N = 100000;
