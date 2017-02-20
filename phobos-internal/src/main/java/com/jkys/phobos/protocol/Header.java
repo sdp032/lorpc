@@ -1,7 +1,5 @@
 package com.jkys.phobos.protocol;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 /**
  * Created by frio on 16/7/4.
  */

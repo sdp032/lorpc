@@ -29,6 +29,24 @@ public class TestServer {
     }
 
     @Test
+    public void testShutdownServer() throws InterruptedException {
+        System.out.println(System.getProperty("user.dir"));
+        ApplicationContext context = new ClassPathXmlApplicationContext("spring/server-application.xml");
+        ServerBean serverBean = (ServerBean) context.getBean(ServerBean.NAME);
+        new Thread(() -> {
+            try {
+                Thread.sleep(8000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return;
+            }
+            System.out.println("to stop server");
+            serverBean.stopServer();
+        }).start();
+        serverBean.joinServer();
+    }
+
+    @Test
     public void protoTest() {
         System.out.println(new ServiceProto(TestService.class).toYaml());
     }

@@ -34,6 +34,7 @@ public class PhobosServer {
     private XBusClient xBusClient;
     private volatile ChannelFuture channelFuture = null;
     private volatile CountDownLatch shutdownBarrier;
+    private ServerChannelHandler serverChannelHandler = new ServerChannelHandler();
 
     public PhobosServer() {
         xBusClient = RegistryUtil.getXBus(PhobosConfig.getInstance().getRegistry());
@@ -64,6 +65,7 @@ public class PhobosServer {
         synchronized (this) {
             if (channelFuture != null && channelFuture.channel().isRegistered()) {
                 channelFuture.channel().close();
+                serverChannelHandler.shutdown();
             }
         }
     }
@@ -97,7 +99,7 @@ public class PhobosServer {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new PhobosRequestDecoder());
                             ch.pipeline().addLast(new PhobosResponseEncoder());
-                            ch.pipeline().addLast(new ServerChannelHandler());
+                            ch.pipeline().addLast(serverChannelHandler);
                         }
                     });
 
@@ -136,8 +138,9 @@ public class PhobosServer {
             logger.info("phobos server is shutting down");
             doPlug[0] = false;
             try {
-                workerGroup.shutdownGracefully();
                 bossGroup.shutdownGracefully();
+                serverChannelHandler.waitShutdown();
+                workerGroup.shutdownGracefully();
                 logger.info("phobos server shutdown finished");
                 System.out.println("phobos server shutdown finished at " + DATE_FORMAT.format(Calendar.getInstance().getTime()));
             } finally {

@@ -19,4 +19,8 @@ public class ServerBean implements ApplicationListener<ContextRefreshedEvent> {
     public void joinServer() throws InterruptedException {
         Helper.joinServer();
     }
+
+    public void stopServer() {
+        Helper.stopServer();
+    }
 }
