@@ -4,6 +4,7 @@ import com.jkys.phobos.client.PhobosProxy;
 import com.jkys.phobos.server.PhobosServer;
 import com.jkys.phobos.server.Provider;
 import com.jkys.phobos.server.ServerContext;
+import com.jkys.phobos.util.LogUtil;
 import org.springframework.context.ApplicationContext;
 
 import java.lang.reflect.InvocationHandler;
@@ -29,6 +30,7 @@ public class PhobosInternalImpl implements PhobosInternal {
     }
 
     public synchronized void triggerServer(ApplicationContext appCtx) {
+        LogUtil.info("trigger phobos server");
         if (phobosServer != null) {
             return;
         }

@@ -91,6 +91,7 @@ public class PhobosServer {
     }
 
     private void startNetty() throws InterruptedException {
+        logger.info("phobos server starting");
         ServerConfig config = PhobosConfig.getInstance().getServer();
         ServerBootstrap bootstrap = new ServerBootstrap();
         EventLoopGroup bossGroup = new NioEventLoopGroup();
