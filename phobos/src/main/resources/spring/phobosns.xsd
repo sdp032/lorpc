@@ -21,7 +21,7 @@
 
     <xsd:element name="client" type="clientType"/>
     <xsd:complexType name="clientType">
-        <xsd:attribute name="serialization" default="MSGPACK">
+        <xsd:attribute name="serialization" default="JSON">
             <xsd:simpleType>
                 <xsd:restriction base="xsd:string">
                     <xsd:enumeration value="JSON"/>
@@ -48,7 +48,7 @@
         <xsd:complexContent>
             <xsd:extension base="beans:identifiedType">
                 <xsd:attribute name="interface" type="xsd:string" use="required"/>
-                <xsd:attribute name="serialization" default="MSGPACK">
+                <xsd:attribute name="serialization" default="JSON">
                     <xsd:simpleType>
                         <xsd:restriction base="xsd:string">
                             <xsd:enumeration value="JSON"/>
