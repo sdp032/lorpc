@@ -21,12 +21,12 @@
 
     <xsd:element name="client" type="clientType"/>
     <xsd:complexType name="clientType">
-        <xsd:attribute name="serialization" default="JSON">
+        <xsd:attribute name="serialization" default="Json">
             <xsd:simpleType>
                 <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="JSON"/>
-                    <xsd:enumeration value="MSGPACK"/>
-                    <xsd:enumeration value="PROTOBUFF"/>
+                    <xsd:enumeration value="Json"/>
+                    <xsd:enumeration value="Msgpack"/>
+                    <xsd:enumeration value="Protobuf"/>
                 </xsd:restriction>
             </xsd:simpleType>
         </xsd:attribute>
@@ -48,12 +48,12 @@
         <xsd:complexContent>
             <xsd:extension base="beans:identifiedType">
                 <xsd:attribute name="interface" type="xsd:string" use="required"/>
-                <xsd:attribute name="serialization" default="JSON">
+                <xsd:attribute name="serialization" default="Json">
                     <xsd:simpleType>
                         <xsd:restriction base="xsd:string">
-                            <xsd:enumeration value="JSON"/>
-                            <xsd:enumeration value="MSGPACK"/>
-                            <xsd:enumeration value="PROTOBUFF"/>
+                            <xsd:enumeration value="Json"/>
+                            <xsd:enumeration value="Msgpack"/>
+                            <xsd:enumeration value="Protobuf"/>
                         </xsd:restriction>
                     </xsd:simpleType>
                 </xsd:attribute>
