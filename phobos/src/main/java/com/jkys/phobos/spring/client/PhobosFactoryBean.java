@@ -1,6 +1,6 @@
 package com.jkys.phobos.spring.client;
 
-import com.jkys.phobos.internal.Helper;
+import com.jkys.phobos.internal.Phobos;
 import org.springframework.beans.factory.FactoryBean;
 
 import java.lang.reflect.InvocationHandler;
@@ -16,7 +16,7 @@ public class PhobosFactoryBean<T> implements FactoryBean<T> {
     private String serviceVersion;
 
     public T getObject() throws Exception {
-        InvocationHandler phobosProxy = Helper.newClientProxy(serviceInterface, serviceName, serviceVersion);
+        InvocationHandler phobosProxy = Phobos.newClientProxy(serviceInterface, serviceName, serviceVersion);
         T t = (T) Proxy.newProxyInstance(serviceInterface.getClassLoader(), new Class[]{serviceInterface}, phobosProxy);
         return t;
     }

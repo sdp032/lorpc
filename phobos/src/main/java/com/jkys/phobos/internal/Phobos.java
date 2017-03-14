@@ -7,7 +7,7 @@ import java.lang.reflect.InvocationHandler;
 /**
  * Created by lo on 1/20/17.
  */
-public class Helper {
+public class Phobos {
     private static final ClassLoader internalClassLoader = new InternalClassLoader();
     private static final String internalImplName = PhobosInternal.class.getName() + "Impl";
     private static PhobosInternal phobosInternal;
@@ -29,8 +29,12 @@ public class Helper {
         return phobosInternal.newClientProxy(interfaceClass, name, version);
     }
 
-    public static void registryProvider(Class<?> implClass) {
-        phobosInternal.registryProvider(implClass);
+    public static void registryProvider(String bean) {
+        phobosInternal.registryProvider(bean);
+    }
+
+    public static void registryProvider(Object impl) {
+        phobosInternal.registryProvider(impl);
     }
 
     public static void triggerServer(ApplicationContext appCtx) {

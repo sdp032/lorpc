@@ -1,6 +1,6 @@
 package com.jkys.phobos.spring.server;
 
-import com.jkys.phobos.internal.Helper;
+import com.jkys.phobos.internal.Phobos;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
@@ -13,14 +13,14 @@ public class ServerBean implements ApplicationListener<ContextRefreshedEvent> {
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        Helper.triggerServer(event.getApplicationContext());
+        Phobos.triggerServer(event.getApplicationContext());
     }
 
     public void joinServer() throws InterruptedException {
-        Helper.joinServer();
+        Phobos.joinServer();
     }
 
     public void stopServer(Long forceStopTimeoutInSeconds) {
-        Helper.stopServer(forceStopTimeoutInSeconds);
+        Phobos.stopServer(forceStopTimeoutInSeconds);
     }
 }

@@ -9,7 +9,8 @@ import java.lang.reflect.InvocationHandler;
  */
 public interface PhobosInternal {
     InvocationHandler newClientProxy(Class<?> interfaceClass, String name, String version);
-    void registryProvider(Class<?> implClass);
+    void registryProvider(String bean);
+    void registryProvider(Object impl);
     void triggerServer(ApplicationContext appCtx);
     void joinServer() throws InterruptedException;
     void stopServer(Long forceStopTimeoutInSeconds);
