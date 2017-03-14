@@ -131,7 +131,7 @@ public class PhobosServer {
                 try {
                     xBusClient.plugServices(context.getServiceDescs(), endpoint, PLUG_TTL);
                 } catch (XBusException e) {
-                    logger.error("plug services fail", e);
+                    logger.error("plug services fail: " + e.toString(), e);
                 }
                 try {
                     Thread.sleep(PLUG_INTERVAL * 1000);
