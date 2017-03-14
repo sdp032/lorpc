@@ -41,9 +41,6 @@ public class Provider {
     private void resolveService() {
         Class<?>[] interfaces = this.implClass.getInterfaces();
         for (Class<?> cls : interfaces) {
-            if (!cls.isInterface()) {
-                continue;
-            }
             if (cls.getAnnotation(Service.class) != null) {
                 if (serviceInterface != null) {
                     throw new RuntimeException("multi service interface detected!");
