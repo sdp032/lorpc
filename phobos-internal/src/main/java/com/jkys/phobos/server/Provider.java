@@ -1,6 +1,7 @@
 package com.jkys.phobos.server;
 
 import com.github.infrmods.xbus.item.ServiceDesc;
+import com.jkys.phobos.annotation.Service;
 import com.jkys.phobos.annotation.ServiceUtil;
 import com.jkys.phobos.protocol.Request;
 import com.jkys.phobos.serialization.SerializationType;
@@ -39,11 +40,20 @@ public class Provider {
 
     private void resolveService() {
         Class<?>[] interfaces = this.implClass.getInterfaces();
-        if (interfaces == null || interfaces.length != 1) {
-            // FIXME exception
-            throw new RuntimeException("invalid service impl");
+        for (Class<?> cls : interfaces) {
+            if (!cls.isInterface()) {
+                continue;
+            }
+            if (cls.getAnnotation(Service.class) != null) {
+                if (serviceInterface != null) {
+                    throw new RuntimeException("multi service interface detected!");
+                }
+                serviceInterface = cls;
+            }
         }
-        serviceInterface = interfaces[0];
+        if (serviceInterface == null) {
+            throw new RuntimeException("invalid service impl (missing service interface)");
+        }
         serviceProto = new ServiceProto(serviceInterface);
 
         try {
