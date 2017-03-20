@@ -5,11 +5,11 @@
     <parent>
         <groupId>com.jkys.servicekit</groupId>
         <artifactId>mars</artifactId>
-        <version>1.0</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>phobos</artifactId>
-    <version>${projectVersion}</version>
+    <version>1.0-SNAPSHOT</version>
     <dependencies>
         <dependency>
             <groupId>com.jkys.servicekit</groupId>
@@ -19,7 +19,7 @@
         <dependency>
             <groupId>com.jkys.servicekit</groupId>
             <artifactId>phobos-internal</artifactId>
-            <version>${projectVersion}</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -52,6 +52,12 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>${log4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>2.5.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>

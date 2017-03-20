@@ -5,10 +5,10 @@
     <parent>
         <artifactId>mars</artifactId>
         <groupId>com.jkys.servicekit</groupId>
-        <version>1.0</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>phobos-common</artifactId>
-    <version>${projectVersion}</version>
+    <version>1.0-SNAPSHOT</version>
 </project>
