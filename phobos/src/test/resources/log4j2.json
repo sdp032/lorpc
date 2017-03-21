@@ -1,13 +1,22 @@
-{ "configuration": { "status": "info", "name": "mars",
-  "packages": "com.jkys.phobos",
-  "ThresholdFilter": { "level": "info" },
-  "appenders": {
-    "Console": { "name": "STDOUT",
-      "PatternLayout": { "pattern": "%d %p %c{1.} [%t] $${env:USER} %m%n" }
+{
+  "configuration": {
+    "status": "info",
+    "name": "mars",
+    "appenders": {
+      "Console": {
+        "name": "STDOUT",
+        "PatternLayout": {
+          "pattern": "%d %p %c{1.} [%t] $${env:USER} %m%n"
+        }
+      }
+    },
+    "loggers": {
+      "root": {
+        "level": "info",
+        "AppenderRef": {
+          "ref": "STDOUT"
+        }
+      }
     }
-  },
-  "loggers": {
-    "root": { "level": "info", "AppenderRef": { "ref": "STDOUT" }}
   }
-}
 }

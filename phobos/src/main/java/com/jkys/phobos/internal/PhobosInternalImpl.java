@@ -46,15 +46,18 @@ public class PhobosInternalImpl implements PhobosInternal {
         }
 
         for (String bean: providerBeans) {
+            LogUtil.info("register provider: {}", bean);
             Object impl = appCtx.getBean(bean);
             registryProvider(impl);
         }
+        LogUtil.info("provider registered");
 
         ServerContext serverContext = ServerContext.getInstance();
         for (Provider provider : providers.values()) {
             serverContext.register(provider);
         }
 
+        LogUtil.info("creating phobos server");
         phobosServer = new PhobosServer();
         phobosServer.start();
     }
