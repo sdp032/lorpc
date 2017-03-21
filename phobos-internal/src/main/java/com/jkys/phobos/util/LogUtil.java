@@ -12,4 +12,8 @@ public class LogUtil {
     public static void info(String message, Object ...objs) {
         logger.info(message, objs);
     }
+
+    public static void error(String message, Throwable t) {
+        logger.error(message, t);
+    }
 }

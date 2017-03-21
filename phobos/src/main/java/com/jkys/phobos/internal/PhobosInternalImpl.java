@@ -6,6 +6,8 @@ import com.jkys.phobos.server.Provider;
 import com.jkys.phobos.server.ServerContext;
 import com.jkys.phobos.util.LogUtil;
 import io.netty.util.internal.ConcurrentSet;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.context.ApplicationContext;
 
 import java.lang.reflect.InvocationHandler;
@@ -45,21 +47,40 @@ public class PhobosInternalImpl implements PhobosInternal {
             return;
         }
 
-        for (String bean: providerBeans) {
-            LogUtil.info("register provider: {}", bean);
-            Object impl = appCtx.getBean(bean);
-            registryProvider(impl);
-        }
-        LogUtil.info("provider registered");
+        try {
+            for (String bean : providerBeans) {
+                LogUtil.info("register provider: {}", bean);
+                Object impl = getTargetImpl(appCtx.getBean(bean));
+                registryProvider(impl);
+            }
 
-        ServerContext serverContext = ServerContext.getInstance();
-        for (Provider provider : providers.values()) {
-            serverContext.register(provider);
+            ServerContext serverContext = ServerContext.getInstance();
+            for (Provider provider : providers.values()) {
+                serverContext.register(provider);
+            }
+        } catch (Throwable t) {
+            LogUtil.error("init phobos fail", t);
+            throw t;
         }
 
-        LogUtil.info("creating phobos server");
-        phobosServer = new PhobosServer();
-        phobosServer.start();
+        try {
+            phobosServer = new PhobosServer();
+            phobosServer.start();
+        } catch (Throwable t) {
+            LogUtil.error("start phobos fail", t);
+            throw t;
+        }
+    }
+
+    private static Object getTargetImpl(Object impl) {
+        while (AopUtils.isAopProxy(impl)) {
+            try {
+                impl = ((Advised)impl).getTargetSource().getTarget();
+            } catch (Exception e) {
+                throw new RuntimeException("get aop target fail", e);
+            }
+        }
+        return impl;
     }
 
     public void joinServer() throws InterruptedException {

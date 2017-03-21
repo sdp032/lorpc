@@ -10,6 +10,7 @@ import com.jkys.phobos.proto.Function;
 import com.jkys.phobos.proto.ServiceProto;
 import com.jkys.phobos.protocol.Response;
 import com.jkys.phobos.serialization.SerializerFactory;
+import com.jkys.phobos.util.LogUtil;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -39,17 +40,17 @@ public class Provider {
     }
 
     private void resolveService() {
-        Class<?>[] interfaces = this.implClass.getInterfaces();
+        Class<?>[] interfaces = implClass.getInterfaces();
         for (Class<?> cls : interfaces) {
             if (cls.getAnnotation(Service.class) != null) {
                 if (serviceInterface != null) {
-                    throw new RuntimeException("multi service interface detected!");
+                    throw new RuntimeException("multi service interface detected(impl: " + implClass.getName() + ")!");
                 }
                 serviceInterface = cls;
             }
         }
         if (serviceInterface == null) {
-            throw new RuntimeException("invalid service impl (missing service interface)");
+            throw new RuntimeException("invalid service impl (missing service interface): [" + implClass + "]");
         }
         serviceProto = new ServiceProto(serviceInterface);
 
