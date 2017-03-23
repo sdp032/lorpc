@@ -59,6 +59,7 @@ public class ClientConnection implements ChannelFutureListener {
         bootstrap.group(group).channel(NioSocketChannel.class)
                 .option(ChannelOption.TCP_NODELAY, true)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout * 1000)
+                .option(ChannelOption.SO_KEEPALIVE, true)
                 .handler(new ChannelInitializer<SocketChannel>() {
                      public void initChannel(SocketChannel socketChannel) throws Exception {
                         socketChannel.pipeline().addLast(new PhobosRequestEncoder());
