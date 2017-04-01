@@ -33,7 +33,7 @@ public class PhobosInternalImpl implements PhobosInternal {
     }
 
     public void registryProvider(Object impl) {
-        Provider provider = new Provider(impl.getClass());
+        Provider provider = new Provider(getTargetImpl(impl).getClass());
         provider.setImpl(impl);
         if (providers.putIfAbsent(provider.key(), provider) != null) {
             // FIXME exception
@@ -50,8 +50,7 @@ public class PhobosInternalImpl implements PhobosInternal {
         try {
             for (String bean : providerBeans) {
                 LogUtil.info("register provider: {}", bean);
-                Object impl = getTargetImpl(appCtx.getBean(bean));
-                registryProvider(impl);
+                registryProvider(appCtx.getBean(bean));
             }
 
             ServerContext serverContext = ServerContext.getInstance();
