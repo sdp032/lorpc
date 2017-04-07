@@ -29,6 +29,7 @@ public class RegistryConfig {
 
     public RegistryConfig() {
         AppEnv env = AppEnv.get();
+        this.appName = env.getName();
         endpoint = env.getEndpoint();
         if (new File(AUTO_JKS).exists()) {
             keystorePath = AUTO_JKS;

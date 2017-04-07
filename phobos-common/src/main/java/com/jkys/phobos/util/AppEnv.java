@@ -6,6 +6,7 @@ import java.util.Map;
  * Created by lo on 1/7/17.
  */
 public class AppEnv {
+    public static final String UNKNOWN_APP = "unknown";
     private static final String DEFAULT_ENDPOINT = "xbus.qa.91jkys.com:4433";
 
     private String name;
@@ -22,7 +23,7 @@ public class AppEnv {
             appEnv.name = System.getProperty("app.name");
         }
         if (appEnv.name == null) {
-            appEnv.name = "unknown";
+            appEnv.name = UNKNOWN_APP;
         }
         appEnv.endpoint = env.get("APP_ENDPOINT");
         if (appEnv.endpoint == null) {
