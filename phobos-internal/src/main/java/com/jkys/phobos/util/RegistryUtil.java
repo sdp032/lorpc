@@ -22,10 +22,8 @@ public class RegistryUtil {
         } else if (cfg.getKeyPath() != null) {
             config = new XBusConfig(endpoints, cfg.getCaCertPath(),
                     cfg.getCertPath(), cfg.getKeyPath());
-        } else if (!AppEnv.UNKNOWN_APP.equals(cfg.getAppName())) {
-            config = new XBusConfig(endpoints, cfg.getAppName());
         } else {
-            throw new RuntimeException("missing key config");
+            config = new XBusConfig(endpoints, cfg.getAppName());
         }
         return new XBusClient(config);
     }
