@@ -4,6 +4,7 @@ import com.jkys.phobos.protocol.BodyType;
 import com.jkys.phobos.protocol.Header;
 import com.jkys.phobos.protocol.PhobosRequest;
 import com.jkys.phobos.protocol.Request;
+import com.jkys.phobos.util.Hex;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -65,7 +66,13 @@ public class PhobosRequestDecoder extends ByteToMessageDecoder {
         Request request = null;
         switch (bodyType) {
             case Default:
-                request = Request.toRequest(bytes);
+                try {
+                    request = Request.toRequest(bytes);
+                } catch (Throwable e) {
+                    logger.error("decode request body(" + header + ", "
+                            + Hex.hexify(bytes)+ ") fail", e);
+                    throw e;
+                }
                 break;
             default:
                 logger.warn("unsupported type: " + bodyType);
