@@ -17,6 +17,7 @@ public class ServerConfig {
 
     private String bindHost;
     private Integer bindPort;
+    private Integer threads;
     private boolean blocking = false;
 
     private ServerConfig() {
@@ -63,6 +64,14 @@ public class ServerConfig {
 
     public void setBindPort(Integer bindPort) {
         this.bindPort = bindPort;
+    }
+
+    public Integer getThreads() {
+        return threads;
+    }
+
+    public void setThreads(Integer threads) {
+        this.threads = threads;
     }
 
     public boolean isBlocking() {

@@ -12,6 +12,9 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -19,10 +22,22 @@ import java.util.concurrent.TimeUnit;
  */
 @ChannelHandler.Sharable
 public class ServerChannelHandler extends ChannelInboundHandlerAdapter {
+    private static final int DEFAULT_THREADS;
     private static Logger logger = LoggerFactory.getLogger(ServerChannelHandler.class);
     private ServerContext context = ServerContext.getInstance();
     private ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+    private ExecutorService executor = Executors.newFixedThreadPool(DEFAULT_THREADS);
     private volatile boolean isShuttingDown = false;
+
+    static {
+        DEFAULT_THREADS = Math.max(1, Runtime.getRuntime().availableProcessors() * 8);
+    }
+
+    void setThreads(Integer threads) {
+        if (threads != null) {
+            executor = Executors.newFixedThreadPool(threads);
+        }
+    }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
@@ -88,8 +103,9 @@ public class ServerChannelHandler extends ChannelInboundHandlerAdapter {
             return;
         }
         SerializationType serializationType = SerializationType.get(request.getHeader().getSerializationType());
-        // TODO execute thread pool
-        PhobosResponse response = new PhobosResponse(request.getHeader(), provider.invoke(serializationType, request.getRequest()));
-        ctx.writeAndFlush(response);
+        executor.execute(() -> {
+            PhobosResponse response = new PhobosResponse(request.getHeader(), provider.invoke(serializationType, request.getRequest()));
+            ctx.writeAndFlush(response);
+        });
     }
 }

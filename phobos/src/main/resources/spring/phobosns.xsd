@@ -17,6 +17,7 @@
     <xsd:complexType name="serverType">
         <xsd:attribute name="bindHost" type="xsd:string"/>
         <xsd:attribute name="bindPort" type="xsd:int"/>
+        <xsd:attribute name="threads" type="xsd:int"/>
     </xsd:complexType>
 
     <xsd:element name="client" type="clientType"/>

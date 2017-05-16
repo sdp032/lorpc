@@ -21,6 +21,10 @@ public class ServerDefinitionParser implements BeanDefinitionParser {
             Integer port = Integer.valueOf(element.getAttribute("bindPort"));
             config.setBindPort(port);
         }
+        if (element.hasAttribute("threads")) {
+            Integer threads = Integer.valueOf(element.getAttribute("threads"));
+            config.setThreads(threads);
+        }
 
         RootBeanDefinition beanDefinition = new RootBeanDefinition();
         beanDefinition.setBeanClass(ServerConfig.class);
